@@ -27,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<ProductDto> getAllProducts() {
+    public List<ProductDto> findAll() {
         List<ProductEntity> products = productRepository.findAll();
         return products.stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))

@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class OnlineStoreApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(OnlineStoreApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(OnlineStoreApplication.class, args);
+	}
 
     @Bean
     public OpenAPI customOpenAPI() {
