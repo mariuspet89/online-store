@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.model.dto;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 
@@ -7,7 +8,7 @@ public class CartDto {
 
     private String cartId;
     private String userId;
-    private Set<ProductDto> products;
+    private HashMap<ProductDto, Integer> products;
 
     public String getCartId() {
         return cartId;
@@ -25,11 +26,11 @@ public class CartDto {
         this.userId = userId;
     }
 
-    public Set<ProductDto> getProducts() {
+    public HashMap<ProductDto, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(Set<ProductDto> products) {
+    public void setProducts(HashMap<ProductDto, Integer> products) {
         this.products = products;
     }
 
