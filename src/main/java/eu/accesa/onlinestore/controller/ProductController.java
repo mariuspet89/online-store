@@ -1,6 +1,8 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.entity.ProductEntity;
+import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +20,16 @@ public class ProductController {
 
     private final ProductService productService;
 
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
 
-    @GetMapping()
+    @GetMapping("/findAll")
     public ResponseEntity<List<ProductDto>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll());
     }
+
+
 }
