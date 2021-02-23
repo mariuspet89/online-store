@@ -2,76 +2,77 @@ package eu.accesa.onlinestore.model.dto;
 
 public class ProductDto {
 
-    private String ID;
-    private String Name;
-    private String Description;
-    private Double Price;
-    private Double Rating;
-    private Integer ItemInStock;
-    private String ImageUrl;
-    private String Brand;
+    private String _id;
+    private String name;
+    private String description;
+    private Double price;
+    private Double rating;
+    private Integer itemsinstock;
+    private String image;
+    private String brand;
 
-    public String getID() {
-        return ID;
+    public String get_id() {
+        return _id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public Double getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(Double price) {
-        Price = price;
+        this.price = price;
     }
 
     public Double getRating() {
-        return Rating;
+        return rating;
     }
 
     public void setRating(Double rating) {
-        Rating = rating;
+        this.rating = rating;
     }
 
-    public Integer getItemInStock() {
-        return ItemInStock;
+
+    public Integer getItemsinstock() {
+        return itemsinstock;
     }
 
-    public void setItemInStock(Integer itemInStock) {
-        ItemInStock = itemInStock;
+    public void setItemsinstock(Integer itemsinstock) {
+        this.itemsinstock = itemsinstock;
     }
 
-    public String getImageUrl() {
-        return ImageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        ImageUrl = imageUrl;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getBrand() {
-        return Brand;
+        return brand;
     }
 
     public void setBrand(String brand) {
-        Brand = brand;
+        this.brand = brand;
     }
 }
