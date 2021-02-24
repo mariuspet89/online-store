@@ -19,25 +19,25 @@ public class CartController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private CartDto createCart(@Valid @RequestBody CartDto cartDto){
+    private CartDto createCart(@Valid @RequestBody CartDto cartDto) {
         return cartService.createCart(cartDto);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    private CartDto getCartById(@PathVariable String id){
+    private CartDto getCartById(@PathVariable String id) {
         return cartService.getCartById(id);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    private CartDto updateCart(@Valid @RequestBody CartDto cartDto){
+    private CartDto updateCart(@Valid @RequestBody CartDto cartDto) {
         return cartService.updateCart(cartDto);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    private void deleteCart(@Valid @RequestBody CartDto cartDto){
+    private void deleteCart(@Valid @RequestBody CartDto cartDto) {
         cartService.deleteCart(cartDto);
     }
 }

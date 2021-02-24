@@ -3,7 +3,7 @@ package eu.accesa.onlinestore.service.implementation;
 import eu.accesa.onlinestore.OnlineStoreApplication;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.CartDto;
-import eu.accesa.onlinestore.model.entity.Cart;
+import eu.accesa.onlinestore.model.entity.CartEntity;
 import eu.accesa.onlinestore.repository.CartRepository;
 import eu.accesa.onlinestore.service.CartService;
 import org.modelmapper.ModelMapper;
@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService {
         if (mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class) == cartDto) {
             return mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class);
         } else {
-            Cart cart = mapper.map(cartDto, Cart.class);
+            CartEntity cart = mapper.map(cartDto, CartEntity.class);
             return mapper.map(cartRepository.save(cart), CartDto.class);
         }
     }
@@ -40,7 +40,7 @@ public class CartServiceImpl implements CartService {
         LOGGER.info("Service: searching for cart with id: {}", id);
 
         return mapper.map(cartRepository.findById(id).orElseThrow(() -> new EntityNotFoundException
-                (Cart.class.getName(), "CartId", id)), CartDto.class);
+                (CartEntity.class.getName(), "CartId", id)), CartDto.class);
     }
 
     @Override
@@ -48,8 +48,8 @@ public class CartServiceImpl implements CartService {
         LOGGER.info("Service: updating cart with old values: {} with new values {}",
                 cartRepository.findById(cartDto.getCartId()), cartDto.toString());
 
-        Cart cartFromDatabase = cartRepository.findById(cartDto.getCartId()).
-                orElseThrow(() -> new EntityNotFoundException(Cart.class.getName(), "CartId", cartDto.getCartId()));
+        CartEntity cartFromDatabase = cartRepository.findById(cartDto.getCartId()).
+                orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", cartDto.getCartId()));
 
         mapper.map(cartDto, cartFromDatabase);
 
@@ -60,6 +60,6 @@ public class CartServiceImpl implements CartService {
     public void deleteCart(CartDto cartDto) {
         LOGGER.info("Service: deleting cart with values: {}", cartDto.toString());
 
-        cartRepository.delete(mapper.map(cartDto, Cart.class));
+        cartRepository.delete(mapper.map(cartDto, CartEntity.class));
     }
 }

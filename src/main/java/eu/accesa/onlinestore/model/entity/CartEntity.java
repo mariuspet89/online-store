@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Objects;
 
 @Document(collation = "carts")
-public class Cart {
+public class CartEntity {
 
     @Id
     private String cartId;
     private String userId;
-    private HashMap<Product, Integer> products;
+    private HashMap<ProductEntity, Integer> products;
 
     public String getCartId() {
         return cartId;
@@ -30,11 +30,11 @@ public class Cart {
         this.userId = userId;
     }
 
-    public HashMap<Product, Integer> getProducts() {
+    public HashMap<ProductEntity, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<Product, Integer> products) {
+    public void setProducts(HashMap<ProductEntity, Integer> products) {
         this.products = products;
     }
 
@@ -42,12 +42,21 @@ public class Cart {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cart cart = (Cart) o;
+        CartEntity cart = (CartEntity) o;
         return Objects.equals(cartId, cart.cartId) && Objects.equals(userId, cart.userId) && Objects.equals(products, cart.products);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(cartId, userId, products);
+    }
+
+    @Override
+    public String toString() {
+        return "CartEntity{" +
+                "cartId='" + cartId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", products=" + products +
+                '}';
     }
 }

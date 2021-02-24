@@ -2,7 +2,6 @@ package eu.accesa.onlinestore.model.dto;
 
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Set;
 
 public class CartDto {
 
@@ -45,5 +44,14 @@ public class CartDto {
     @Override
     public int hashCode() {
         return Objects.hash(cartId, userId, products);
+    }
+
+    @Override
+    public String toString() {
+        return "CartDto{" +
+                "cartId='" + cartId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", products=" + products +
+                '}';
     }
 }
