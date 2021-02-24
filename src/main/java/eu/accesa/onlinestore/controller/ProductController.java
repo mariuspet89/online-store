@@ -28,7 +28,7 @@ public class ProductController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a product")
-    public ResponseEntity<ProductDto> createNewCourse(@Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> createNewProduct(@Valid @RequestBody ProductDto productDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDto));
     }
 
