@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.HashMap;
 import java.util.Objects;
 
-@Document(collation = "carts")
+@Document(collection = "carts")
 public class CartEntity {
 
     @Id
