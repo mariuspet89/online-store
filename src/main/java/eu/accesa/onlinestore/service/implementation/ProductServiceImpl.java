@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,7 +25,6 @@ public class ProductServiceImpl implements ProductService {
         this.modelMapper = modelMapper;
     }
 
-
     @Override
     public List<ProductDto> findAll() {
         List<ProductEntity> products = productRepository.findAll();
@@ -35,13 +33,34 @@ public class ProductServiceImpl implements ProductService {
                 .collect(toList());
     }
 
-
     @Override
     public ProductDto findById(String Id) {
-//        ProductEntity productEntity = productRepository.findById(Id).orElseThrow();
         ProductEntity productEntity = productRepository.findById(Id).orElseThrow();
         return modelMapper.map(productEntity, ProductDto.class);
     }
 
+    @Override
+    public ProductDto addNewProduct(ProductDto productDto) {
+        ProductEntity productEntity = modelMapper.map(productDto, ProductEntity.class);
 
+        return modelMapper.map(productRepository.save(productEntity), ProductDto.class);
+    }
+
+    @Override
+    public List<ProductDto> findByName(String name) {
+        List<ProductEntity> products = productRepository.findByNameIsContainingIgnoreCase(name);
+
+        return products.stream()
+                .map(product -> modelMapper.map(product, ProductDto.class))
+                .collect(toList());
+    }
+
+    @Override
+    public void deleteProductById(String name) {
+
+        ProductEntity productEntity = productRepository.findById(name).orElseThrow();
+
+        productRepository.delete(productEntity);
+
+    }
 }
