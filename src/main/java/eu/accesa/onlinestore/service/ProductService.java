@@ -8,4 +8,8 @@ public interface ProductService {
 
     List<ProductDto> findAll();
     ProductDto findById(String Id);
+    ProductDto addNewProduct(ProductDto productDto);
+    List<ProductDto> findByName(String name);
+    void deleteProductById(String name);
+
 }

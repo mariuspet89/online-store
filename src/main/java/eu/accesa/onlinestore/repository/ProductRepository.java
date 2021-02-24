@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
 
+    List<ProductEntity> findByNameIsContainingIgnoreCase(String name);
+
 }
