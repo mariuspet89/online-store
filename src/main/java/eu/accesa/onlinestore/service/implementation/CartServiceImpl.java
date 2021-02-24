@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.OnlineStoreApplication;
+import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.CartDto;
 import eu.accesa.onlinestore.model.entity.Cart;
 import eu.accesa.onlinestore.repository.CartRepository;
@@ -43,8 +44,8 @@ public class CartServiceImpl implements CartService {
         LOGGER.info("Service: updating cart with old values: {} with new values {}",
                 cartRepository.findById(cartDto.getCartId()), cartDto.toString());
 
-        // here we'll throw an exception instead of null
-        Cart cartFromDatabase = cartRepository.findById(cartDto.getCartId()).orElse(null);
+        Cart cartFromDatabase = cartRepository.findById(cartDto.getCartId()).orElseThrow(() ->
+                new EntityNotFoundException(Cart.class.getName(), "CartId", cartDto.getCartId()));
 
         Cart updatedCart = mapper.map(cartDto, Cart.class);
 
