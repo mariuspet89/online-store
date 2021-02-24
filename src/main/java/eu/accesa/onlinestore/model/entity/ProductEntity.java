@@ -1,7 +1,6 @@
 package eu.accesa.onlinestore.model.entity;
 
 import nonapi.io.github.classgraph.json.Id;
-import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ProductEntity {
 
     @Id
-    private ObjectId _id;
+    private String id;
     private String name;
     private String description;
     private Double price;
@@ -20,12 +19,12 @@ public class ProductEntity {
     private String brand;
 
 
-    public ObjectId get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(ObjectId _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

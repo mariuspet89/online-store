@@ -34,9 +34,9 @@ public class ProductController {
 //    public ResponseEntity<ProductDto> findById(@PathVariable String Id) {
 //        return ResponseEntity.status(HttpStatus.OK).body(productService.findById(Id));
 //    }
-    @GetMapping("/{Id}")
-   public ResponseEntity<ProductEntity> findById(@PathVariable String Id){
-        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findBy_idEquals(Id));
+    @GetMapping("/{id}")
+   public ResponseEntity<Optional<ProductEntity>> findById(@PathVariable String id){
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findById(id));
     }
 
 }

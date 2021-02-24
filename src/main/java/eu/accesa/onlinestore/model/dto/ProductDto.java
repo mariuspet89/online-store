@@ -2,7 +2,7 @@ package eu.accesa.onlinestore.model.dto;
 
 public class ProductDto {
 
-    private String _id;
+    private String id;
     private String name;
     private String description;
     private Double price;
@@ -11,12 +11,20 @@ public class ProductDto {
     private String image;
     private String brand;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String get_id() {
-        return _id;
+        return id;
     }
 
     public void set_id(String _id) {
-        this._id = _id;
+        this.id = id;
     }
 
     public String getName() {
