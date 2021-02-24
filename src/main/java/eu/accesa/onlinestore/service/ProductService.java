@@ -12,5 +12,6 @@ public interface ProductService {
     ProductDto addNewProduct(ProductDto productDto);
     List<ProductDto> findByName(String name);
     void deleteProductById(String name);
+    ProductDto updateProduct(ProductDto productDto);
 
 }

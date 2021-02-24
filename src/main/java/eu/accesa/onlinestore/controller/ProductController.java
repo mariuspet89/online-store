@@ -5,7 +5,6 @@ import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +45,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Optional<ProductEntity>> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(productRepository.findById(id));
+    }
+
+    @PutMapping
+    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
     }
 
     @DeleteMapping("/{id}")
