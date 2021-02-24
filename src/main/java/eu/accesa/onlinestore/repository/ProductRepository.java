@@ -10,12 +10,4 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
 
-    List<ProductEntity> findAll();
-
-    ProductEntity findBy_id(ObjectId _id);
-
-    ProductEntity findBy_idMatches(ObjectId _id);
-
-    ProductEntity findBy_idEquals(String name);
-
 }
