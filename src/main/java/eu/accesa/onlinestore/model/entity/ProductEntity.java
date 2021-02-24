@@ -1,9 +1,15 @@
 package eu.accesa.onlinestore.model.entity;
 
 import nonapi.io.github.classgraph.json.Id;
+<<<<<<< HEAD
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
+=======
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+>>>>>>> d7737f8082a69f19bb0944b8116efed997914773
 
 @Document(collection = "products")
 public class ProductEntity {
@@ -18,6 +24,10 @@ public class ProductEntity {
     private String image;
     private String brand;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d7737f8082a69f19bb0944b8116efed997914773
     public String getId() {
         return id;
     }
@@ -81,6 +91,7 @@ public class ProductEntity {
     public void setBrand(String brand) {
         this.brand = brand;
     }
+<<<<<<< HEAD
 
     @Override
     public boolean equals(Object o) {
@@ -108,4 +119,6 @@ public class ProductEntity {
                 ", brand='" + brand + '\'' +
                 '}';
     }
+=======
+>>>>>>> d7737f8082a69f19bb0944b8116efed997914773
 }
