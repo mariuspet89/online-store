@@ -21,14 +21,6 @@ public class ProductDto {
         this.id = id;
     }
 
-    public String get_id() {
-        return id;
-    }
-
-    public void set_id(String _id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
