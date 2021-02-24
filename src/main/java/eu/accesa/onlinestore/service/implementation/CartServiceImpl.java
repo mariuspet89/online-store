@@ -27,16 +27,20 @@ public class CartServiceImpl implements CartService {
     public CartDto createCart(CartDto cartDto) {
         LOGGER.info("Service: creating cart with values: {}", cartDto.toString());
 
-        Cart cart = mapper.map(cartDto, Cart.class);
-        return mapper.map(cartRepository.save(cart), CartDto.class);
+        if (mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class) == cartDto) {
+            return mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class);
+        } else {
+            Cart cart = mapper.map(cartDto, Cart.class);
+            return mapper.map(cartRepository.save(cart), CartDto.class);
+        }
     }
 
     @Override
     public CartDto getCartById(String id) {
         LOGGER.info("Service: searching for cart with id: {}", id);
 
-        // here we'll throw an exception instead of null
-        return mapper.map(cartRepository.findById(id).orElse(null), CartDto.class);
+        return mapper.map(cartRepository.findById(id).orElseThrow(() -> new EntityNotFoundException
+                (Cart.class.getName(), "CartId", id)), CartDto.class);
     }
 
     @Override
@@ -44,12 +48,12 @@ public class CartServiceImpl implements CartService {
         LOGGER.info("Service: updating cart with old values: {} with new values {}",
                 cartRepository.findById(cartDto.getCartId()), cartDto.toString());
 
-        Cart cartFromDatabase = cartRepository.findById(cartDto.getCartId()).orElseThrow(() ->
-                new EntityNotFoundException(Cart.class.getName(), "CartId", cartDto.getCartId()));
+        Cart cartFromDatabase = cartRepository.findById(cartDto.getCartId()).
+                orElseThrow(() -> new EntityNotFoundException(Cart.class.getName(), "CartId", cartDto.getCartId()));
 
-        Cart updatedCart = mapper.map(cartDto, Cart.class);
+        mapper.map(cartDto, cartFromDatabase);
 
-        return mapper.map(cartRepository.save(updatedCart), CartDto.class);
+        return mapper.map(cartRepository.save(cartFromDatabase), CartDto.class);
     }
 
     @Override
