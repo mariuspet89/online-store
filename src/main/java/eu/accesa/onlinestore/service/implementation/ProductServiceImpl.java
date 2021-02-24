@@ -63,4 +63,12 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(productEntity);
 
     }
+
+    @Override
+    public ProductDto updateProduct(ProductDto productDto) {
+        ProductEntity productEntity = productRepository.findById(productDto.getName()).orElseThrow();
+        modelMapper.map(productDto, productEntity);
+        productRepository.save(productEntity);
+        return modelMapper.map(productEntity, ProductDto.class);
+    }
 }
