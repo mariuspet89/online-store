@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
@@ -26,7 +27,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductDto addNewProduct(ProductDto productDto) {
+        LOGGER.info("Creating Product " + productDto.getId());
+
+        ProductEntity productEntity = modelMapper.map(productDto, ProductEntity.class);
+
+        return modelMapper.map(productRepository.save(productEntity), ProductDto.class);
+    }
+
+    @Override
     public List<ProductDto> findAll() {
+        LOGGER.info("Searching for all Products");
+
         List<ProductEntity> products = productRepository.findAll();
         return products.stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
@@ -34,20 +46,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto findById(String Id) {
-        ProductEntity productEntity = productRepository.findById(Id).orElseThrow();
+    public ProductDto findById(String id) {
+        LOGGER.info("Searching for the Product with the following ID: " + id);
+
+        ProductEntity productEntity = productRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(ProductEntity.class.getSimpleName(),
+                        "ProductId", id));
+
         return modelMapper.map(productEntity, ProductDto.class);
     }
 
-    @Override
-    public ProductDto addNewProduct(ProductDto productDto) {
-        ProductEntity productEntity = modelMapper.map(productDto, ProductEntity.class);
-
-        return modelMapper.map(productRepository.save(productEntity), ProductDto.class);
-    }
 
     @Override
     public List<ProductDto> findByName(String name) {
+        LOGGER.info("Searching for Products with the following Name: " + name);
+
         List<ProductEntity> products = productRepository.findByNameIsContainingIgnoreCase(name);
 
         return products.stream()
@@ -56,19 +69,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProductById(String name) {
+    public ProductDto updateProduct(ProductDto productDto) {
+        LOGGER.info("Updating for Product with the following Id: " + productDto.getId());
 
-        ProductEntity productEntity = productRepository.findById(name).orElseThrow();
+        ProductEntity productEntity = productRepository.findById(productDto.getId()).orElseThrow(
+                () -> new EntityNotFoundException(ProductEntity.class.getSimpleName(),
+                        "ProductId", productDto.getId()));
 
-        productRepository.delete(productEntity);
+        modelMapper.map(productDto, productEntity);
+        productRepository.save(productEntity);
 
+        return modelMapper.map(productEntity, ProductDto.class);
     }
 
     @Override
-    public ProductDto updateProduct(ProductDto productDto) {
-        ProductEntity productEntity = productRepository.findById(productDto.getName()).orElseThrow();
-        modelMapper.map(productDto, productEntity);
-        productRepository.save(productEntity);
-        return modelMapper.map(productEntity, ProductDto.class);
+    public void deleteProductById(String id) {
+        LOGGER.info("Deleting for Product with the following Id: " + id);
+
+        ProductEntity productEntity = productRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(ProductEntity.class.getSimpleName(),
+                        "ProductId", id));
+
+        productRepository.delete(productEntity);
     }
+
 }

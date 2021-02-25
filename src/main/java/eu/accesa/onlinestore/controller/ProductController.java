@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     @PutMapping
-    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto ) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
     }
 
