@@ -12,7 +12,7 @@ public class CartEntity {
     @Id
     private String cartId;
     private String userId;
-    private HashMap<ProductEntity, Integer> products;
+    private HashMap<String, Integer> products;
 
     public String getCartId() {
         return cartId;
@@ -30,11 +30,11 @@ public class CartEntity {
         this.userId = userId;
     }
 
-    public HashMap<ProductEntity, Integer> getProducts() {
+    public HashMap<String, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<ProductEntity, Integer> products) {
+    public void setProducts(HashMap<String, Integer> products) {
         this.products = products;
     }
 
