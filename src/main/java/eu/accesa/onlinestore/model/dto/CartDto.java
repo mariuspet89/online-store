@@ -5,16 +5,16 @@ import java.util.Objects;
 
 public class CartDto {
 
-    private String cartId;
+    private String id;
     private String userId;
     private HashMap<String, Integer> products;
 
-    public String getCartId() {
-        return cartId;
+    public String getId() {
+        return id;
     }
 
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -36,7 +36,7 @@ public class CartDto {
     @Override
     public String toString() {
         return "CartDto{" +
-                "cartId='" + cartId + '\'' +
+                "id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
                 ", products=" + products +
                 '}';
@@ -47,11 +47,11 @@ public class CartDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CartDto cartDto = (CartDto) o;
-        return Objects.equals(cartId, cartDto.cartId) && Objects.equals(userId, cartDto.userId) && Objects.equals(products, cartDto.products);
+        return Objects.equals(id, cartDto.id) && Objects.equals(userId, cartDto.userId) && Objects.equals(products, cartDto.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cartId, userId, products);
+        return Objects.hash(id, userId, products);
     }
 }

@@ -27,7 +27,7 @@ public class CartServiceImpl implements CartService {
     public CartDto createCart(CartDto cartDto) {
         LOGGER.info("Service: creating cart with values: {}", cartDto.toString());
 
-        if (mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class).getUserId().equals(cartDto.getUserId())) {
+        if (cartDto.getUserId().equals(mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class).getUserId())) {
             return mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class);
         } else {
             CartEntity cart = mapper.map(cartDto, CartEntity.class);
@@ -46,10 +46,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDto updateCart(CartDto cartDto) {
         LOGGER.info("Service: updating cart with old values: {} with new values {}",
-                cartRepository.findById(cartDto.getCartId()).toString(), cartDto.toString());
+                cartRepository.findById(cartDto.getId()).toString(), cartDto.toString());
 
-        CartEntity cartFromDatabase = cartRepository.findById(cartDto.getCartId()).
-                orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", cartDto.getCartId()));
+        CartEntity cartFromDatabase = cartRepository.findById(cartDto.getId()).
+                orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", cartDto.getId()));
 
         mapper.map(cartDto, cartFromDatabase);
 

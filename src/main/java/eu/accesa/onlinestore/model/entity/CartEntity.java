@@ -10,16 +10,16 @@ import java.util.Objects;
 public class CartEntity {
 
     @Id
-    private String cartId;
+    private String id;
     private String userId;
     private HashMap<String, Integer> products;
 
-    public String getCartId() {
-        return cartId;
+    public String getId() {
+        return id;
     }
 
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -43,18 +43,18 @@ public class CartEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CartEntity cart = (CartEntity) o;
-        return Objects.equals(cartId, cart.cartId) && Objects.equals(userId, cart.userId) && Objects.equals(products, cart.products);
+        return Objects.equals(id, cart.id) && Objects.equals(userId, cart.userId) && Objects.equals(products, cart.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cartId, userId, products);
+        return Objects.hash(id, userId, products);
     }
 
     @Override
     public String toString() {
         return "CartEntity{" +
-                "cartId='" + cartId + '\'' +
+                "id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
                 ", products=" + products +
                 '}';
