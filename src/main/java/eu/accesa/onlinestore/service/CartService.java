@@ -8,6 +8,8 @@ public interface CartService {
 
     CartDto getCartById(String id);
 
+    CartDto getCartByUserId(String id);
+
     CartDto updateCart(CartDto cartDto);
 
     void deleteCart(CartDto cartDto);

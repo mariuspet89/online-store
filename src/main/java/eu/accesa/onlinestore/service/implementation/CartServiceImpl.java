@@ -44,6 +44,14 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public CartDto getCartByUserId(String id){
+        LOGGER.info("Service: searching for cart belonging to user with id: {}", id);
+
+        return mapper.map(cartRepository.findCartEntityByUserId(id).orElseThrow(() -> new EntityNotFoundException
+                (CartEntity.class.getName(), "CartId", id)), CartDto.class);
+    }
+
+    @Override
     public CartDto updateCart(CartDto cartDto) {
         LOGGER.info("Service: updating cart with old values: {} with new values {}",
                 cartRepository.findById(cartDto.getId()).toString(), cartDto.toString());

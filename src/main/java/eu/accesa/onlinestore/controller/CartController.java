@@ -29,6 +29,12 @@ public class CartController {
         return cartService.getCartById(id);
     }
 
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    private CartDto getCartByUserId(@PathVariable String userId) {
+        return cartService.getCartByUserId(userId);
+    }
+
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     private CartDto updateCart(@Valid @RequestBody CartDto cartDto) {
