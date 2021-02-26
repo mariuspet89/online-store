@@ -46,17 +46,13 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity newOrder = mapper.map(orderDto, OrderEntity.class);
         newOrder.setUser(userEntity);
 
-        HashMap<String, Integer> productsOrdered = new HashMap<>();
         for (String productId : orderDto.getOrderedProducts().keySet()) {
-            if (!productRepository.findById(productId).isEmpty()) {
-                productsOrdered.put(orderDto.getOrderedProducts().keySet().toString(), orderDto.getOrderedProducts().get(productId));
-            } else {
+            if (productRepository.findById(productId).isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
-        newOrder.setOrderedProducts(productsOrdered);
-        OrderEntity savedNewOrder = orderRepository.save(newOrder);
-        return mapper.map(savedNewOrder, OrderDto.class);
+        return mapper.map(orderRepository.save(newOrder), OrderDto.class);
+
     }
 
     @Override
