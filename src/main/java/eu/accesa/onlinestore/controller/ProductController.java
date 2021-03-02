@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
@@ -40,8 +41,8 @@ public class ProductController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Page<ProductDto>> findAll(Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
+    public ResponseEntity<Page<ProductDto>> findAll(UserPageDto userPageDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(userPageDto));
     }
 
     @GetMapping("/{id}")

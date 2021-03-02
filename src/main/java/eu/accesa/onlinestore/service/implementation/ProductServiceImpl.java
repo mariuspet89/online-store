@@ -2,6 +2,7 @@ package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
@@ -26,11 +27,11 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
     private final ModelMapper modelMapper;
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
-        this.productRepository = productRepository;
+    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository) {
         this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -43,9 +44,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductDto> findAll(Pageable pageable) {
+    public Page<ProductDto> findAll(UserPageDto userPageDto) {
         LOGGER.info("Searching for all Products");
-        Pageable paging = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Pageable paging = PageRequest.of(userPageDto.getPageNo(), userPageDto.getPageSize());
+        Sort sort=Sort.by(userPageDto.getSortDirection(),userPageDto.getSortBy());
         return modelMapper.map(productRepository.findAll(paging),new TypeToken<Page<ProductDto>>(){}.getType());
     }
 
