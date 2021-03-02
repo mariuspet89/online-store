@@ -5,6 +5,8 @@ import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +40,8 @@ public class ProductController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<ProductDto>> findAll( @RequestParam(defaultValue = "0") Integer pageNo,
-                                                     @RequestParam(defaultValue = "10") Integer pageSize,
-                                                     @RequestParam(defaultValue = "name") String sortBy) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageNo, pageSize, sortBy));
+    public ResponseEntity<Page<ProductDto>> findAll(Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
     }
 
     @GetMapping("/{id}")

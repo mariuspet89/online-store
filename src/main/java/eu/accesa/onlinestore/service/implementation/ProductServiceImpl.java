@@ -6,6 +6,7 @@ import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,15 +43,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll(Integer pageNo,Integer pageSize,String sortBy) {
+    public Page<ProductDto> findAll(Pageable pageable) {
         LOGGER.info("Searching for all Products");
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<ProductEntity> products = productRepository.findAll(paging);
-        if(products.hasContent()){
-            return products.getContent().stream().map(product->modelMapper.map(product,ProductDto.class)).collect(toList());
-        }
-        else {return new ArrayList<ProductEntity>().stream().map(product->modelMapper.map(product,ProductDto.class)).collect(toList());
-        }
+        Pageable paging = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return modelMapper.map(productRepository.findAll(paging),new TypeToken<Page<ProductDto>>(){}.getType());
     }
 
     @Override
