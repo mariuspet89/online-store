@@ -28,6 +28,8 @@ dependencies {
 	compile 'io.springfox:springfox-swagger-ui:3.0.0'
 	annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 	compile 'org.mongodb:mongodb-driver-sync'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
 }
 configurations {
 	compile.exclude group: 'org.slf4j', module: 'slf4j-simple'
