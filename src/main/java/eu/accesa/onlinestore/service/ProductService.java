@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<ProductDto> findAll();
+    List<ProductDto> findAll(Integer pageNo,Integer pageSize,String sortBy);
     ProductDto findById(String Id);
     ProductDto addNewProduct(ProductDto productDto);
     List<ProductDto>findByName(String name);

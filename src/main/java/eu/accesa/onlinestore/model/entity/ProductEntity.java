@@ -1,6 +1,8 @@
 package eu.accesa.onlinestore.model.entity;
 import nonapi.io.github.classgraph.json.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Objects;
 
 @Document(collection = "products")
@@ -12,7 +14,9 @@ public class ProductEntity {
     private String description;
     private Double price;
     private Double rating;
-    private Integer itemsinstock;
+    @Field(value="itemsinstock")
+    private Integer itemsInStock;
+    @Field(value = "picture")
     private String image;
     private String brand;
 
@@ -56,12 +60,12 @@ public class ProductEntity {
         this.rating = rating;
     }
 
-    public Integer getItemsinstock() {
-        return itemsinstock;
+    public Integer getItemsInStock() {
+        return itemsInStock;
     }
 
-    public void setItemsinstock(Integer itemsinstock) {
-        this.itemsinstock = itemsinstock;
+    public void setItemsInStock(Integer itemsInStock) {
+        this.itemsInStock = itemsInStock;
     }
 
     public String getImage() {
@@ -81,19 +85,6 @@ public class ProductEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProductEntity that = (ProductEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(rating, that.rating) && Objects.equals(itemsinstock, that.itemsinstock) && Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, price, rating, itemsinstock, image, brand);
-    }
-
-    @Override
     public String toString() {
         return "ProductEntity{" +
                 "id='" + id + '\'' +
@@ -101,9 +92,22 @@ public class ProductEntity {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", rating=" + rating +
-                ", itemsinstock=" + itemsinstock +
+                ", itemsInStock=" + itemsInStock +
                 ", image='" + image + '\'' +
                 ", brand='" + brand + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductEntity that = (ProductEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(rating, that.rating) && Objects.equals(itemsInStock, that.itemsInStock) && Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, price, rating, itemsInStock, image, brand);
     }
 }

@@ -38,8 +38,10 @@ public class ProductController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<ProductDto>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll());
+    public ResponseEntity<List<ProductDto>> findAll( @RequestParam(defaultValue = "0") Integer pageNo,
+                                                     @RequestParam(defaultValue = "10") Integer pageSize,
+                                                     @RequestParam(defaultValue = "name") String sortBy) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageNo, pageSize, sortBy));
     }
 
     @GetMapping("/{id}")

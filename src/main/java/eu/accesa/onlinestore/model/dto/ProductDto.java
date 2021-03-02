@@ -9,7 +9,7 @@ public class ProductDto {
     private String description;
     private Double price;
     private Double rating;
-    private Integer itemsinstock;
+    private Integer itemsInStock;
     private String image;
     private String brand;
 
@@ -53,12 +53,12 @@ public class ProductDto {
         this.rating = rating;
     }
 
-    public Integer getItemsinstock() {
-        return itemsinstock;
+    public Integer getItemsInStock() {
+        return itemsInStock;
     }
 
-    public void setItemsinstock(Integer itemsinstock) {
-        this.itemsinstock = itemsinstock;
+    public void setItemsInStock(Integer itemsInStock) {
+        this.itemsInStock = itemsInStock;
     }
 
     public String getImage() {
@@ -82,12 +82,12 @@ public class ProductDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductDto that = (ProductDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(rating, that.rating) && Objects.equals(itemsinstock, that.itemsinstock) && Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(rating, that.rating) && Objects.equals(itemsInStock, that.itemsInStock) && Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, rating, itemsinstock, image, brand);
+        return Objects.hash(id, name, description, price, rating, itemsInStock, image, brand);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ProductDto {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", rating=" + rating +
-                ", itemsinstock=" + itemsinstock +
+                ", itemsinstock=" + itemsInStock +
                 ", image='" + image + '\'' +
                 ", brand='" + brand + '\'' +
                 '}';

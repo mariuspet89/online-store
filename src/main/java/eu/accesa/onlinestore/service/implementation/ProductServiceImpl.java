@@ -8,8 +8,13 @@ import eu.accesa.onlinestore.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -36,13 +41,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll() {
+    public List<ProductDto> findAll(Integer pageNo,Integer pageSize,String sortBy) {
         LOGGER.info("Searching for all Products");
-
-        List<ProductEntity> products = productRepository.findAll();
-        return products.stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(toList());
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<ProductEntity> products = productRepository.findAll(paging);
+        if(products.hasContent()){
+            return products.getContent().stream().map(product->modelMapper.map(product,ProductDto.class)).collect(toList());
+        }
+        else {return new ArrayList<ProductEntity>().stream().map(product->modelMapper.map(product,ProductDto.class)).collect(toList());
+        }
     }
 
     @Override
