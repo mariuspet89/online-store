@@ -10,6 +10,7 @@ import java.util.List;
 
 
 @Repository
+
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
 
     List <ProductEntity>findByNameIsContainingIgnoreCase(String name);

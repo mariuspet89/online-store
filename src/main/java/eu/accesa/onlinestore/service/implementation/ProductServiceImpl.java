@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -46,10 +44,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDto> findAll(UserPageDto userPageDto) {
         LOGGER.info("Searching for all Products");
+        Sort sort = Sort.by(userPageDto.getSortDirection(), userPageDto.getSortBy());
+        Pageable paging = PageRequest.of(userPageDto.getPageNo(), userPageDto.getPageSize(), sort);
 
-        Pageable paging = PageRequest.of(userPageDto.getPageNo(), userPageDto.getPageSize());
-        Sort sort=Sort.by(userPageDto.getSortDirection(),userPageDto.getSortBy());
-        return modelMapper.map(productRepository.findAll(paging),new TypeToken<Page<ProductDto>>(){}.getType());
+        return modelMapper.map(productRepository.findAll(paging), new TypeToken<Page<ProductDto>>() {
+        }.getType());
     }
 
     @Override
