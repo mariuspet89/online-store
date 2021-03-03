@@ -1,10 +1,13 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +41,8 @@ public class ProductController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<ProductDto>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll());
+    public ResponseEntity<Page<ProductDto>> findAll(UserPageDto userPageDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(userPageDto));
     }
 
     @GetMapping("/{id}")

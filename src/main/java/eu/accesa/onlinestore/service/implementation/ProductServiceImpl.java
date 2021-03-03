@@ -2,12 +2,18 @@ package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +25,11 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
     private final ModelMapper modelMapper;
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
-        this.productRepository = productRepository;
+    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository) {
         this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -36,13 +42,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll() {
+    public Page<ProductDto> findAll(UserPageDto userPageDto) {
         LOGGER.info("Searching for all Products");
+        Sort sort = Sort.by(userPageDto.getSortDirection(), userPageDto.getSortBy());
+        Pageable paging = PageRequest.of(userPageDto.getPageNo(), userPageDto.getPageSize(), sort);
 
-        List<ProductEntity> products = productRepository.findAll();
-        return products.stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(toList());
+        return modelMapper.map(productRepository.findAll(paging), new TypeToken<Page<ProductDto>>() {
+        }.getType());
     }
 
     @Override
