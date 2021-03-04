@@ -1,23 +1,57 @@
 package eu.accesa.onlinestore.model.entity;
 
 import nonapi.io.github.classgraph.json.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 @Document(collection = "users")
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     @Id
     private String id;
     private String firstName;
     private String lastName;
     private String email;
+
+    @Indexed(unique = true)
     private String username;
+    private String password;
     private String telephone;
     private String sex;
-    private String password;
     private AddressEntity addressEntity;
+
+    private Boolean enabled = true;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     public String getId() {
         return id;
@@ -89,6 +123,14 @@ public class UserEntity {
 
     public void setAddress(AddressEntity addressEntity) {
         this.addressEntity = addressEntity;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
