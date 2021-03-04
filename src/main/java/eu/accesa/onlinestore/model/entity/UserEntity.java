@@ -24,7 +24,7 @@ public class UserEntity implements UserDetails {
     private String password;
     private String telephone;
     private String sex;
-    private Address address;
+    private AddressEntity addressEntity;
 
     private Boolean enabled = true;
 
@@ -117,12 +117,12 @@ public class UserEntity implements UserDetails {
         this.password = password;
     }
 
-    public Address getAddress() {
-        return address;
+    public AddressEntity getAddress() {
+        return addressEntity;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddress(AddressEntity addressEntity) {
+        this.addressEntity = addressEntity;
     }
 
     public Boolean getEnabled() {
@@ -138,12 +138,12 @@ public class UserEntity implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(username, that.username) && Objects.equals(telephone, that.telephone) && Objects.equals(sex, that.sex) && Objects.equals(password, that.password) && Objects.equals(address, that.address);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(username, that.username) && Objects.equals(telephone, that.telephone) && Objects.equals(sex, that.sex) && Objects.equals(password, that.password) && Objects.equals(addressEntity, that.addressEntity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, username, telephone, sex, password, address);
+        return Objects.hash(id, firstName, lastName, email, username, telephone, sex, password, addressEntity);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class UserEntity implements UserDetails {
                 ", telephone='" + telephone + '\'' +
                 ", sex='" + sex + '\'' +
                 ", password='" + password + '\'' +
-                ", address=" + address +
+                ", address=" + addressEntity +
                 '}';
     }
 }

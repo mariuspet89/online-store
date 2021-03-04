@@ -4,7 +4,7 @@ import org.springframework.data.domain.Sort;
 
 public class UserPageDto {
     private Integer pageNo=0;
-    private Integer pageSize=5;
+    private Integer pageSize=15;
     private Sort.Direction sortDirection=Sort.Direction.ASC;
     private String sortBy="brand";
 

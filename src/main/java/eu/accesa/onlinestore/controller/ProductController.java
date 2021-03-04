@@ -46,8 +46,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<ProductEntity>> findById(@PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findById(id));
+    public ResponseEntity<ProductDto> findById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findById(id));
     }
 
     @PutMapping
