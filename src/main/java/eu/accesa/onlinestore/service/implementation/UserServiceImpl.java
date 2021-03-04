@@ -7,8 +7,6 @@ import eu.accesa.onlinestore.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -18,12 +16,10 @@ import static java.util.stream.Collectors.toList;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-    private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder, ModelMapper modelMapper, UserRepository userRepository) {
-        this.passwordEncoder = passwordEncoder;
+    public UserServiceImpl(ModelMapper modelMapper, UserRepository userRepository) {
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
     }
@@ -39,15 +35,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findById(String id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow();
-
         return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Override
     public UserDto addNewUser(UserDto userDto) {
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
-        userEntity.setPassword(encodedPassword);
+
         return modelMapper.map(userRepository.save(userEntity), UserDto.class);
     }
 
