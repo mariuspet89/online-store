@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.security;
 import eu.accesa.onlinestore.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,6 +54,8 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // public endpoints (e.g. Swagger)
                 .mvcMatchers("/swagger-ui/**", "/login").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/products/**").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/users").permitAll()
                 // private endpoints
                 .anyRequest().authenticated();
 
