@@ -1,6 +1,6 @@
 package eu.accesa.onlinestore.model.dto;
 
-import eu.accesa.onlinestore.model.entity.Address;
+import eu.accesa.onlinestore.model.entity.AddressEntity;
 
 public class UserDto {
 
@@ -12,7 +12,7 @@ public class UserDto {
     private String telephone;
     private String sex;
     private String password;
-    private Address address;
+    private AddressEntity addressEntity;
 
     public String getId() {
         return id;
@@ -78,11 +78,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public Address getAddress() {
-        return address;
+    public AddressEntity getAddress() {
+        return addressEntity;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddress(AddressEntity addressEntity) {
+        this.addressEntity = addressEntity;
     }
 }

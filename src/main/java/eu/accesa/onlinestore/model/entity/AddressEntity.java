@@ -1,11 +1,14 @@
-package eu.accesa.onlinestore.model.dto;
+package eu.accesa.onlinestore.model.entity;
 
-import eu.accesa.onlinestore.model.entity.AddressEntity;
+import nonapi.io.github.classgraph.json.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-public class AddressDto {
+@Document(collection = "address")
+public class AddressEntity {
 
+    @Id
     private String address;
     private String city;
     private String county;
@@ -47,8 +50,8 @@ public class AddressDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AddressDto that = (AddressDto) o;
-        return Objects.equals(address, that.address) && Objects.equals(city, that.city) && Objects.equals(county, that.county) && Objects.equals(postalCode, that.postalCode);
+        AddressEntity addressEntity1 = (AddressEntity) o;
+        return Objects.equals(address, addressEntity1.address) && Objects.equals(city, addressEntity1.city) && Objects.equals(county, addressEntity1.county) && Objects.equals(postalCode, addressEntity1.postalCode);
     }
 
     @Override
