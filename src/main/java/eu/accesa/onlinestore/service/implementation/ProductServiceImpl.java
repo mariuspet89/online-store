@@ -2,6 +2,7 @@ package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.ProductDtoPost;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
@@ -33,12 +34,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto addNewProduct(ProductDto productDto) {
-        LOGGER.info("Creating Product " + productDto.getId());
+    public ProductDtoPost addNewProduct(ProductDtoPost productDtoPost) {
+        LOGGER.info("Creating Product ");
 
-        ProductEntity productEntity = modelMapper.map(productDto, ProductEntity.class);
+        ProductEntity productEntity = modelMapper.map(productDtoPost, ProductEntity.class);
 
-        return modelMapper.map(productRepository.save(productEntity), ProductDto.class);
+        return modelMapper.map(productRepository.save(productEntity), ProductDtoPost.class);
     }
 
     @Override
@@ -76,17 +77,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto updateProduct(ProductDto productDto) {
-        LOGGER.info("Updating for Product with the following Id: " + productDto.getId());
+    public ProductDtoPost updateProduct(ProductDto productDto) {
 
         ProductEntity productEntity = productRepository.findById(productDto.getId()).orElseThrow(
                 () -> new EntityNotFoundException(ProductEntity.class.getSimpleName(),
                         "ProductId", productDto.getId()));
 
-        modelMapper.map(productDto, productEntity);
+        ProductDtoPost  productDtoPost = modelMapper.map(productDto, ProductDtoPost.class);
+        modelMapper.map(productDtoPost, productEntity);
         productRepository.save(productEntity);
 
-        return modelMapper.map(productEntity, ProductDto.class);
+        return modelMapper.map(productEntity, ProductDtoPost.class);
     }
 
     @Override

@@ -1,20 +1,18 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.ProductDtoPost;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
-import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -31,8 +29,8 @@ public class ProductController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a product")
-    public ResponseEntity<ProductDto> createNewProduct(@Valid @RequestBody ProductDto productDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDto));
+    public ResponseEntity<ProductDtoPost> createNewProduct(@Valid @RequestBody ProductDtoPost productDtoPost) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDtoPost));
     }
 
     @GetMapping("name-contains/{name}")
@@ -50,8 +48,9 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findById(id));
     }
 
-    @PutMapping
-    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto ) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDtoPost> updateProduct(@PathVariable String id,@Valid @RequestBody ProductDto productDto ) {
+        findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
     }
 
