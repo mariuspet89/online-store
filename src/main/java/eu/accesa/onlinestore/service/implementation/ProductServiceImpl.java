@@ -51,6 +51,7 @@ public class ProductServiceImpl implements ProductService {
         }.getType());
     }
 
+
     @Override
     public ProductDto findById(String id) {
         LOGGER.info("Searching for the Product with the following ID: " + id);
