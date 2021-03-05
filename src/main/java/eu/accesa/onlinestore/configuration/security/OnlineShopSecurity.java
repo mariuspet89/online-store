@@ -1,4 +1,4 @@
-package eu.accesa.onlinestore.security;
+package eu.accesa.onlinestore.configuration.security;
 
 import eu.accesa.onlinestore.repository.UserRepository;
 import org.springframework.context.annotation.Bean;

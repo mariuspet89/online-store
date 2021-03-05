@@ -1,4 +1,4 @@
-package eu.accesa.onlinestore.security;
+package eu.accesa.onlinestore.configuration.security;
 
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import io.jsonwebtoken.*;
