@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.service.implementation;
 import eu.accesa.onlinestore.OnlineStoreApplication;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
+import eu.accesa.onlinestore.model.dto.OrderDtoWithoutId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
@@ -37,32 +38,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto createOrder(OrderDto orderDto) {
-        LOGGER.info("Service: creating order with id: {}", orderDto.getId());
+    public OrderDtoWithoutId createOrder(OrderDtoWithoutId orderDtoWithoutId) {
+        LOGGER.info("Service: creating order");
 
-        UserEntity userEntity = userRepository.findById(orderDto.getUserId()).
+        UserEntity userEntity = userRepository.findById(orderDtoWithoutId.getUserId()).
                 orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
-                        " UserID ", orderDto.getUserId()));
-        OrderEntity newOrder = mapper.map(orderDto, OrderEntity.class);
+                        " UserID ", orderDtoWithoutId.getUserId()));
+
+
+        OrderEntity newOrder = mapper.map(orderDtoWithoutId, OrderEntity.class);
         newOrder.setUser(userEntity);
 
-        for (String productId : orderDto.getOrderedProducts().keySet()) {
+        for (String productId : orderDtoWithoutId.getOrderedProducts().keySet()) {
             if (productRepository.findById(productId).isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
-        return mapper.map(orderRepository.save(newOrder), OrderDto.class);
+        return mapper.map(orderRepository.save(newOrder), OrderDtoWithoutId.class);
 
     }
 
     @Override
-    public OrderDto updateOrder(OrderDto orderDto) {
+    public OrderDtoWithoutId updateOrder(OrderDto orderDto) {
+
         LOGGER.info("Service: updating order with old values: {} with new values {}",
                 orderRepository.findById(orderDto.getId()).toString(), orderDto.toString());
         OrderEntity oldOrder = orderRepository.findById(orderDto.getId()).orElseThrow(() ->
                 new EntityNotFoundException(OrderEntity.class.getName(), "OrderId", orderDto.getId()));
-        mapper.map(orderDto, oldOrder);
-        return mapper.map(orderRepository.save(oldOrder), OrderDto.class);
+        OrderDtoWithoutId orderDtoWithoutId = mapper.map(orderDto, OrderDtoWithoutId.class);
+        mapper.map(orderDtoWithoutId, oldOrder);
+        return mapper.map(orderRepository.save(oldOrder), OrderDtoWithoutId.class);
     }
 
     @Override
@@ -82,8 +87,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getAllOrders() {
         LOGGER.info("Service: getting  all  order");
-        List<OrderEntity> orders=orderRepository.findAll();
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity,OrderDto.class)).collect(toList());
+        List<OrderEntity> orders = orderRepository.findAll();
+        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
     }
 
 }

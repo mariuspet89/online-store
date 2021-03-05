@@ -1,11 +1,9 @@
 package eu.accesa.onlinestore.controller;
 
-import eu.accesa.onlinestore.model.dto.CartDto;
 import eu.accesa.onlinestore.model.dto.OrderDto;
-import eu.accesa.onlinestore.model.dto.ProductDto;
+import eu.accesa.onlinestore.model.dto.OrderDtoWithoutId;
 import eu.accesa.onlinestore.service.OrderService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +21,8 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private OrderDto createOrder(@RequestBody OrderDto orderDto) {
-        return orderService.createOrder(orderDto);
+    private OrderDtoWithoutId createOrder(@RequestBody OrderDtoWithoutId orderDtoWithoutId) {
+        return orderService.createOrder(orderDtoWithoutId);
     }
     @GetMapping("/getAll")
     public ResponseEntity<List<OrderDto>> getAllOrders() {
@@ -42,7 +40,7 @@ public class OrderController {
         return orderService.getOrdersByUser(userId);
     }
     @PutMapping
-    public ResponseEntity<OrderDto> updateOrder(@Valid @RequestBody OrderDto orderDto ) {
+    public ResponseEntity<OrderDtoWithoutId> updateOrder(@Valid @RequestBody OrderDto orderDto ) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrder(orderDto));
     }
 }
