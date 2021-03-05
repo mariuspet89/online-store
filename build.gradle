@@ -32,7 +32,6 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-test'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-	implementation 'org.springframework.security:spring-security-oauth2-jose'
 }
 configurations {
 	compile.exclude group: 'org.slf4j', module: 'slf4j-simple'
