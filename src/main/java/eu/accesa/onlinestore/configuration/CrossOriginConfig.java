@@ -15,8 +15,9 @@ public class CrossOriginConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS").
-                        exposedHeaders("Authorization");
+                        .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                        .exposedHeaders("Authorization");
+
             }
         };
     }

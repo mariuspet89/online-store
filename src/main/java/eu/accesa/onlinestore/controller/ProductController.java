@@ -34,17 +34,17 @@ public class ProductController {
     public ResponseEntity<ProductDto> createNewProduct(@Valid @RequestBody ProductDto productDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDto));
     }
-
+    @CrossOrigin
     @GetMapping("name-contains/{name}")
     public ResponseEntity<List<ProductDto>> findByNameContains(@PathVariable String name) {
         return ResponseEntity.status(HttpStatus.OK).body((productService.findByName(name)));
     }
-
+    @CrossOrigin
     @GetMapping("/findAll")
     public ResponseEntity<Page<ProductDto>> findAll(UserPageDto userPageDto) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(userPageDto));
     }
-
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findById(id));
