@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.service.implementation;
 import eu.accesa.onlinestore.OnlineStoreApplication;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.CartDto;
+import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import eu.accesa.onlinestore.repository.CartRepository;
 import eu.accesa.onlinestore.service.CartService;
@@ -24,15 +25,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto createCart(CartDto cartDto) {
-        LOGGER.info("Service: creating cart with values: {}", cartDto.toString());
+    public CartDtoNoId createCart(CartDtoNoId cartDtoNoId) {
+        LOGGER.info("Service: creating cart with values: {}", cartDtoNoId.toString());
 
-        if (cartDto.getUserId().equals(mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class).getUserId())) {
-            return mapper.map(cartRepository.findById(cartDto.getUserId()), CartDto.class);
-        } else {
-            CartEntity cart = mapper.map(cartDto, CartEntity.class);
+            CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);
             return mapper.map(cartRepository.save(cart), CartDto.class);
-        }
     }
 
     @Override
