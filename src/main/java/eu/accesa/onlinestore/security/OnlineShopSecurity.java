@@ -53,8 +53,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
         final String[] SWAGGER_AUTH_WHITELIST = {
                 "/swagger-ui/**",
                 "/swagger-resources/**",
-                "v3/api-docs",
-                "v2/api-docs"
+                "/v3/api-docs",
         };
 
         // Set permissions on endpoints

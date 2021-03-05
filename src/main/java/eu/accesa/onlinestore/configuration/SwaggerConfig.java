@@ -18,20 +18,9 @@ import java.util.List;
 public class SwaggerConfig {
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    private ApiInfo apiInfo() {
-        return new ApiInfo("Online-store API",
-                "Some custom description of API.",
-                "1.0",
-                "Terms of service",
-                new Contact("Dan Goia","www.accesa.eu","dan.goia@accesa.eu"),
-                "License of API",
-                "API license URL",
-                Collections.emptyList());
-    }
-
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
@@ -41,8 +30,19 @@ public class SwaggerConfig {
                 .build();
     }
 
-    private ApiKey apiKey() {
-        return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
+    private ApiInfo apiInfo() {
+        return new ApiInfo("Online-store API",
+                "Some custom description of API.",
+                "1.0",
+                "Terms of service",
+                new Contact("Some one from accesa", "www.accesa.eu", "dummy@ader.eu"),
+                "License of API",
+                "API license URL",
+                Collections.emptyList());
+    }
+
+    private HttpAuthenticationScheme apiKey() {
+        return HttpAuthenticationScheme.JWT_BEARER_BUILDER.name("JWT").build();
     }
 
     private SecurityContext securityContext() {

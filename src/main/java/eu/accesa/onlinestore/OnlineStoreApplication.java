@@ -15,14 +15,14 @@ public class OnlineStoreApplication {
 		SpringApplication.run(OnlineStoreApplication.class, args);
 	}
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Spring boot training  API")
-                        .version("1.0")
-                        .description("Spring training api description")
-                        .termsOfService("http://swagger.io/terms/")
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
-    }
+//    @Bean
+//    public OpenAPI customOpenAPI() {
+//        return new OpenAPI()
+//                .info(new Info()
+//                        .title("Spring boot training  API")
+//                        .version("1.0")
+//                        .description("Spring training api description")
+//                        .termsOfService("http://swagger.io/terms/")
+//                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
+//    }
 }
