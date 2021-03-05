@@ -1,6 +1,6 @@
 package eu.accesa.onlinestore.model.dto;
 
-public class ProductDtoPost {
+public class ProductDtoWithoutId {
 
     private String name;
     private String description;
@@ -65,7 +65,4 @@ public class ProductDtoPost {
     public void setBrand(String brand) {
         this.brand = brand;
     }
-
-
-
 }

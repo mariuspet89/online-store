@@ -1,7 +1,7 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
-import eu.accesa.onlinestore.model.dto.ProductDtoPost;
+import eu.accesa.onlinestore.model.dto.ProductDtoWithoutId;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.ProductService;
@@ -29,8 +29,8 @@ public class ProductController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a product")
-    public ResponseEntity<ProductDtoPost> createNewProduct(@Valid @RequestBody ProductDtoPost productDtoPost) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDtoPost));
+    public ResponseEntity<ProductDtoWithoutId> createNewProduct(@Valid @RequestBody ProductDtoWithoutId productDtoWithoutId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addNewProduct(productDtoWithoutId));
     }
 
     @GetMapping("name-contains/{name}")
@@ -48,9 +48,8 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findById(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDtoPost> updateProduct(@PathVariable String id,@Valid @RequestBody ProductDto productDto ) {
-        findById(id);
+    @PutMapping
+    public ResponseEntity<ProductDtoWithoutId> updateProduct(@Valid @RequestBody ProductDto productDto) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
     }
 
