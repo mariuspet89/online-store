@@ -18,7 +18,7 @@ public class CrossOriginConfig implements WebMvcConfigurer {
                         .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .exposedHeaders("Authorization")
                         .allowedHeaders("*")
-                        .allowedOrigins("http://18.224.7.25:5000/");
+                        .allowedOrigins("http://18.224.7.25:5000");
 
             }
         };
