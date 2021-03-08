@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.CartDto;
+import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ public class CartController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private CartDto createCart(@Valid @RequestBody CartDto cartDto) {
-        return cartService.createCart(cartDto);
+    private CartDto createCart(@Valid @RequestBody CartDtoNoId cartDtoNoId) {
+        return cartService.createCart(cartDtoNoId);
     }
 
     @GetMapping("/{id}")
