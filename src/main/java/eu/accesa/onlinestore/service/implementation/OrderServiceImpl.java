@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.service.implementation;
 import eu.accesa.onlinestore.OnlineStoreApplication;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
+import eu.accesa.onlinestore.model.dto.OrderDtoWithoutId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
@@ -10,6 +11,7 @@ import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.OrderService;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +39,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto createOrder(OrderDto orderDto) {
-        LOGGER.info("Service: creating order with id: {}", orderDto.getId());
+    public OrderDto createOrder(OrderDtoWithoutId orderDtoWithoutId) {
+        LOGGER.info("Service: creating order");
 
-        UserEntity userEntity = userRepository.findById(orderDto.getUserId()).
+        UserEntity userEntity = userRepository.findById(orderDtoWithoutId.getUserId()).
                 orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
-                        " UserID ", orderDto.getUserId()));
-        OrderEntity newOrder = mapper.map(orderDto, OrderEntity.class);
+                        " UserID ", orderDtoWithoutId.getUserId()));
+
+        ObjectId objectId = new ObjectId();
+        OrderEntity newOrder = mapper.map(orderDtoWithoutId, OrderEntity.class);
+        newOrder.setId(objectId.toString());
         newOrder.setUser(userEntity);
 
-        for (String productId : orderDto.getOrderedProducts().keySet()) {
+        for (String productId : orderDtoWithoutId.getOrderedProducts().keySet()) {
             if (productRepository.findById(productId).isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
@@ -56,13 +61,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto updateOrder(OrderDto orderDto) {
+    public OrderDtoWithoutId updateOrder(OrderDto orderDto) {
+
         LOGGER.info("Service: updating order with old values: {} with new values {}",
                 orderRepository.findById(orderDto.getId()).toString(), orderDto.toString());
         OrderEntity oldOrder = orderRepository.findById(orderDto.getId()).orElseThrow(() ->
                 new EntityNotFoundException(OrderEntity.class.getName(), "OrderId", orderDto.getId()));
-        mapper.map(orderDto, oldOrder);
-        return mapper.map(orderRepository.save(oldOrder), OrderDto.class);
+        OrderDtoWithoutId orderDtoWithoutId = mapper.map(orderDto, OrderDtoWithoutId.class);
+        mapper.map(orderDtoWithoutId, oldOrder);
+        return mapper.map(orderRepository.save(oldOrder), OrderDtoWithoutId.class);
     }
 
     @Override
@@ -82,8 +89,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getAllOrders() {
         LOGGER.info("Service: getting  all  order");
-        List<OrderEntity> orders=orderRepository.findAll();
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity,OrderDto.class)).collect(toList());
+        List<OrderEntity> orders = orderRepository.findAll();
+        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
     }
 
 }
