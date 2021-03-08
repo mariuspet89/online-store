@@ -21,7 +21,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private OrderDtoWithoutId createOrder(@RequestBody OrderDtoWithoutId orderDtoWithoutId) {
+    private OrderDto createOrder(@RequestBody OrderDtoWithoutId orderDtoWithoutId) {
         return orderService.createOrder(orderDtoWithoutId);
     }
     @GetMapping("/getAll")

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDtoWithoutId createOrder(OrderDtoWithoutId orderDtoWithoutId);
+    OrderDto createOrder(OrderDtoWithoutId orderDtoWithoutId);
     OrderDtoWithoutId updateOrder(OrderDto orderDto);
     List<OrderDto> getOrdersByUser(String userId);
     OrderDto getOrderById(String orderId);

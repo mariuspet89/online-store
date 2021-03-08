@@ -11,6 +11,7 @@ import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.OrderService;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +39,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDtoWithoutId createOrder(OrderDtoWithoutId orderDtoWithoutId) {
+    public OrderDto createOrder(OrderDtoWithoutId orderDtoWithoutId) {
         LOGGER.info("Service: creating order");
 
         UserEntity userEntity = userRepository.findById(orderDtoWithoutId.getUserId()).
                 orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
                         " UserID ", orderDtoWithoutId.getUserId()));
 
-
+        ObjectId objectId = new ObjectId();
         OrderEntity newOrder = mapper.map(orderDtoWithoutId, OrderEntity.class);
+        newOrder.setId(objectId.toString());
         newOrder.setUser(userEntity);
 
         for (String productId : orderDtoWithoutId.getOrderedProducts().keySet()) {
@@ -54,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
-        return mapper.map(orderRepository.save(newOrder), OrderDtoWithoutId.class);
+        return mapper.map(orderRepository.save(newOrder), OrderDto.class);
 
     }
 
