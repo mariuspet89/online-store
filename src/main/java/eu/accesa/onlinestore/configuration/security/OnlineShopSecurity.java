@@ -22,6 +22,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
@@ -103,6 +104,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
         config.addAllowedOrigin("http://18.224.7.25:5000");
         config.addAllowedHeader("*");
         config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setExposedHeaders(List.of("Authorization"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
