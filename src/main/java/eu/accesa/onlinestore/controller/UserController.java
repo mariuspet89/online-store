@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<UserEntity>> findById(@PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userRepository.findById(id));
+    public ResponseEntity<UserDto>findById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
     }
 
     @PostMapping
