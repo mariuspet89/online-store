@@ -20,7 +20,7 @@ public class CartController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private CartDtoNoId createCart(@Valid @RequestBody CartDtoNoId cartDtoNoId) {
+    private CartDto createCart(@Valid @RequestBody CartDtoNoId cartDtoNoId) {
         return cartService.createCart(cartDtoNoId);
     }
 

@@ -7,6 +7,7 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import eu.accesa.onlinestore.repository.CartRepository;
 import eu.accesa.onlinestore.service.CartService;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,9 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDto createCart(CartDtoNoId cartDtoNoId) {
         LOGGER.info("Service: creating cart with values: {}", cartDtoNoId.toString());
-
+            ObjectId objectId = new ObjectId();
             CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);
+            cart.setId(objectId.toString());
             return mapper.map(cartRepository.save(cart), CartDto.class);
     }
 
