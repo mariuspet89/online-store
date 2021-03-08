@@ -25,7 +25,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDtoNoId createCart(CartDtoNoId cartDtoNoId) {
+    public CartDto createCart(CartDtoNoId cartDtoNoId) {
         LOGGER.info("Service: creating cart with values: {}", cartDtoNoId.toString());
 
             CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);

@@ -5,7 +5,7 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 
 public interface CartService {
 
-    CartDtoNoId createCart(CartDtoNoId cartDtoNoId);
+    CartDto createCart(CartDtoNoId cartDtoNoId);
 
     CartDto getCartById(String id);
 
