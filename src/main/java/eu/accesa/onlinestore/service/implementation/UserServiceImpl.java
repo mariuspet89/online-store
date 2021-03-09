@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addNewUser(UserDtoNoId userDtoNoId) {
+    public UserDto createUser(UserDtoNoId userDtoNoId) {
         String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
         userDtoNoId.setPassword(encodedPassword);
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(String id) {
+    public void deleteUser(String id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow();
         userRepository.delete(userEntity);
     }

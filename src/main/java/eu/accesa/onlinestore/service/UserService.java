@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.service;
 
-
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 
@@ -12,9 +11,9 @@ public interface UserService {
 
     UserDto findById(String id);
 
-    UserDto addNewUser(UserDtoNoId userDtoNoId);
-
-    void deleteUserById(String id);
+    UserDto createUser(UserDtoNoId userDtoNoId);
 
     UserDto updateUser(String id, UserDtoNoId userDtoNoId);
+
+    void deleteUser(String id);
 }

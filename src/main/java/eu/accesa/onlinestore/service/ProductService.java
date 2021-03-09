@@ -1,7 +1,7 @@
 package eu.accesa.onlinestore.service;
 
 import eu.accesa.onlinestore.model.dto.ProductDto;
-import eu.accesa.onlinestore.model.dto.ProductDtoWithoutId;
+import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
 import org.springframework.data.domain.Page;
 
@@ -11,14 +11,13 @@ public interface ProductService {
 
     Page<ProductDto> findAll(UserPageDto userPageDto);
 
-    ProductDto findById(String Id);
-
-    ProductDtoWithoutId addNewProduct(ProductDtoWithoutId productDtoWithoutId);
+    ProductDto findById(String id);
 
     List<ProductDto> findByName(String name);
 
-    void deleteProductById(String name);
+    ProductDto createProduct(ProductDtoNoId productDtoNoId);
 
-    ProductDtoWithoutId updateProduct(ProductDto productDto);
+    ProductDto updateProduct(String id, ProductDtoNoId productDtoNoId);
 
+    void deleteProduct(String id);
 }

@@ -34,8 +34,8 @@ public class UserController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a user.")
-    public ResponseEntity<UserDto> createNewUser(@Valid @RequestBody UserDtoNoId userDtoNoId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addNewUser(userDtoNoId));
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDtoNoId userDtoNoId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDtoNoId));
     }
 
     @PutMapping("{id}")
@@ -44,8 +44,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable String id) {
-        userService.deleteUserById(id);
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
     }
 }
