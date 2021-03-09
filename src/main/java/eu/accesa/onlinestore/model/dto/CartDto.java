@@ -1,9 +1,6 @@
 package eu.accesa.onlinestore.model.dto;
 
-import java.util.HashMap;
-import java.util.Objects;
-
-public class CartDto extends CartDtoNoId{
+public class CartDto extends CartDtoNoId {
 
     private String id;
 

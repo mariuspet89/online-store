@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 // Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB.
 @DataMongoTest
 class UserRepositoryTest {
@@ -162,9 +161,9 @@ class UserRepositoryTest {
         final Optional<UserEntity> loadedUser = userRepository.findById(savedUser.getId());
         assertTrue(loadedUser.isPresent());
         loadedUser.ifPresent(user ->
-            assertThat(user).usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(userEntity)
+                assertThat(user).usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(userEntity)
         );
     }
 

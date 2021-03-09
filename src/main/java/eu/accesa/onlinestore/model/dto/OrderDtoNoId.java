@@ -1,20 +1,20 @@
 package eu.accesa.onlinestore.model.dto;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
 
-public class OrderDtoWithoutId {
+public class OrderDtoNoId {
 
-    private HashMap<String, Integer> orderedProducts;
+    private Map<String, Integer> orderedProducts;
     private LocalDateTime orderDate;
     private Double orderValue;
     private String userId;
 
-    public HashMap<String, Integer> getOrderedProducts() {
+    public Map<String, Integer> getOrderedProducts() {
         return orderedProducts;
     }
 
-    public void setOrderedProducts(HashMap<String, Integer> orderedProducts) {
+    public void setOrderedProducts(Map<String, Integer> orderedProducts) {
         this.orderedProducts = orderedProducts;
     }
 

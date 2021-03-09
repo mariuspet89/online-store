@@ -5,13 +5,13 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 
 public interface CartService {
 
-    CartDto createCart(CartDtoNoId cartDtoNoId);
-
     CartDto getCartById(String id);
 
     CartDto getCartByUserId(String id);
 
-    CartDto updateCart(CartDto cartDto);
+    CartDto createCart(CartDtoNoId cartDtoNoId);
 
-    void deleteCart(CartDto cartDto);
+    CartDto updateCart(String id, CartDtoNoId cartDtoNoId);
+
+    void deleteCart(String id);
 }
