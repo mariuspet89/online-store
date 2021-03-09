@@ -10,7 +10,6 @@ import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.OrderService;
-import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,17 +66,17 @@ public class OrderServiceImpl implements OrderService {
                 orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
                         " UserID ", orderDtoNoId.getUserId()));
 
-        ObjectId objectId = new ObjectId();
-        OrderEntity newOrder = mapper.map(orderDtoNoId, OrderEntity.class);
-        newOrder.setId(objectId.toString());
-        newOrder.setUser(userEntity);
-
         for (String productId : orderDtoNoId.getOrderedProducts().keySet()) {
             if (productRepository.findById(productId).isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
-        return mapper.map(orderRepository.save(newOrder), OrderDto.class);
+
+        OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
+        orderEntity.setUser(userEntity);
+
+        orderEntity = orderRepository.save(orderEntity);
+        return mapper.map(orderEntity, OrderDto.class);
 
     }
 
