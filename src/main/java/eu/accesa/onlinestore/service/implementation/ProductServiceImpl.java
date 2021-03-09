@@ -40,8 +40,8 @@ public class ProductServiceImpl implements ProductService {
 
         ProductEntity productEntity = modelMapper.map(productDtoNoId, ProductEntity.class);
 
-        ProductEntity savedProductEntity = productRepository.save(productEntity);
-        return modelMapper.map(savedProductEntity, ProductDto.class);
+        productEntity = productRepository.save(productEntity);
+        return modelMapper.map(productEntity, ProductDto.class);
     }
 
     @Override
