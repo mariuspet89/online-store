@@ -5,11 +5,11 @@ import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,10 +50,10 @@ public class TestUtils {
         return productDtoNoId;
     }
 
-    public static OrderEntity createOrderEntity(String id,LocalDateTime orderDate, Double orderValue, UserEntity user) {
+    public static OrderEntity testOrderEntity(String id, Double orderValue, UserEntity user) {
                OrderEntity orderEntity = new OrderEntity();
         orderEntity.setId(id);
-        orderEntity.setOrderedProducts(createOrderedProducts("fistProductId",
+        orderEntity.setOrderedProducts(testHMOrderedProducts("fistProductId",
                 "secondProductId",
                 "thirdProductId",
                 1,
@@ -65,7 +65,7 @@ public class TestUtils {
         return orderEntity;
     }
 
-    public static HashMap<String, Integer> createOrderedProducts(String a,String b,String c,Integer one,Integer two, Integer three) {
+    public static HashMap<String, Integer> testHMOrderedProducts(String a, String b, String c, Integer one, Integer two, Integer three) {
         List<String> productIds=new ArrayList<>();
         productIds.add(a);
         productIds.add(b);
@@ -85,9 +85,9 @@ public class TestUtils {
         return orderedProducts;
     }
 
-    public static UserEntity createUserEntity(String id,String firstName,String lastName,String email,String userName,
-                                              String password,String phone,String gender,String address,String city,
-                                              String county,String postalCode) {
+    public static UserEntity testUserEntity(String id, String firstName, String lastName, String email, String userName,
+                                            String password, String phone, String gender, String address, String city,
+                                            String county, String postalCode) {
         final UserEntity userEntity = new UserEntity();
         userEntity.setId(id);
         userEntity.setFirstName(firstName);
@@ -105,5 +105,16 @@ public class TestUtils {
         addressEntity.setPostalCode(postalCode);
         userEntity.setAddress(addressEntity);
         return userEntity;
+    }
+
+    public static List<OrderEntity>testOrdersList(){
+        return Arrays.asList(
+                testOrderEntity("60377ec00e2cb07c9a3811d3",11.11,testUserEntity("603648273ed85832b440eb99",
+                        "John","Doe","jd@mockemail.com","jd","qwerty",
+                        "40722112211","male","Toamnei nr.1","Las Vegas","Nevada","440055")),
+                testOrderEntity("60377ec00e2cb07c9a3800c2",22.22,testUserEntity("603648273ed85832b440e11a",
+                        "Ion","Iliescu","ii@mockemail.com","nemuritorul","elena",
+                        "40722112222","male","Permanentei nr.1","Voluntari","Ilfov","220055"))
+        );
     }
 }
