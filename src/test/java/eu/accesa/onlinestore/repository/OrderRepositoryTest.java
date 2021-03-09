@@ -17,8 +17,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports Mon
 @DataMongoTest
@@ -67,5 +69,22 @@ class OrderRepositoryTest {
 
         // THEN
         assertEquals(20, orders.size(), "findAll() should return 20 orders!");
+    }
+    @Test
+    void testFindByIdSucces(){
+        //GIVEN
+        final String id="6038ae272c4f617114584428";
+
+        //WHEN
+        Optional<OrderEntity> order=orderRepository.findById(id);
+
+        //THEN
+        assertTrue(order.isPresent(),"An order with Id: "+id+" should exist");
+        order.ifPresent(orderEntity -> {
+            assertEquals(id,orderEntity.getId());
+            assertEquals(2367,orderEntity.getOrderValue());
+            assertEquals("603648273ed85832b440eb9c",orderEntity.getUser().getId());
+
+        });
     }
 }
