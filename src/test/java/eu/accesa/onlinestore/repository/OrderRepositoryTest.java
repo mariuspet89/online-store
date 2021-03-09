@@ -2,7 +2,6 @@ package eu.accesa.onlinestore.repository;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.threetenbp.ser.LocalDateTimeSerializer;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
@@ -26,9 +25,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-//Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports Mon
+//Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB
 @DataMongoTest
-class OrderRepositoryTest {
+public class OrderRepositoryTest {
     // the path to the JSON file
     private final File ORDER_DATA_JSON = Paths.get("src", "test", "resources", "data", "OrderData.json").toFile();
 
@@ -42,7 +41,7 @@ class OrderRepositoryTest {
     private OrderRepository orderRepository;
 
     @BeforeEach
-    void setUp() throws IOException {
+    public void setUp() throws IOException {
         // deserialize the JSON file to an array of users
 
         OrderEntity[] orders = objectMapper.readValue(ORDER_DATA_JSON, OrderEntity[].class);
@@ -53,13 +52,13 @@ class OrderRepositoryTest {
     }
 
     @AfterEach
-    void tearDown() {
+    public void tearDown() {
         // drop the users collection
         mongoTemplate.dropCollection("orders");
     }
 
     @Test
-    void testFindAllSuccess() {
+    public void testFindAllSuccess() {
         // WHEN
         List<OrderEntity> orders = orderRepository.findAll();
 
@@ -68,16 +67,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testFindAllFailure() {
-        // WHEN
-        List<OrderEntity> orders = orderRepository.findAll();
-
-        // THEN
-        assertEquals(20, orders.size(), "findAll() should return 20 orders!");
-    }
-
-    @Test
-    void testFindByIdSucces() {
+    public void testFindByIdSucces() {
         //GIVEN
         final String id = "6038ae272c4f617114584428";
 
@@ -100,7 +90,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testFindByFailure() {
+    public void testFindByFailure() {
         //GIVEN
         final String id = "fakeId";
 
@@ -113,7 +103,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testGetOrderEntitiesByUserIdSuccess() {
+    public void testGetOrderEntitiesByUserIdSuccess() {
         // GIVEN
         final String userId = "604107dde3835d7496be4e3d";
 
@@ -129,7 +119,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testDeleteSuccess() {
+    public void testDeleteSuccess() {
         // GIVEN
         final String id = "6037a0ab9cfa0f22a397ac4c";
 
@@ -141,7 +131,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testUpdateSuccess() {
+    public void testUpdateSuccess() {
         // GIVEN
         final String id = "6037a0ab9cfa0f22a397ac4c";
         final OrderEntity order = orderRepository.findById(id).get();
@@ -158,7 +148,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testSave() {
+    public void testSave() {
         // GIVEN
         final UserEntity userEntity = new UserEntity();
         userEntity.setId("60377ec00e2cb07c9a3811d3");
@@ -177,8 +167,8 @@ class OrderRepositoryTest {
         addressEntity.setPostalCode("123456");
         userEntity.setAddress(addressEntity);
 
-        final HashMap<String, Integer>orderedProducts=new HashMap<>();
-        orderedProducts.put("6034068975bb0d4088a441c2",1);
+        final HashMap<String, Integer> orderedProducts = new HashMap<>();
+        orderedProducts.put("6034068975bb0d4088a441c2", 1);
 
         final OrderEntity orderToSave = new OrderEntity();
         orderToSave.setOrderValue(123.1);
