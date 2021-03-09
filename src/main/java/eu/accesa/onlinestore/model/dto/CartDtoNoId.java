@@ -1,11 +1,11 @@
 package eu.accesa.onlinestore.model.dto;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class CartDtoNoId {
 
     private String userId;
-    private HashMap<String, Integer> products;
+    private Map<String, Integer> products;
 
     public String getUserId() {
         return userId;
@@ -15,11 +15,11 @@ public class CartDtoNoId {
         this.userId = userId;
     }
 
-    public HashMap<String, Integer> getProducts() {
+    public Map<String, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<String, Integer> products) {
+    public void setProducts(Map<String, Integer> products) {
         this.products = products;
     }
 }

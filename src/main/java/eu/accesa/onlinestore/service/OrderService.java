@@ -1,18 +1,19 @@
 package eu.accesa.onlinestore.service;
 
 import eu.accesa.onlinestore.model.dto.OrderDto;
-import eu.accesa.onlinestore.model.dto.OrderDtoWithoutId;
-import org.springframework.data.domain.Sort.Order;
+import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 
 import java.util.List;
 
 public interface OrderService {
 
-    OrderDto createOrder(OrderDtoWithoutId orderDtoWithoutId);
-    OrderDtoWithoutId updateOrder(OrderDto orderDto);
-    List<OrderDto> getOrdersByUser(String userId);
-    OrderDto getOrderById(String orderId);
-    List<OrderDto>getAllOrders();
+    List<OrderDto> findAll();
 
+    OrderDto findById(String orderId);
 
+    List<OrderDto> findByUser(String userId);
+
+    OrderDto createOrder(OrderDtoNoId orderDtoNoId);
+
+    OrderDto updateOrder(String id, OrderDtoNoId orderDtoNoId);
 }
