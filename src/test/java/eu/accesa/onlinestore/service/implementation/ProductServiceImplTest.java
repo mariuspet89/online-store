@@ -12,6 +12,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static eu.accesa.onlinestore.utils.TestUtils.createProductDtoNoId;
 import static eu.accesa.onlinestore.utils.TestUtils.createProductEnity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,4 +61,81 @@ public class ProductServiceImplTest {
 
         verify(productRepository).save(any(ProductEntity.class));
     }
+
+    @Test
+    public void findById() {
+        String id = "123";
+        ProductEntity foundProduct = createProductEnity("123",
+                "test name 1", "test description 1", 1.2, 2.5, 0,
+                "test1", "test1");
+        when(productRepository.findById(id)).thenReturn(Optional.of(foundProduct));
+        ProductDto foundProductDto = productService.findById(id);
+        assertEquals(id, foundProductDto.getId(), "ID mismatch");
+        verify(productRepository).findById(id);
+
+    }
+
+    @Test
+    public void findByName() {
+        String name = "test name 1";
+        ProductEntity productEntity = createProductEnity("123",
+                "test name 1", "test description 1", 1.2, 2.5, 0,
+                "test1", "test1");
+
+        List<ProductEntity> foundProducts = new ArrayList<>();
+        foundProducts.add(productEntity);
+
+        when(productRepository.findByNameIsContainingIgnoreCase(name))
+                .thenReturn(foundProducts);
+
+        List<ProductDto> foundProductDtos = productService.findByName(name);
+        assertEquals(name, foundProductDtos.get(0).getName());
+        verify(productRepository).findByNameIsContainingIgnoreCase(name);
+    }
+
+    @Test
+    public void update() {
+
+        String id = "123";
+        ProductEntity foundProduct = createProductEnity("123",
+                "test name 1", "test description 1", 1.2, 2.5, 0,
+                "test1", "test1");
+
+
+        ProductEntity updatedProductEntity = createProductEnity("123",
+                "update name", "update description ", 3.3, 3.3, 0,
+                "update image", "update");
+
+        when(productRepository.findById(id)).thenReturn(Optional.of(foundProduct));
+        when(productRepository.save(foundProduct)).thenReturn(updatedProductEntity);
+
+        ProductDtoNoId productDtoNoId = createProductDtoNoId(
+                updatedProductEntity.getName(),
+                updatedProductEntity.getDescription(),
+                updatedProductEntity.getPrice(),
+                updatedProductEntity.getRating(),
+                updatedProductEntity.getItemsInStock(),
+                updatedProductEntity.getImage(),
+                updatedProductEntity.getBrand()
+        );
+
+        ProductDtoNoId updatedDto = productService.updateProduct(id, productDtoNoId);
+        assertEquals("update name", updatedDto.getName());
+        assertEquals("update description ", updatedDto.getDescription());
+
+    }
+
+    @Test
+    void delete() {
+        ProductEntity foundProduct = createProductEnity("123",
+                "test name 1", "test description 1", 1.2, 2.5, 0,
+                "test1", "test1");
+
+        when(productRepository.findById(foundProduct.getId())).thenReturn(Optional.of(foundProduct));
+        productService.deleteProduct(foundProduct.getId());
+        verify(productRepository, times(1)).delete(foundProduct);
+
+    }
+
+
 }

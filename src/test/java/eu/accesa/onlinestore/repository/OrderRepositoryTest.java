@@ -31,7 +31,7 @@ public class OrderRepositoryTest {
     // the path to the JSON file
     private final File ORDER_DATA_JSON = Paths.get("src", "test", "resources", "data", "OrderData.json").toFile();
 
-    // used to load a JSON file into a list of Users
+    // used to load a JSON file into a list of Products
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -42,18 +42,18 @@ public class OrderRepositoryTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        // deserialize the JSON file to an array of users
+        // deserialize the JSON file to an array of products
 
         OrderEntity[] orders = objectMapper.readValue(ORDER_DATA_JSON, OrderEntity[].class);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        // load each user into embedded MongoDB
+        // load each product into embedded MongoDB
         Arrays.stream(orders).forEach(mongoTemplate::save);
     }
 
     @AfterEach
     public void tearDown() {
-        // drop the users collection
+        // drop the products collection
         mongoTemplate.dropCollection("orders");
     }
 
@@ -188,4 +188,6 @@ public class OrderRepositoryTest {
                         .ignoringFields("id")
                         .isEqualTo(savedOrder));
     }
+
+
 }

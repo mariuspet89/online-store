@@ -1,0 +1,22 @@
+[
+  {
+    "id": "6040d6ba1e240556a8b76e9b",
+    "name": "BICICLETĂ MTB E-ST 900 27,5 PLUS PORTOCALIU ROCKRIDER",
+    "description": "minim amet mollit esse est aliquip anim sit nostrud veniam adipisicing laboris occaecat dolore deserunt officia anim voluptate deserunt sunt quis tempor eu do in",
+    "price": 5052.8,
+    "rating": 4.8,
+    "itemsInStock": 11,
+    "image": "https://images.immediate.co.uk/production/volatile/sites/21/2019/03/vitus-nucleus-29vr-01-1546950934590-28yoc1fsocuj-1549026859608-367lfw54uv0s-3dff6bf-e1564576707898.jpg?quality=90&resize=620,413",
+    "brand": "BTWIN"
+  },
+  {
+    "id": "6040d6ba1e240556a8b76e90",
+    "name": "BICICLETĂ ELECTRICĂ MTB E-ST 500 27,5 ROCKRIDER",
+    "description": "consectetur anim culpa officia quis ex culpa elit pariatur velit veniam exercitation in est nisi ad id esse mollit duis qui elit duis aliqua ad",
+    "price": 6768.5,
+    "rating": 0.3,
+    "itemsInStock": 76,
+    "image": "https://images.immediate.co.uk/production/volatile/sites/21/2020/03/Calibre-Triple-B-01-d6a56ec.jpg?quality=90&resize=620,413",
+    "brand": "BTWIN"
+  }
+]
