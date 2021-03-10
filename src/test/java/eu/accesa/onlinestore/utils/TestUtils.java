@@ -115,6 +115,29 @@ public class TestUtils {
     }
 
     public static List<OrderEntity> testOrdersList() {
+    public static UserDto createUserDto(String id, String firstName, String lastName, String email, String userName,
+                                        String password, String phone, String gender, String address, String city,
+                                        String county, String postalCode) {
+        final UserDto userDto = new UserDto();
+        userDto.setId(id);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setEmail(email);
+        userDto.setUsername(userName);
+        userDto.setPassword(password);
+        userDto.setTelephone(phone);
+        userDto.setSex(gender);
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddress(address);
+        addressEntity.setCity(city);
+        addressEntity.setCounty(county);
+        addressEntity.setPostalCode(postalCode);
+        userDto.setAddressEntity(addressEntity);
+        return userDto;
+    }
+
+    public static List<OrderEntity>testOrdersList(){
         return Arrays.asList(
                 testOrderEntity("60377ec00e2cb07c9a3811d3", 11.11, testUserEntity("603648273ed85832b440eb99",
                         "John", "Doe", "jd@mockemail.com", "jd", "qwerty",

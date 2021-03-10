@@ -1,6 +1,8 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.UserDto;
+import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.UserRepository;
@@ -16,11 +18,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 import java.util.Optional;
 
+import static eu.accesa.onlinestore.utils.TestUtils.createUserDto;
 import static eu.accesa.onlinestore.utils.TestUtils.testUserEntity;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -91,4 +96,47 @@ class UserServiceImplTest {
         assertEquals(mockAddress.getPostalCode(), addressEntity.getPostalCode());
     }
 
+    @Test
+    void testFindByIdfNotFailure() {
+        // GIVEN
+        String expectedMessage = "UserEntity with UserID = 1 not found";
+        doReturn(Optional.empty()).when(userRepository).findById(anyString());
+
+        // WHEN
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> userService.findById("1"));
+
+        // THEN
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testCreateUser() {
+        // GIVEN
+        UserDtoNoId mockUserDto = createUserDto(null, "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+        UserEntity mockUser = testUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols",
+                "123-456-789", "M", "Main Street 1", "Main Street 1", "Nevada",
+                "123456");
+        AddressEntity mockAddress = mockUser.getAddress();
+
+        doReturn(mockUser).when(userRepository).save(any(UserEntity.class));
+
+        // WHEN
+        UserDto newUser = userService.createUser(mockUserDto);
+
+        // THEN
+        assertNotNull(newUser);
+
+        verify(passwordEncoder).encode(anyString());
+        verify(userRepository).save(any(UserEntity.class));
+
+        assertNotNull(newUser.getId());
+        assertNotEquals(0, newUser.getId().length(), "The user ID should not be empty!");
+        assertThat(newUser).usingRecursiveComparison()
+                .ignoringFields("id", "password")
+                .isEqualTo(mockUserDto);
+    }
 }
