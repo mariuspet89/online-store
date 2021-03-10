@@ -59,7 +59,8 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
         userDtoNoId.setPassword(encodedPassword);
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
-        return modelMapper.map(userRepository.save(userEntity), UserDto.class);
+        userEntity = userRepository.save(userEntity);
+        return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Override

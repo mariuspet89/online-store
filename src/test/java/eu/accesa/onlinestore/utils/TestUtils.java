@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.utils;
 
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
+import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
@@ -105,6 +106,28 @@ public class TestUtils {
         addressEntity.setPostalCode(postalCode);
         userEntity.setAddress(addressEntity);
         return userEntity;
+    }
+
+    public static UserDto createUserDto(String id, String firstName, String lastName, String email, String userName,
+                                        String password, String phone, String gender, String address, String city,
+                                        String county, String postalCode) {
+        final UserDto userDto = new UserDto();
+        userDto.setId(id);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setEmail(email);
+        userDto.setUsername(userName);
+        userDto.setPassword(password);
+        userDto.setTelephone(phone);
+        userDto.setSex(gender);
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddress(address);
+        addressEntity.setCity(city);
+        addressEntity.setCounty(county);
+        addressEntity.setPostalCode(postalCode);
+        userDto.setAddressEntity(addressEntity);
+        return userDto;
     }
 
     public static List<OrderEntity>testOrdersList(){
