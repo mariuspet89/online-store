@@ -3,13 +3,12 @@ package eu.accesa.onlinestore.utils;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
+import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,10 +84,11 @@ public class TestUtils {
         }
         return orderedProducts;
     }
-    public static HashMap<String, Integer> testHMOrderedProduct(String a , Integer one) {
+
+    public static HashMap<String, Integer> testHMOrderedProduct(String a, Integer one) {
 
         HashMap<String, Integer> orderedProducts = new HashMap<>();
-       orderedProducts.put(a,one);
+        orderedProducts.put(a, one);
         return orderedProducts;
     }
 
@@ -114,7 +114,6 @@ public class TestUtils {
         return userEntity;
     }
 
-    public static List<OrderEntity> testOrdersList() {
     public static UserDto createUserDto(String id, String firstName, String lastName, String email, String userName,
                                         String password, String phone, String gender, String address, String city,
                                         String county, String postalCode) {
@@ -137,7 +136,7 @@ public class TestUtils {
         return userDto;
     }
 
-    public static List<OrderEntity>testOrdersList(){
+    public static List<OrderEntity> testOrdersList() {
         return Arrays.asList(
                 testOrderEntity("60377ec00e2cb07c9a3811d3", 11.11, testUserEntity("603648273ed85832b440eb99",
                         "John", "Doe", "jd@mockemail.com", "jd", "qwerty",
@@ -154,8 +153,8 @@ public class TestUtils {
         return newOrderDtoNoId;
     }
 
-    public static OrderDto testOrderDto(String id,Double orderValue, String userId){
-        OrderDto order=new OrderDto();
+    public static OrderDto testOrderDto(String id, Double orderValue, String userId) {
+        OrderDto order = new OrderDto();
         order.setId(id);
         order.setOrderValue(orderValue);
         order.setUserId(userId);
