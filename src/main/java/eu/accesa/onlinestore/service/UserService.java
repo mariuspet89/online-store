@@ -1,8 +1,7 @@
 package eu.accesa.onlinestore.service;
 
-
-import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
+import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 
 import java.util.List;
 
@@ -12,9 +11,9 @@ public interface UserService {
 
     UserDto findById(String id);
 
-    UserDto addNewUser(UserDto userDto);
+    UserDto createUser(UserDtoNoId userDtoNoId);
 
-    void deleteUserById(String id);
+    UserDto updateUser(String id, UserDtoNoId userDtoNoId);
 
-    UserDto updateUser(UserDto userDto);
+    void deleteUser(String id);
 }

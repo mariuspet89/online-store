@@ -1,8 +1,7 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.UserDto;
-import eu.accesa.onlinestore.model.entity.UserEntity;
-import eu.accesa.onlinestore.repository.UserRepository;
+import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -19,11 +17,9 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("/findAll")
@@ -32,25 +28,24 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto>findById(@PathVariable String id) {
+    public ResponseEntity<UserDto> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a user.")
-    public ResponseEntity<UserDto> createNewUser(@Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addNewUser(userDto));
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDtoNoId userDtoNoId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDtoNoId));
     }
 
-    @PutMapping
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userDto));
+    @PutMapping("{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDtoNoId userDtoNoId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, userDtoNoId));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable String id) {
-        userService.deleteUserById(id);
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
     }
-
 }

@@ -1,7 +1,7 @@
 package eu.accesa.onlinestore.controller;
 
 import eu.accesa.onlinestore.model.dto.OrderDto;
-import eu.accesa.onlinestore.model.dto.OrderDtoWithoutId;
+import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,28 +19,31 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    private OrderDto createOrder(@RequestBody OrderDtoWithoutId orderDtoWithoutId) {
-        return orderService.createOrder(orderDtoWithoutId);
-    }
     @GetMapping("/getAll")
-    public ResponseEntity<List<OrderDto>> getAllOrders() {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllOrders());
+    public ResponseEntity<List<OrderDto>> findAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.findAll());
     }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    private OrderDto getOrderById(@PathVariable String id) {
-        return orderService.getOrderById(id);
+    public OrderDto findById(@PathVariable String id) {
+        return orderService.findById(id);
     }
 
     @GetMapping("user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    private List<OrderDto> getOrdersByUserId(@PathVariable String userId) {
-        return orderService.getOrdersByUser(userId);
+    public List<OrderDto> findByUserId(@PathVariable String userId) {
+        return orderService.findByUser(userId);
     }
-    @PutMapping
-    public ResponseEntity<OrderDtoWithoutId> updateOrder(@Valid @RequestBody OrderDto orderDto ) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrder(orderDto));
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDto createOrder(@RequestBody OrderDtoNoId orderDtoNoId) {
+        return orderService.createOrder(orderDtoNoId);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderDto> updateOrder(@PathVariable String id, @Valid @RequestBody OrderDtoNoId orderDtoNoId) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrder(id, orderDtoNoId));
     }
 }

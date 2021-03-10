@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.service.implementation;
 
-import eu.accesa.onlinestore.OnlineStoreApplication;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.CartDto;
 import eu.accesa.onlinestore.model.dto.CartDtoNoId;
@@ -16,22 +15,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CartServiceImpl implements CartService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineStoreApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CartServiceImpl.class);
+
     private final CartRepository cartRepository;
     private final ModelMapper mapper;
 
     public CartServiceImpl(CartRepository cartRepository, ModelMapper mapper) {
         this.cartRepository = cartRepository;
         this.mapper = mapper;
-    }
-
-    @Override
-    public CartDto createCart(CartDtoNoId cartDtoNoId) {
-        LOGGER.info("Service: creating cart with values: {}", cartDtoNoId.toString());
-            ObjectId objectId = new ObjectId();
-            CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);
-            cart.setId(objectId.toString());
-            return mapper.map(cartRepository.save(cart), CartDto.class);
     }
 
     @Override
@@ -43,7 +34,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto getCartByUserId(String id){
+    public CartDto getCartByUserId(String id) {
         LOGGER.info("Service: searching for cart belonging to user with id: {}", id);
 
         return mapper.map(cartRepository.findCartEntityByUserId(id).orElseThrow(() -> new EntityNotFoundException
@@ -51,22 +42,30 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto updateCart(CartDto cartDto) {
-        LOGGER.info("Service: updating cart with old values: {} with new values {}",
-                cartRepository.findById(cartDto.getId()).toString(), cartDto.toString());
-
-        CartEntity cartFromDatabase = cartRepository.findById(cartDto.getId()).
-                orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", cartDto.getId()));
-
-        mapper.map(cartDto, cartFromDatabase);
-
-        return mapper.map(cartRepository.save(cartFromDatabase), CartDto.class);
+    public CartDto createCart(CartDtoNoId cartDtoNoId) {
+        LOGGER.info("Service: creating cart with values: {}", cartDtoNoId.toString());
+        ObjectId objectId = new ObjectId();
+        CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);
+        cart.setId(objectId.toString());
+        return mapper.map(cartRepository.save(cart), CartDto.class);
     }
 
     @Override
-    public void deleteCart(CartDto cartDto) {
-        LOGGER.info("Service: deleting cart with values: {}", cartDto.toString());
+    public CartDto updateCart(String id, CartDtoNoId cartDtoNoId) {
+        LOGGER.info("Service: updating cart with old values: {} with new values {}",
+                cartRepository.findById(id).toString(), cartDtoNoId.toString());
 
-        cartRepository.delete(mapper.map(cartDto, CartEntity.class));
+        CartEntity cartFromDatabase = cartRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", id));
+
+        mapper.map(cartDtoNoId, cartFromDatabase);
+        CartEntity savedCartEntity = cartRepository.save(cartFromDatabase);
+        return mapper.map(savedCartEntity, CartDto.class);
+    }
+
+    @Override
+    public void deleteCart(String id) {
+        LOGGER.info("Service: deleting cart with ID = {}", id);
+        cartRepository.deleteById(id);
     }
 }

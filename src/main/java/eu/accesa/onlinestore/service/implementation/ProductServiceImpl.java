@@ -2,7 +2,7 @@ package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.ProductDto;
-import eu.accesa.onlinestore.model.dto.ProductDtoWithoutId;
+import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
@@ -25,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
 
@@ -34,12 +35,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDtoWithoutId addNewProduct(ProductDtoWithoutId productDtoWithoutId) {
+    public ProductDto createProduct(ProductDtoNoId productDtoNoId) {
         LOGGER.info("Creating Product ");
 
-        ProductEntity productEntity = modelMapper.map(productDtoWithoutId, ProductEntity.class);
+        ProductEntity productEntity = modelMapper.map(productDtoNoId, ProductEntity.class);
 
-        return modelMapper.map(productRepository.save(productEntity), ProductDtoWithoutId.class);
+        productEntity = productRepository.save(productEntity);
+        return modelMapper.map(productEntity, ProductDto.class);
     }
 
     @Override
@@ -75,21 +77,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDtoWithoutId updateProduct(ProductDto productDto) {
+    public ProductDto updateProduct(String id, ProductDtoNoId productDtoNoId) {
+        ProductEntity productEntity = productRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ProductEntity.class.getSimpleName(), "ProductId", id));
 
-        ProductEntity productEntity = productRepository.findById(productDto.getId()).orElseThrow(
-                () -> new EntityNotFoundException(ProductEntity.class.getSimpleName(),
-                        "ProductId", productDto.getId()));
-
-        ProductDtoWithoutId productDtoWithoutId = modelMapper.map(productDto, ProductDtoWithoutId.class);
-        modelMapper.map(productDtoWithoutId, productEntity);
+        modelMapper.map(productDtoNoId, productEntity);
         productRepository.save(productEntity);
 
-        return modelMapper.map(productEntity, ProductDtoWithoutId.class);
+        return modelMapper.map(productEntity, ProductDto.class);
     }
 
     @Override
-    public void deleteProductById(String id) {
+    public void deleteProduct(String id) {
         LOGGER.info("Deleting for Product with the following Id: " + id);
 
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(
@@ -98,5 +98,4 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.delete(productEntity);
     }
-
 }

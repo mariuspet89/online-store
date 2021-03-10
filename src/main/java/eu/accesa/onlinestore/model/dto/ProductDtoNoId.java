@@ -1,6 +1,6 @@
 package eu.accesa.onlinestore.model.dto;
 
-public class ProductDtoWithoutId {
+public class ProductDtoNoId {
 
     private String name;
     private String description;

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "6037a0ab9cfa0f22a397ac4c",
+    "orderedProducts": {
+      "[6034068975bb0d4088a441c2]": 1
+    },
+    "orderDate": "2021-02-25T07:59:05.848",
+    "orderValue": 2367,
+    "user": {
+      "id": "604107dde3835d7496be4e3d",
+      "firstName": "john",
+      "lastName": "travolta",
+      "email": "johny@travolta.com",
+      "username": "johnytravolta",
+      "telephone": "123456",
+      "sex": "Mr",
+      "password": "johny123",
+      "address": {
+        "address": "sunste blvd, nr 13",
+        "city": "LA",
+        "county": "california",
+        "postalCode": "542545"
+      }
+    }
+  },
+  {
+    "id": "6038ae272c4f617114584428",
+    "orderedProducts": {
+      "[6034068975bb0d4088a441c2, 6034068975bb0d4088a441c6]": 3
+    },
+    "orderDate": "2021-02-26T08:13:57.36",
+    "orderValue": 12,
+    "user": {
+      "id": "603648273ed85832b440eb99",
+      "firstName": "Lilah",
+      "lastName": "Rozier",
+      "email": "lrozier2@networksolutions.com",
+      "username": "lrozier2",
+      "telephone": "592-653-3873",
+      "sex": "F",
+      "password": "test",
+      "address": {
+        "address": "Frunzisului Street",
+        "city": "Cluj-Napoca",
+        "county": "Cluj",
+        "postalCode": "123456"
+      }
+    }
+  }
+]

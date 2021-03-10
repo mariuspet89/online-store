@@ -1,0 +1,35 @@
+[
+  {
+    "id": "603648273ed85832b440eb99",
+    "firstName": "Lilah",
+    "lastName": "Rozier",
+    "email": "lrozier2@networksolutions.com",
+    "username": "lrozier2",
+    "telephone": "592-653-3873",
+    "sex": "F",
+    "password": "$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG",
+    "address": {
+      "address": "Frunzisului Street",
+      "city": "Cluj-Napoca",
+      "county": "Cluj",
+      "postalCode": "123456"
+    }
+  },
+  {
+    "id": "604107dde3835d7496be4e3d",
+    "firstName": "john",
+    "lastName": "travolta",
+    "email": "johny@travolta.com",
+    "username": "johnytravolta",
+    "telephone": "123456",
+    "sex": "Mr",
+    "password": "johny123",
+    "address": {
+      "address": "sunste blvd, nr 13",
+      "city": "LA",
+      "county": "california",
+      "postalCode": "542545"
+    }
+  }
+
+]
