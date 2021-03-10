@@ -18,8 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 import java.util.Optional;
 
-import static eu.accesa.onlinestore.utils.TestUtils.createUserDto;
-import static eu.accesa.onlinestore.utils.TestUtils.testUserEntity;
+import static eu.accesa.onlinestore.utils.UserTestUtils.createUserDto;
+import static eu.accesa.onlinestore.utils.UserTestUtils.createUserEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,12 +45,12 @@ class UserServiceImplTest {
     @Test
     void testFindAll() {
         // GIVEN
-        UserEntity mockUser1 = testUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+        UserEntity mockUser1 = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
                 "Las Vegas", "Nevada", "123456");
         AddressEntity mockAddress1 = mockUser1.getAddress();
 
-        UserEntity mockUser2 = testUserEntity("2", "John", "Travolta", "johntravolta@movies.com",
+        UserEntity mockUser2 = createUserEntity("2", "John", "Travolta", "johntravolta@movies.com",
                 "johntravolta", "guns", "123-456-789-0", "M", "Main Street 2",
                 "Los Angeles", "California", "123457");
         AddressEntity mockAddress2 = mockUser2.getAddress();
@@ -67,7 +67,7 @@ class UserServiceImplTest {
     @Test
     void testFindByIdSuccess() {
         // GIVEN
-        UserEntity mockUser = testUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+        UserEntity mockUser = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
                 "Main Street 1", "Nevada", "123456");
         AddressEntity mockAddress = mockUser.getAddress();
@@ -116,7 +116,7 @@ class UserServiceImplTest {
         UserDtoNoId mockUserDto = createUserDto(null, "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
                 "Main Street 1", "Nevada", "123456");
-        UserEntity mockUser = testUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+        UserEntity mockUser = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols",
                 "123-456-789", "M", "Main Street 1", "Main Street 1", "Nevada",
                 "123456");
