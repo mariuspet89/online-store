@@ -2,7 +2,6 @@ package eu.accesa.onlinestore.configuration;
 
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
-import eu.accesa.onlinestore.model.entity.UserEntity;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;

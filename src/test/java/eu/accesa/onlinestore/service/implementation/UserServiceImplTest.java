@@ -48,12 +48,12 @@ class UserServiceImplTest {
         UserEntity mockUser1 = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
                 "Las Vegas", "Nevada", "123456");
-        AddressEntity mockAddress1 = mockUser1.getAddress();
+        AddressEntity mockAddress1 = mockUser1.getAddressEntity();
 
         UserEntity mockUser2 = createUserEntity("2", "John", "Travolta", "johntravolta@movies.com",
                 "johntravolta", "guns", "123-456-789-0", "M", "Main Street 2",
                 "Los Angeles", "California", "123457");
-        AddressEntity mockAddress2 = mockUser2.getAddress();
+        AddressEntity mockAddress2 = mockUser2.getAddressEntity();
 
         doReturn(List.of(mockUser1, mockUser2)).when(userRepository).findAll();
 
@@ -70,7 +70,7 @@ class UserServiceImplTest {
         UserEntity mockUser = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
                 "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
                 "Main Street 1", "Nevada", "123456");
-        AddressEntity mockAddress = mockUser.getAddress();
+        AddressEntity mockAddress = mockUser.getAddressEntity();
 
         doReturn(Optional.of(mockUser)).when(userRepository).findById(anyString());
 

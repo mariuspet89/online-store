@@ -82,7 +82,7 @@ public class OrderRepositoryTest {
             assertEquals("603648273ed85832b440eb99", orderEntity.getUser().getId());
             assertEquals("Lilah", orderEntity.getUser().getFirstName());
             assertEquals("Rozier", orderEntity.getUser().getLastName());
-            assertEquals("Cluj-Napoca", orderEntity.getUser().getAddress().getCity());
+            assertEquals("Cluj-Napoca", orderEntity.getUser().getAddressEntity().getCity());
             assertEquals(2021, orderEntity.getOrderDate().getYear());
             assertEquals(2, orderEntity.getOrderDate().getMonthValue());
             assertEquals(26, orderEntity.getOrderDate().getDayOfMonth());
@@ -165,7 +165,7 @@ public class OrderRepositoryTest {
         addressEntity.setCity("Cluj-Napoca");
         addressEntity.setCounty("Cluj");
         addressEntity.setPostalCode("123456");
-        userEntity.setAddress(addressEntity);
+        userEntity.setAddressEntity(addressEntity);
 
         final HashMap<String, Integer> orderedProducts = new HashMap<>();
         orderedProducts.put("6034068975bb0d4088a441c2", 1);
