@@ -24,7 +24,7 @@ public class UserTestUtils {
         addressEntity.setCity(city);
         addressEntity.setCounty(county);
         addressEntity.setPostalCode(postalCode);
-        userEntity.setAddress(addressEntity);
+        userEntity.setAddressEntity(addressEntity);
         return userEntity;
     }
 

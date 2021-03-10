@@ -9,7 +9,6 @@ import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
@@ -123,7 +122,7 @@ public class TestUtils {
         addressEntity.setCity(city);
         addressEntity.setCounty(county);
         addressEntity.setPostalCode(postalCode);
-        userEntity.setAddress(addressEntity);
+        userEntity.setAddressEntity(addressEntity);
         return userEntity;
     }
 

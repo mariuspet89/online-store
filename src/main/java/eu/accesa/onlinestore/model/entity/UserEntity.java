@@ -117,11 +117,11 @@ public class UserEntity implements UserDetails {
         this.password = password;
     }
 
-    public AddressEntity getAddress() {
+    public AddressEntity getAddressEntity() {
         return addressEntity;
     }
 
-    public void setAddress(AddressEntity addressEntity) {
+    public void setAddressEntity(AddressEntity addressEntity) {
         this.addressEntity = addressEntity;
     }
 

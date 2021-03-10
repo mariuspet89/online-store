@@ -80,7 +80,7 @@ class UserRepositoryTest {
             assertEquals("Mr", user.getSex());
             assertEquals("johny123", user.getPassword());
 
-            final AddressEntity addressEntity = user.getAddress();
+            final AddressEntity addressEntity = user.getAddressEntity();
             assertNotNull(addressEntity);
             assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
             assertEquals("LA", addressEntity.getCity());
@@ -123,7 +123,7 @@ class UserRepositoryTest {
             assertEquals("Mr", user.getSex());
             assertEquals("johny123", user.getPassword());
 
-            final AddressEntity addressEntity = user.getAddress();
+            final AddressEntity addressEntity = user.getAddressEntity();
             assertNotNull(addressEntity);
             assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
             assertEquals("LA", addressEntity.getCity());
@@ -151,7 +151,7 @@ class UserRepositoryTest {
         addressEntity.setCity("Cluj-Napoca");
         addressEntity.setCounty("Cluj");
         addressEntity.setPostalCode("123456");
-        userEntity.setAddress(addressEntity);
+        userEntity.setAddressEntity(addressEntity);
 
         // WHEN
         final UserEntity savedUser = userRepository.save(userEntity);
