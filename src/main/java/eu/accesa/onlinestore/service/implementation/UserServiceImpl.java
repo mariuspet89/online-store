@@ -1,7 +1,10 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
+import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.UserService;
@@ -32,6 +35,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
+        LOGGER.info("UserService: getting all users");
+
         List<UserEntity> users = userRepository.findAll();
         return users.stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
@@ -40,12 +45,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(String id) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        LOGGER.info("UserService: searching for user with ID = {}", id);
+
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
         return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Override
     public UserDto createUser(UserDtoNoId userDtoNoId) {
+        LOGGER.info("UserService: creating user");
+
         String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
         userDtoNoId.setPassword(encodedPassword);
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
@@ -54,7 +64,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(String id, UserDtoNoId userDtoNoId) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        LOGGER.info("Updating user with ID = {}", id);
+
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
         modelMapper.map(userDtoNoId, userEntity);
         userRepository.save(userEntity);
         return modelMapper.map(userEntity, UserDto.class);
@@ -62,6 +75,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String id) {
+        LOGGER.info("Deleting user with ID = {}", id);
+
         UserEntity userEntity = userRepository.findById(id).orElseThrow();
         userRepository.delete(userEntity);
     }
