@@ -97,7 +97,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testFindByIdfNotFailure() {
+    void testFindByIdFailure() {
         // GIVEN
         String expectedMessage = "UserEntity with UserID = 1 not found";
         doReturn(Optional.empty()).when(userRepository).findById(anyString());
@@ -120,7 +120,6 @@ class UserServiceImplTest {
                 "johnwayne", "pistols",
                 "123-456-789", "M", "Main Street 1", "Main Street 1", "Nevada",
                 "123456");
-        AddressEntity mockAddress = mockUser.getAddress();
 
         doReturn(mockUser).when(userRepository).save(any(UserEntity.class));
 
@@ -138,5 +137,48 @@ class UserServiceImplTest {
         assertThat(newUser).usingRecursiveComparison()
                 .ignoringFields("id", "password")
                 .isEqualTo(mockUserDto);
+    }
+    
+    @Test
+    void testUpdateUser() {
+        // GIVEN
+        UserDtoNoId mockUserDto = createUserDto(null, "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+        UserEntity mockUser = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "Bigpistols",
+                "123-456-789", "M", "Main Street 1", "Main Street 1", "Nevada",
+                "123456");
+        String userId = mockUser.getId();
+
+        doReturn(Optional.of(mockUser)).when(userRepository).findById(anyString());
+        doReturn(mockUser).when(userRepository).save(any(UserEntity.class));
+
+        // WHEN
+        UserDto updatedUser = userService.updateUser(userId, mockUserDto);
+
+        // THEN
+        assertNotNull(updatedUser);
+
+        verify(userRepository).save(any(UserEntity.class));
+
+        assertThat(updatedUser).usingRecursiveComparison()
+                .ignoringFields("id", "password")
+                .isEqualTo(mockUserDto);
+    }
+
+    @Test
+    void testUpdateUserFailure() {
+        // GIVEN
+        String expectedMessage = "UserEntity with UserID = 1 not found";
+        doReturn(Optional.empty()).when(userRepository).findById(anyString());
+
+        // WHEN
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> userService.updateUser("1", new UserDtoNoId()));
+
+        // THEN
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }
