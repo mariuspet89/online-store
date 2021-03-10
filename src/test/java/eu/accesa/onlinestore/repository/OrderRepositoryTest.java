@@ -47,13 +47,13 @@ public class OrderRepositoryTest {
         OrderEntity[] orders = objectMapper.readValue(ORDER_DATA_JSON, OrderEntity[].class);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        // load each user into embedded MongoDB
+        // load each order into embedded MongoDB
         Arrays.stream(orders).forEach(mongoTemplate::save);
     }
 
     @AfterEach
     public void tearDown() {
-        // drop the users collection
+        // drop the orders collection
         mongoTemplate.dropCollection("orders");
     }
 

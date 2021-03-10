@@ -3,9 +3,13 @@ package eu.accesa.onlinestore.model.dto;
 import org.springframework.data.domain.Sort;
 
 public class UserPageDto {
+    //defines the first page
     private Integer pageNo=0;
+    //defines default page size in case of no inputs
     private Integer pageSize=15;
+    //sets default sort direction
     private Sort.Direction sortDirection=Sort.Direction.ASC;
+    //sets  default sort field for the page
     private String sortBy="brand";
 
     public Integer getPageNo() {
