@@ -1,7 +1,6 @@
 package eu.accesa.onlinestore.utils;
 
-import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
-import eu.accesa.onlinestore.model.dto.UserPageDto;
+import eu.accesa.onlinestore.model.dto.*;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
@@ -72,7 +71,6 @@ public class TestUtils {
                 1,
                 2,
                 3));
-        orderEntity.setOrderDate(LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))));
         orderEntity.setUser(user);
         orderEntity.setOrderValue(orderValue);
         return orderEntity;
@@ -95,6 +93,12 @@ public class TestUtils {
                 orderedProducts.put(s, i);
             }
         }
+        return orderedProducts;
+    }
+    public static HashMap<String, Integer> testHMOrderedProduct(String a , Integer one) {
+
+        HashMap<String, Integer> orderedProducts = new HashMap<>();
+       orderedProducts.put(a,one);
         return orderedProducts;
     }
 
@@ -120,7 +124,29 @@ public class TestUtils {
         return userEntity;
     }
 
-    public static List<OrderEntity> testOrdersList() {
+    public static UserDto createUserDto(String id, String firstName, String lastName, String email, String userName,
+                                        String password, String phone, String gender, String address, String city,
+                                        String county, String postalCode) {
+        final UserDto userDto = new UserDto();
+        userDto.setId(id);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setEmail(email);
+        userDto.setUsername(userName);
+        userDto.setPassword(password);
+        userDto.setTelephone(phone);
+        userDto.setSex(gender);
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddress(address);
+        addressEntity.setCity(city);
+        addressEntity.setCounty(county);
+        addressEntity.setPostalCode(postalCode);
+        userDto.setAddressEntity(addressEntity);
+        return userDto;
+    }
+
+    public static List<OrderEntity>testOrdersList(){
         return Arrays.asList(
                 testOrderEntity("60377ec00e2cb07c9a3811d3", 11.11, testUserEntity("603648273ed85832b440eb99",
                         "John", "Doe", "jd@mockemail.com", "jd", "qwerty",
@@ -142,4 +168,19 @@ public class TestUtils {
                         "test2", "test2"));
 
     }
+
+    public static OrderDtoNoId testOrderDtoNoId(Double orderValue, String userId) {
+        OrderDtoNoId newOrderDtoNoId = new OrderDtoNoId();
+        newOrderDtoNoId.setUserId(userId);
+        return newOrderDtoNoId;
+    }
+
+    public static OrderDto testOrderDto(String id,Double orderValue, String userId){
+        OrderDto order=new OrderDto();
+        order.setId(id);
+        order.setOrderValue(orderValue);
+        order.setUserId(userId);
+        return order;
+    }
+
 }
