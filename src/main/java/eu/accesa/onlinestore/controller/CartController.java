@@ -23,7 +23,7 @@ public class CartController {
         return cartService.getCartById(id);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public CartDto getCartByUserId(@PathVariable String userId) {
         return cartService.getCartByUserId(userId);
@@ -41,8 +41,8 @@ public class CartController {
         return cartService.updateCart(id, cartDtoNoId);
     }
 
-    @DeleteMapping("{/id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteCart(@PathVariable String id) {
         cartService.deleteCart(id);
     }

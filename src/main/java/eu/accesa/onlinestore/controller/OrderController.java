@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.controller;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.service.OrderService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +38,8 @@ public class OrderController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto createOrder(@RequestBody OrderDtoNoId orderDtoNoId) {
-        return orderService.createOrder(orderDtoNoId);
+    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDtoNoId orderDtoNoId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDtoNoId));
     }
 
     @PutMapping("/{id}")

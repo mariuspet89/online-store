@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.utils;
 
+import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.model.dto.UserPageDto;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
@@ -11,7 +12,6 @@ import java.util.List;
 public class ProductTestUtils {
 
     public static List<ProductEntity> testProductsList() {
-
         return Arrays.asList(
                 createProductEnity("123",
                         "test name 1", "test description 1", 1.2, 2.5, 0,
@@ -19,6 +19,16 @@ public class ProductTestUtils {
                 createProductEnity("456",
                         "test name 2", "test description 2", 2.2, 3.5, 0,
                         "test2", "test2"));
+
+    }
+
+    public static List<ProductDto> testProductsListDto() {
+        return Arrays.asList(
+
+                createProductDto("123", "test name 1", "test description 1", 1.2, 2.5, 0,
+                        "test1", "test1"),
+                createProductDto("123", "test name 1", "test description 1", 1.2, 2.5, 0,
+                        "test1", "test1"));
 
     }
 
@@ -67,4 +77,18 @@ public class ProductTestUtils {
         return userPageDto;
     }
 
+    public static ProductDto createProductDto(String id, String name, String description,
+                                              Double price, Double rating, Integer itemsInStock,
+                                              String image, String brand) {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(id);
+        productDto.setName(name);
+        productDto.setDescription(description);
+        productDto.setPrice(price);
+        productDto.setRating(rating);
+        productDto.setItemsInStock(itemsInStock);
+        productDto.setImage(image);
+        productDto.setBrand(brand);
+        return productDto;
+    }
 }

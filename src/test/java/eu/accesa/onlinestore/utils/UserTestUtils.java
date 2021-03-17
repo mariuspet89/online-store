@@ -28,17 +28,17 @@ public class UserTestUtils {
         return userEntity;
     }
 
-    public static UserDto createUserDto(String id, String firstName, String lastName, String email, String userName,
-                                        String password, String phone, String gender, String address, String city,
+    public static UserDto createUserDto(String id, String firstName, String lastName, String email, String username,
+                                        String password, String telephone, String gender, String address, String city,
                                         String county, String postalCode) {
         final UserDto userDto = new UserDto();
         userDto.setId(id);
         userDto.setFirstName(firstName);
         userDto.setLastName(lastName);
         userDto.setEmail(email);
-        userDto.setUsername(userName);
+        userDto.setUsername(username);
         userDto.setPassword(password);
-        userDto.setTelephone(phone);
+        userDto.setTelephone(telephone);
         userDto.setSex(gender);
 
         final AddressEntity addressEntity = new AddressEntity();

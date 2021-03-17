@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static eu.accesa.onlinestore.utils.UserTestUtils.*;
+import static eu.accesa.onlinestore.utils.UserTestUtils.createUserEntity;
 
 public class OrderTestUtils {
 
@@ -54,6 +54,7 @@ public class OrderTestUtils {
         orderedProducts.put(a, one);
         return orderedProducts;
     }
+
     public static List<OrderEntity> testOrdersList() {
         return Arrays.asList(
                 testOrderEntity("60377ec00e2cb07c9a3811d3", 11.11, createUserEntity("603648273ed85832b440eb99",
@@ -64,9 +65,11 @@ public class OrderTestUtils {
                         "40722112222", "male", "Permanentei nr.1", "Voluntari", "Ilfov", "220055"))
         );
     }
+
     public static OrderDtoNoId testOrderDtoNoId(Double orderValue, String userId) {
         OrderDtoNoId newOrderDtoNoId = new OrderDtoNoId();
         newOrderDtoNoId.setUserId(userId);
+        newOrderDtoNoId.setOrderValue(orderValue);
         return newOrderDtoNoId;
     }
 
@@ -76,5 +79,12 @@ public class OrderTestUtils {
         order.setOrderValue(orderValue);
         order.setUserId(userId);
         return order;
+    }
+
+    public static List<OrderDto> testOrderDtoList() {
+        return Arrays.asList(
+                testOrderDto("orderId1", 1.1, "userId1"),
+                testOrderDto("orderId2", 2.2, "userId2")
+        );
     }
 }
