@@ -1,0 +1,21 @@
+[
+  {
+  "id": "1234567",
+  "products": {
+    "additionalProp1": 10,
+    "additionalProp2": 20,
+    "additionalProp3": 30
+  },
+  "userId": "testtest"
+},
+
+  {
+    "id": "12345678",
+    "products": {
+      "additionalProp1": 30,
+      "additionalProp2": 40,
+      "additionalProp3": 50
+    },
+    "userId": "testtest2"
+  }
+]

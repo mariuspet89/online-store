@@ -8,7 +8,7 @@
     "telephone": "592-653-3873",
     "sex": "F",
     "password": "$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG",
-    "address": {
+    "addressEntity": {
       "address": "Frunzisului Street",
       "city": "Cluj-Napoca",
       "county": "Cluj",
@@ -24,7 +24,7 @@
     "telephone": "123456",
     "sex": "Mr",
     "password": "johny123",
-    "address": {
+    "addressEntity": {
       "address": "sunste blvd, nr 13",
       "city": "LA",
       "county": "california",

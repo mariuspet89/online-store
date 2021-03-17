@@ -56,9 +56,11 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDtoNoId userDtoNoId) {
         LOGGER.info("UserService: creating user");
 
-        String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
-        userDtoNoId.setPassword(encodedPassword);
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
+
+        String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
+        userEntity.setPassword(encodedPassword);
+
         userEntity = userRepository.save(userEntity);
         return modelMapper.map(userEntity, UserDto.class);
     }
@@ -69,8 +71,10 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
+
         modelMapper.map(userDtoNoId, userEntity);
-        userRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
+
         return modelMapper.map(userEntity, UserDto.class);
     }
 
@@ -78,7 +82,8 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String id) {
         LOGGER.info("Deleting user with ID = {}", id);
 
-        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
         userRepository.delete(userEntity);
     }
 }

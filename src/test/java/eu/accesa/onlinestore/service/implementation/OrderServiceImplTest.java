@@ -21,11 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static eu.accesa.onlinestore.utils.UserTestUtils.*;
-import static eu.accesa.onlinestore.utils.ProductTestUtils.*;
 import static eu.accesa.onlinestore.utils.OrderTestUtils.*;
+import static eu.accesa.onlinestore.utils.ProductTestUtils.createProductEnity;
+import static eu.accesa.onlinestore.utils.UserTestUtils.createUserEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -49,23 +50,25 @@ public class OrderServiceImplTest {
     @Test
     public void findAll() {
         when(orderRepository.findAll()).thenReturn(testOrdersList());
-        final List<OrderDto> foundOrders=orderService.findAll();
-        assertNotNull(foundOrders,"List is empty");
-        assertEquals(foundOrders.size(),2,"List size doesn't match actual size");
+        final List<OrderDto> foundOrders = orderService.findAll();
+        assertNotNull(foundOrders, "List is empty");
+        assertEquals(foundOrders.size(), 2, "List size doesn't match actual size");
         verify(orderRepository).findAll();
     }
+
     @Test
-    public void findById(){
-        String id="60377ec00e2cb07c9a3811d3";
-        OrderEntity foundOrder=  testOrderEntity("60377ec00e2cb07c9a3811d3",11.11,createUserEntity("603648273ed85832b440eb99",
-                "John","Doe","jd@mockemail.com","jd","qwerty",
-                "40722112211","male","Toamnei nr.1","Las Vegas","Nevada","440055"));
+    public void findById() {
+        String id = "60377ec00e2cb07c9a3811d3";
+        OrderEntity foundOrder = testOrderEntity("60377ec00e2cb07c9a3811d3", 11.11, createUserEntity("603648273ed85832b440eb99",
+                "John", "Doe", "jd@mockemail.com", "jd", "qwerty",
+                "40722112211", "male", "Toamnei nr.1", "Las Vegas", "Nevada", "440055"));
         when(orderRepository.findById(id)).thenReturn(Optional.of(foundOrder));
-        OrderDto foundOrderDto=orderService.findById(id);
-        assertEquals(foundOrderDto.getId(),id,"ID mismatch");
+        OrderDto foundOrderDto = orderService.findById(id);
+        assertEquals(foundOrderDto.getId(), id, "ID mismatch");
         verify(orderRepository).findById(id);
         verifyNoMoreInteractions(orderRepository);
     }
+
     @Test
     public void createOrder() {
 

@@ -119,11 +119,12 @@ public class ProductRepositoryTest {
                         .isEqualTo(savedProduct));
 
     }
+
     @Test
-    public void testFindByNameIsContainingIgnoreCase(){
+    public void testFindByNameIsContainingIgnoreCase() {
 
         final String name = "BICICLETĂ MTB E-ST 900 27,5 PLUS PORTOCALIU ROCKRIDER";
-        final List <ProductEntity> products =
+        final List<ProductEntity> products =
                 productRepository.findByNameIsContainingIgnoreCase(name);
 
         assertEquals(name, products.get(0).getName());

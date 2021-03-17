@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static eu.accesa.onlinestore.utils.TestUtils.createProductDtoNoId;
-import static eu.accesa.onlinestore.utils.TestUtils.createProductEnity;
+import static eu.accesa.onlinestore.utils.ProductTestUtils.createProductDtoNoId;
+import static eu.accesa.onlinestore.utils.ProductTestUtils.createProductEnity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -136,6 +136,5 @@ public class ProductServiceImplTest {
         verify(productRepository, times(1)).delete(foundProduct);
 
     }
-
 
 }
