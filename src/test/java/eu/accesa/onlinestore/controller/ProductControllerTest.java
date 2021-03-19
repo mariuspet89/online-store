@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.service.implementation.ProductServiceImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -58,6 +59,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @Disabled
     public void testCreateProduct() throws Exception {
         // GIVEN
         ProductDtoNoId request = createProductDto("test1", "test1", "test", 0.0, 0.0,
