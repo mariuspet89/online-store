@@ -24,7 +24,7 @@ public class MongoDbConfig implements InitializingBean, DisposableBean {
 
     private static final String CONNECTION_URL = "mongodb://%s:%d";
 
-    private static String HOST = "dev096.dev.cloud.accesa.eu";
+    private static String HOST = "localhost";
     private static int PORT = 27019;
 
     MongodExecutable mongodExecutable;

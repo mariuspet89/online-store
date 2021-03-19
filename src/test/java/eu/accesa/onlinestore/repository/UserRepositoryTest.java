@@ -6,7 +6,6 @@ import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 // Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB.
 @DataMongoTest(excludeAutoConfiguration = {EmbeddedMongoAutoConfiguration.class})
 @Import(MongoDbConfig.class)
-@Disabled
 class UserRepositoryTest {
 
     // the path to the JSON file
