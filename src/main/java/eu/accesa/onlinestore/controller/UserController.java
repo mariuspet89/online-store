@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a user.")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDtoNoId userDtoNoId) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDtoNoId userDtoNoId) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDtoNoId));
     }
 
