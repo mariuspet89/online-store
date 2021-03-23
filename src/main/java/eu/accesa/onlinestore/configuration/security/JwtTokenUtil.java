@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-@PropertySource(ignoreResourceNotFound = true, value = "src/main/resources/application.properties")
+
 @Component
 public class JwtTokenUtil {
 
