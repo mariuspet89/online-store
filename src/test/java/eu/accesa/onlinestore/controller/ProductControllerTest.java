@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.service.implementation.ProductServiceImpl;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -15,14 +14,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.charset.StandardCharsets;
 
 import static eu.accesa.onlinestore.utils.ProductTestUtils.createProductDto;
 import static eu.accesa.onlinestore.utils.ProductTestUtils.createProductDtoNoId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -45,7 +49,7 @@ class ProductControllerTest {
     private ArgumentCaptor<ProductDtoNoId> productDtoArgumentCaptor;
 
     @Test
-    public void testFindById() throws Exception {
+    void testFindById() throws Exception {
         String productId = "1234";
         ProductDto productDto = createProductDto(productId, "test1", "test", 0.0, 0.0,
                 0, "test1", "test1");
@@ -59,30 +63,80 @@ class ProductControllerTest {
     }
 
     @Test
-    @Disabled
-    public void testCreateProduct() throws Exception {
+    void testCreateProductWithMultipartFile() throws Exception {
         // GIVEN
-        ProductDtoNoId request = createProductDto("test1", "test1", "test", 0.0, 0.0,
-                0, "test1", "test1");
-        ProductDtoNoId createdProduct = createProductDto("test1", "test1", "test", 0.0, 0.0,
-                0, "test1", "test1");
+        ProductDtoNoId requestProductDto = createProductDto(null, "test1", "test", 0.0, 0.0,
+                0, "", "test1");
+        MockMultipartFile file = new MockMultipartFile("file", "bike.png",
+                MediaType.IMAGE_PNG_VALUE, new byte[1]);
+        MockMultipartFile json = new MockMultipartFile("productDto", "json",
+                MediaType.APPLICATION_JSON_VALUE, asJsonString(requestProductDto).getBytes(StandardCharsets.UTF_8));
+
+        ProductDto createdProduct = createProductDto("1", "test1", "test", 0.0, 0.0,
+                0, "imageId", "test1");
+
+        doReturn(createdProduct).when(productService).createProduct(any(ProductDtoNoId.class), any(MultipartFile.class));
+
+        // WHEN
+        mockMvc.perform(multipart("/products")
+                .file(file)
+                .file(json)
+                .accept(MediaType.APPLICATION_JSON))
+                // validate the status and response content type
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                // validate response
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.name", is(requestProductDto.getName())))
+                .andExpect(jsonPath("$.description", is(requestProductDto.getDescription())))
+                .andExpect(jsonPath("$.price", is(requestProductDto.getPrice())))
+                .andExpect(jsonPath("$.rating", is(requestProductDto.getRating())))
+                .andExpect(jsonPath("$.itemsInStock", is(requestProductDto.getItemsInStock())))
+                .andExpect(jsonPath("$.image", is(createdProduct.getImage())))
+                .andExpect(jsonPath("$.brand", is(requestProductDto.getBrand())));
+
+        // THEN
+        verify(productService).createProduct(any(ProductDtoNoId.class), any(MultipartFile.class));
+        verifyNoMoreInteractions(productService);
+    }
+
+    @Test
+    void testCreateProductWithoutMultipartFile() throws Exception {
+        // GIVEN
+        ProductDtoNoId requestProductDto = createProductDto(null, "test1", "test", 0.0, 0.0,
+                0, "imageUrl", "test1");
+        MockMultipartFile json = new MockMultipartFile("productDto", "json",
+                MediaType.APPLICATION_JSON_VALUE, asJsonString(requestProductDto).getBytes(StandardCharsets.UTF_8));
+
+        ProductDto createdProduct = createProductDto("1", "test1", "test", 0.0, 0.0,
+                0, "imageUrl", "test1");
 
         doReturn(createdProduct).when(productService).createProduct(any(ProductDtoNoId.class));
 
         // WHEN
-        mockMvc.perform(post("/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(request)))
+        mockMvc.perform(multipart("/products")
+                .file(json)
+                .accept(MediaType.APPLICATION_JSON))
                 // validate the status and response content type
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                // validate response
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.name", is(requestProductDto.getName())))
+                .andExpect(jsonPath("$.description", is(requestProductDto.getDescription())))
+                .andExpect(jsonPath("$.price", is(requestProductDto.getPrice())))
+                .andExpect(jsonPath("$.rating", is(requestProductDto.getRating())))
+                .andExpect(jsonPath("$.itemsInStock", is(requestProductDto.getItemsInStock())))
+                .andExpect(jsonPath("$.image", is(requestProductDto.getImage())))
+                .andExpect(jsonPath("$.brand", is(requestProductDto.getBrand())));
 
         // THEN
         verify(productService).createProduct(any(ProductDtoNoId.class));
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
-    public void testUpdateProduct() throws Exception {
+    void testUpdateProduct() throws Exception {
         String productId = "1234";
         ProductDtoNoId product = createProductDtoNoId("test1", "test1", 0.0, 0.0,
                 0, "test1", "test1");
