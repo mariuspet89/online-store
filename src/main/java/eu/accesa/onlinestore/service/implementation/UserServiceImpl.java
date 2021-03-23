@@ -1,10 +1,8 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
-import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
-import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.UserService;
@@ -23,11 +21,14 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
+
+    private final EmailServiceImpl emailService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public UserServiceImpl(ModelMapper modelMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserServiceImpl(EmailServiceImpl emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+        this.emailService = emailService;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
@@ -52,16 +53,28 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(userEntity, UserDto.class);
     }
 
+
     @Override
-    public UserDto createUser(UserDtoNoId userDtoNoId) {
+    public UserDto findByEmail(String mail) {
+        return modelMapper.map(userRepository.findByUsername(mail), UserDto.class);
+    }
+
+    @Override
+    public UserDto createUser(UserDtoNoId userDtoNoId) throws Exception {
         LOGGER.info("UserService: creating user");
-
+        List<UserDto> mailChecker = findAll();
+        for (UserDto user : mailChecker) {
+            if (user.getEmail().equals(userDtoNoId.getEmail())) {
+                throw new Exception("This mail is already used!");
+            }
+        }
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
-
         String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
         userEntity.setPassword(encodedPassword);
-
         userEntity = userRepository.save(userEntity);
+
+        emailService.sendSimpleMessage(userEntity.getEmail(),
+                "Hello World", "https://www.google.com/");
         return modelMapper.map(userEntity, UserDto.class);
     }
 
