@@ -107,23 +107,18 @@ public class OrderIntegrationTest {
     @WithMockUser
     @DisplayName("POST //orders - Order created")
     @MongoDataFile(value = "OrderData.json", classType = OrderEntity.class, collectionName = "orders")
-    void createOrder() throws Exception {
+    void createOrderFailure() throws Exception {
         // Setup mocked service
         HashMap<String, Integer> orderedProducts = testHMOrderedProduct("6034068975bb0d4088a441c2", 1);
         OrderDtoNoId orderToBeSavedNoId = testOrderDtoNoId(1.1, "603648273ed85832b440eb99");
         orderToBeSavedNoId.setOrderedProducts(orderedProducts);
-
+        String expectedMessage = "UserEntity with UserID = " + orderToBeSavedNoId.getUserId() + " not found";
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(orderToBeSavedNoId)))
 
-                // Validate the response code and content type
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                // Validate the returned fields
-                .andExpect(jsonPath("$.id",is("orderId")))
-                .andExpect(jsonPath("$.orderValue",is(1.1)))
-                .andExpect(jsonPath("$.userId",is("orderUserId")));
+                // expected status is set to 404 because there is no embedded UserDb set and userService.findById(userId) will throw an EntityNotFoundException
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
