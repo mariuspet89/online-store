@@ -190,6 +190,4 @@ public class OrderRepositoryTest {
                         .ignoringFields("id")
                         .isEqualTo(savedOrder));
     }
-
-
 }
