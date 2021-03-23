@@ -64,8 +64,10 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("UserService: creating user");
         List<UserDto> mailChecker = findAll();
         for (UserDto user : mailChecker) {
-            if (user.getEmail().equals(userDtoNoId.getEmail())) {
-                throw new Exception("This mail is already used!");
+            if (user.getUsername().equals(userDtoNoId.getUsername())) {
+                throw new Exception("This user name is already used!");
+            }else if(user.getEmail().equals((userDtoNoId.getEmail()))){
+                throw new Exception(("This email is already used"));
             }
         }
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
