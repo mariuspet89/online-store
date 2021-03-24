@@ -167,7 +167,7 @@ class UserServiceImplTest {
         // GIVEN
         String userId = "1";
         String oldPassword = "pistols";
-        String newPassword = "Bigpistols";
+        String newPassword = "BigPistols";
         String oldPostalCode = "123456";
         String newPostalCode = "654321";
         UserDtoNoId newUserDataDto = createUserDto(null, "John", "Wayne", "johnwayne@movies.com",
@@ -177,28 +177,23 @@ class UserServiceImplTest {
                 "johnwayne", oldPassword, "123-456-789", "M", "Main Street 1",
                 "Main Street 1", "Nevada", oldPostalCode);
         UserEntity updatedUserEntity = createUserEntity(userId, "John", "Wayne", "johnwayne@movies.com",
-                "johnwayne", newPassword, "123-456-789", "M", "Main Street 1",
+                "johnwayne", "$2y$12$DHCALr9bzYqQ7VW0k0hke.OBbzQ3Cv4EFeqc6MhwTkiBCR5s3hIse", "123-456-789", "M", "Main Street 1",
                 "Main Street 1", "Nevada", newPostalCode);
 
         doReturn(Optional.of(initialUserEntity)).when(userRepository).findById(anyString());
-        doReturn(updatedUserEntity).when(userRepository).save(userEntityArgumentCaptor.capture());
+        when(userRepository.save(initialUserEntity)).thenReturn(updatedUserEntity);
 
         // WHEN
         UserDto updatedUserDto = userService.updateUser(userId, newUserDataDto);
 
         // THEN
-        verify(userRepository).save(any(UserEntity.class));
+        verify(userRepository).save(initialUserEntity);
         verifyNoMoreInteractions(userRepository);
-
-        UserEntity savedUserEntity = userEntityArgumentCaptor.getValue();
-        assertThat(savedUserEntity).usingRecursiveComparison()
-                .ignoringFields("id") // becomes null due to the UserDtoNoId
-                .isEqualTo(updatedUserEntity);
-
         assertNotNull(updatedUserDto);
-        assertThat(updatedUserDto).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(newUserDataDto);
+        assertEquals(updatedUserDto.getId(),userId,"ID mismatch !!");
+        assertEquals(updatedUserDto.getFirstName(),"John");
+        assertEquals(updatedUserDto.getLastName(),"Wayne");
+        assertEquals(updatedUserDto.getPassword(),"$2y$12$DHCALr9bzYqQ7VW0k0hke.OBbzQ3Cv4EFeqc6MhwTkiBCR5s3hIse");
     }
 
     @Test
