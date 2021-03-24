@@ -113,13 +113,13 @@ public class OrderIntegrationTest {
         OrderDtoNoId orderToBeSavedNoId = testOrderDtoNoId(1.1, "603648273ed85832b440eb99");
         orderToBeSavedNoId.setOrderedProducts(orderedProducts);
         String expectedMessage = "UserEntity with UserID = " + orderToBeSavedNoId.getUserId() + " not found";
-        mockMvc.perform(post("/orders")
+        ResultActions result=mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(orderToBeSavedNoId)))
+                .content(asJsonString(orderToBeSavedNoId)));
 
                 // expected status is set to 404 because there is no embedded UserDb set and userService.findById(userId) will throw an EntityNotFoundException
-                .andExpect(status().is4xxClientError());
-    }
+               result.andExpect(status().is4xxClientError());
+        }
 
     @Test
     @WithMockUser
