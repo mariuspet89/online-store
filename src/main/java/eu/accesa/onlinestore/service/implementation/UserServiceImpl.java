@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -99,6 +98,8 @@ public class UserServiceImpl implements UserService {
                 () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
 
         modelMapper.map(userDtoNoId, userEntity);
+        String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
+        userEntity.setPassword(encodedPassword);
         userEntity = userRepository.save(userEntity);
 
         return modelMapper.map(userEntity, UserDto.class);
