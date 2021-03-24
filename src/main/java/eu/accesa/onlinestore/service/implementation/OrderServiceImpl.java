@@ -15,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,14 +25,16 @@ import static java.util.stream.Collectors.toList;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
-
+    private final EmailServiceImpl emailService;
     private final ModelMapper mapper;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    public OrderServiceImpl(ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository,
+    public OrderServiceImpl(EmailServiceImpl emailService, ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository,
                             UserRepository userRepository) {
+        this.emailService = emailService;
         this.mapper = mapper;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
@@ -71,11 +75,14 @@ public class OrderServiceImpl implements OrderService {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
-
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
 
         orderEntity = orderRepository.save(orderEntity);
+
+        emailService.sendSimpleMessage(userEntity.getEmail(),
+                "Your Order", " Your order has been placed, order id\n " + orderEntity.getId()
+                        + " with order date " + orderEntity.getOrderDate());
         return mapper.map(orderEntity, OrderDto.class);
 
     }
