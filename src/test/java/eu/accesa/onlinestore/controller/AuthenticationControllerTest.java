@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.model.dto.AuthRequestDto;
 import eu.accesa.onlinestore.model.entity.UserEntity;
-import org.junit.jupiter.api.Disabled;
+import eu.accesa.onlinestore.service.implementation.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static eu.accesa.onlinestore.utils.UserTestUtils.createUserEntity;
@@ -27,9 +28,9 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @WebMvcTest(AuthenticationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {AuthenticationController.class})
@@ -42,6 +43,9 @@ class AuthenticationControllerTest {
 
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
+
+    @MockBean
+    UserServiceImpl userService;
 
     @SpyBean
     private ModelMapper modelMapper;
@@ -117,6 +121,29 @@ class AuthenticationControllerTest {
                 .content(asJsonString(requestDto)))
                 // validate status
                 .andExpect(status().isUnauthorized());
+    }
+    @Test
+    void userConfirmation() throws Exception {
+        //Given
+        String userId="userId";
+        String username = "johnwayne";
+        String password = "test";
+        UserEntity user=createUserEntity("userId","John", "Wayne", "johnwayne@movies.com",
+                username, password, "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+        user.setEnabled(true);
+        String message="Your account is confirmed!";
+
+        when(userService.confirmUser(userId)).thenReturn(message);
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String userJson = objectMapper.writeValueAsString(user);
+        final ResultActions resultActions = mockMvc.perform(put("/userConfirmation")
+                .param("userId",userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().string("Your account is confirmed!"));
     }
 
     private String asJsonString(final Object object) {
