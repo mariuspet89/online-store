@@ -26,7 +26,7 @@ public class UserEntity implements UserDetails {
     private String password;
     private AddressEntity addressEntity;
 
-    private Boolean enabled = true;
+    private Boolean enabled = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -132,6 +132,7 @@ public class UserEntity implements UserDetails {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
 
     @Override
     public boolean equals(Object o) {

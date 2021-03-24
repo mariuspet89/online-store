@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -76,8 +77,18 @@ public class UserServiceImpl implements UserService {
         userEntity = userRepository.save(userEntity);
 
         emailService.sendSimpleMessage(userEntity.getEmail(),
-                "Hello World", "https://www.google.com/");
+                "Confirmation Email", "Please verify your account by pressing the link below:\n" +
+                        "http://18.224.7.25:5000/userConfirmation?userId=" + userEntity.getId());
         return modelMapper.map(userEntity, UserDto.class);
+    }
+
+    public String confirmUser(String userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", userId));
+
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+        return "Your account is confirmed!";
     }
 
     @Override
