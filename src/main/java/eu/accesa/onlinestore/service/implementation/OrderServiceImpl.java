@@ -88,6 +88,10 @@ public class OrderServiceImpl implements OrderService {
                 "Invoice", "Test Subject",
                 "C:\\Users\\doru.varga\\Desktop" +
                         "\\internship\\onlineshop\\online-store\\src\\main\\resources\\InvoiceTest.txt");
+
+        String orderIdToInvoice = orderEntity.getId();
+        OrderEntity orderToInvoice=orderRepository.findById(orderEntity.getId()).orElseThrow(()->new EntityNotFoundException(OrderEntity.class.getName(),"OrderId",orderIdToInvoice));
+        pdfGeneratorService.generateInvoice(orderToInvoice);
         return mapper.map(orderEntity, OrderDto.class);
 
     }
