@@ -47,6 +47,9 @@ public class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
+    @Mock
+    private EmailServiceImpl emailService;
+
     @Test
     public void findAll() {
         when(orderRepository.findAll()).thenReturn(testOrdersList());
