@@ -14,11 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -68,6 +65,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(SWAGGER_AUTH_WHITELIST).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/users").permitAll()
+                .mvcMatchers(HttpMethod.PUT,"/userConfirmation").permitAll()
                 // private endpoints
                 .anyRequest().authenticated();
 

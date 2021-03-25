@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendSimpleMessage(userEntity.getEmail(),
                 "Confirmation Email", "Please verify your account by pressing the link below:\n" +
-                        "http://18.224.7.25:5000/userConfirmation?userId=" + userEntity.getId());
+                        "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
         return modelMapper.map(userEntity, UserDto.class);
     }
 
