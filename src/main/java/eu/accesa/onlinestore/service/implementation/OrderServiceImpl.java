@@ -83,6 +83,10 @@ public class OrderServiceImpl implements OrderService {
         emailService.sendSimpleMessage(userEntity.getEmail(),
                 "Your Order", " Your order has been placed, order id\n " + orderEntity.getId()
                         + " with order date " + orderEntity.getOrderDate());
+
+        emailService.sendMessageWithAttachment(userEntity.getEmail(),
+                "Invoice","Test Subject",
+                "C:\\Users\\doru.varga\\Desktop\\internship\\onlineshop\\online-store\\src\\main\\resources\\InvoiceTest.txt");
         return mapper.map(orderEntity, OrderDto.class);
 
     }
