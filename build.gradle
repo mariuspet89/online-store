@@ -47,7 +47,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/e-iceblue/spire.pdf
 	// https://mvnrepository.com/artifact/e-iceblue/spire.doc.free
 	implementation group: 'e-iceblue', name: 'spire.doc.free', version: '3.9.0'
-
+// https://mvnrepository.com/artifact/e-iceblue/spire.pdf
+	implementation group: 'e-iceblue', name: 'spire.pdf', version: '3.4.2'
 }
 configurations {
 	compile.exclude group: 'org.slf4j', module: 'slf4j-simple'

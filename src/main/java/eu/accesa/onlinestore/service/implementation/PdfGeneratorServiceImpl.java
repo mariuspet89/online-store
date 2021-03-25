@@ -30,7 +30,7 @@ public class PdfGeneratorServiceImpl implements PdfGeneratorService {
         ) {
             if (object instanceof Field) {
                 Field field = (Field) object;
-                field.setCode(String.format("=D%d*0.05\\# \"0.00\"", 3 + rowNum));
+                field.setCode(String.format("=D%d*0.19\\# \"0.00\"", 3 + rowNum));
             }
             break;
         }
@@ -39,7 +39,7 @@ public class PdfGeneratorServiceImpl implements PdfGeneratorService {
         ) {
             if (object instanceof Field) {
                 Field field = (Field) object;
-                field.setCode(String.format("=D%d+D%d\\# \"$#,##0.00\"", 3 + rowNum, 5 + rowNum));
+                field.setCode(String.format("=D%d+D%d\\# \"RON#,##0.00\"", 3 + rowNum, 5 + rowNum));
             }
             break;
         }
@@ -72,7 +72,7 @@ public class PdfGeneratorServiceImpl implements PdfGeneratorService {
         //create a document instance
         Document doc= new Document();
         //load the template file
-        doc.loadFromFile("/Invoice-Template.docx");
+        doc.loadFromFile("C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice-Template.docx");
         //replace text in the document
         doc.replace("#InvoiceNum", order.getId(), true, true);
         doc.replace("#CompanyName", order.getUser().getLastName()+" "+order.getUser().getFirstName(), true, true);
@@ -86,10 +86,10 @@ public class PdfGeneratorServiceImpl implements PdfGeneratorService {
 
         //define purchase data
         String[][] purchaseData = {
-                new String[]{"Product A", "5", "22.8"},
-                new String[]{"Product B", "4", "35.3"},
-                new String[]{"Product C", "2", "52.9"},
-                new String[]{"Product D", "3", "25"},
+                new String[]{"Bicicleta MTB", "1", "22.8"},
+                new String[]{"Bicicleta B", "4", "35.3"},
+                new String[]{"Bicicleta C", "2", "52.9"},
+                new String[]{"Bicicleta D", "3", "25"},
         };
         //write the purchase data to the document
         writeDataToDocument(doc, purchaseData);
