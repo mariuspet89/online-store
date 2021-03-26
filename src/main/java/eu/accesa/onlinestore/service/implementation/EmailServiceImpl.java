@@ -5,16 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
-//import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-
 import java.io.File;
+
+//import org.springframework.mail.MailSender;
 
 
 @Service
@@ -50,15 +50,17 @@ public class EmailServiceImpl implements EmailService {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             // pass 'true' to the constructor to create a multipart message
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            MimeMessageHelper helper = new MimeMessageHelper(message, true,"UTF-8");
 
             helper.setFrom(NOREPLY_ADDRESS);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text);
+            FileSystemResource resource = new FileSystemResource(new File("C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf"));
+            helper.addAttachment("Invoice.pdf",resource);
 
-            FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
-            helper.addAttachment("Invoice", file);
+            /*FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
+            helper.addAttachment("Invoice", file);*/
 
             emailSender.send(message);
         } catch (MessagingException e) {
