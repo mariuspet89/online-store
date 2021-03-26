@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -53,10 +54,30 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(userEntity, UserDto.class);
     }
 
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 
     @Override
-    public UserDto findByEmail(String mail) {
-        return modelMapper.map(userRepository.findByUsername(mail), UserDto.class);
+    public UserDto findByUsername(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "username", username));
+
+        return modelMapper.map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public UserDto findByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "username", email));
+
+        return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Override
