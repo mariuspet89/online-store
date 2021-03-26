@@ -117,9 +117,9 @@ Each element of it is a String array that can be set up like this: */
         doc.saveToFile("Invoice.pdf", FileFormat.PDF);
         return doc;
     }
-    public String convertWithStream(HashMap<String,Integer> map) {
-        String mapAsString = map.keySet().stream()
-                .map(key -> key + "," + map.get(key))
+    public String convertWithStream(HashMap<String,Integer> orderedProducts) {
+        String mapAsString = orderedProducts.keySet().stream()
+                .map(key -> key + "," + orderedProducts.get(key))
                 .collect(Collectors.joining("", "{", "}"));
         return mapAsString;
     }
