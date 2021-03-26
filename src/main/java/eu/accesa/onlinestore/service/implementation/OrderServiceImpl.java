@@ -15,9 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,15 +28,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private final PdfGeneratorServiceImpl pdfGeneratorService;
 
-    public OrderServiceImpl(EmailServiceImpl emailService, ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository,
-                            UserRepository userRepository) {
+    public OrderServiceImpl(EmailServiceImpl emailService, ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository, PdfGeneratorServiceImpl pdfGeneratorService) {
         this.emailService = emailService;
         this.mapper = mapper;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.pdfGeneratorService = pdfGeneratorService;
     }
 
     @Override
@@ -84,14 +82,15 @@ public class OrderServiceImpl implements OrderService {
                 "Your Order", " Your order has been placed, order id\n " + orderEntity.getId()
                         + " with order date " + orderEntity.getOrderDate());
 
-        emailService.sendMessageWithAttachment(userEntity.getEmail(),
-                "Invoice", "Test Subject",
-                "C:\\Users\\doru.varga\\Desktop" +
-                        "\\internship\\onlineshop\\online-store\\src\\main\\resources\\InvoiceTest.txt");
+
 
         String orderIdToInvoice = orderEntity.getId();
         OrderEntity orderToInvoice=orderRepository.findById(orderEntity.getId()).orElseThrow(()->new EntityNotFoundException(OrderEntity.class.getName(),"OrderId",orderIdToInvoice));
-        pdfGeneratorService.generateInvoice(orderToInvoice);
+        pdfGeneratorService.generateInvoiceHashMapp(orderToInvoice);
+
+        emailService.sendMessageWithAttachment(userEntity.getEmail(),
+                "Invoice", "Please find the invoice generated for your order",
+                "C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf");
         return mapper.map(orderEntity, OrderDto.class);
 
     }
