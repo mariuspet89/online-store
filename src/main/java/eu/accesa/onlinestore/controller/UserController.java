@@ -32,6 +32,26 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
     }
 
+    @GetMapping("/existsByUsername")
+    public ResponseEntity<Boolean> existsByUsername(@RequestParam String username) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.existsByUsername(username));
+    }
+
+    @GetMapping("/findByUsername")
+    public ResponseEntity<UserDto> findByUsername(@RequestParam String username) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findByUsername(username));
+    }
+
+    @GetMapping("/existsByEmail")
+    public ResponseEntity<Boolean> existsByEmail(@RequestParam String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.existsByEmail(email));
+    }
+
+    @GetMapping("/findByEmail")
+    public ResponseEntity<UserDto> findByEmail(@RequestParam() String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findByEmail(email));
+    }
+
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a user.")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDtoNoId userDtoNoId) throws Exception {
