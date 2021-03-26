@@ -86,7 +86,8 @@ public class OrderServiceImpl implements OrderService {
 
         emailService.sendMessageWithAttachment(userEntity.getEmail(),
                 "Invoice", "Test Subject",
-                "\\resources\\InvoiceTest.txt");
+                "C:\\Users\\doru.varga\\Desktop" +
+                        "\\internship\\onlineshop\\online-store\\src\\main\\resources\\InvoiceTest.txt");
         return mapper.map(orderEntity, OrderDto.class);
 
     }
