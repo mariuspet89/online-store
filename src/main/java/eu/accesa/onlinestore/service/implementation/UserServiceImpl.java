@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(UserEntity.class.getName(), "username", email));
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "email", email));
 
         return modelMapper.map(userEntity, UserDto.class);
     }
@@ -102,15 +102,6 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(userEntity, UserDto.class);
     }
 
-    public String confirmUser(String userId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", userId));
-
-        userEntity.setEnabled(true);
-        userRepository.save(userEntity);
-        return "Your account is confirmed!";
-    }
-
     @Override
     public UserDto updateUser(String id, UserDtoNoId userDtoNoId) {
         LOGGER.info("Updating user with ID = {}", id);
@@ -133,5 +124,15 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", id));
         userRepository.delete(userEntity);
+    }
+
+    @Override
+    public String confirmUser(String userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", userId));
+
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+        return "Your account is confirmed!";
     }
 }

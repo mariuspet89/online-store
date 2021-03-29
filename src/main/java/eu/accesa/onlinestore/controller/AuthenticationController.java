@@ -4,6 +4,7 @@ import eu.accesa.onlinestore.model.dto.AuthRequestDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
+import eu.accesa.onlinestore.service.UserService;
 import eu.accesa.onlinestore.service.implementation.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +25,10 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final ModelMapper modelMapper;
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-                                    ModelMapper modelMapper, UserServiceImpl userService) {
+                                    ModelMapper modelMapper, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.modelMapper = modelMapper;

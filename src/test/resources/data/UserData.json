@@ -13,7 +13,8 @@
       "city": "Cluj-Napoca",
       "county": "Cluj",
       "postalCode": "123456"
-    }
+    },
+    "enabled": true
   },
   {
     "id": "604107dde3835d7496be4e3d",
@@ -29,7 +30,7 @@
       "city": "LA",
       "county": "california",
       "postalCode": "542545"
-    }
+    },
+    "enabled": false
   }
-
 ]
