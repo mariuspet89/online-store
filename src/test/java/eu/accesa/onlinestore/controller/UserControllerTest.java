@@ -129,6 +129,112 @@ class UserControllerTest {
     }
 
     @Test
+    void testExistsByUsername() throws Exception {
+        // GIVEN
+        String username = "johnwayne";
+
+        doReturn(true).when(userService).existsByUsername(username);
+
+        // WHEN, THEN
+        mockMvc.perform(get("/users/existsByUsername")
+                .param("username", username))
+                // verify status and response type
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // verify response
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void testFindByUsername() throws Exception {
+        // GIVEN
+        UserDto mockUser = createUserDto("1", "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Las Vegas", "Nevada", "123456");
+        AddressEntity address = mockUser.getAddressEntity();
+        String username = mockUser.getUsername();
+
+        doReturn(mockUser).when(userService).findByUsername(username);
+
+        // WHEN
+        mockMvc.perform(get("/users/findByUsername")
+                .param("username", username))
+                // validate the status and response content type
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // validate response
+                .andExpect(jsonPath("$.id", is(mockUser.getId())))
+                .andExpect(jsonPath("$.firstName", is(mockUser.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(mockUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(mockUser.getEmail())))
+                .andExpect(jsonPath("$.username", is(username)))
+                .andExpect(jsonPath("$.password", is(mockUser.getPassword())))
+                .andExpect(jsonPath("$.telephone", is(mockUser.getTelephone())))
+                .andExpect(jsonPath("$.sex", is(mockUser.getSex())))
+                .andExpect(jsonPath("$.addressEntity.address", is(address.getAddress())))
+                .andExpect(jsonPath("$.addressEntity.city", is(address.getCity())))
+                .andExpect(jsonPath("$.addressEntity.county", is(address.getCounty())))
+                .andExpect(jsonPath("$.addressEntity.postalCode", is(address.getPostalCode())));
+
+        // THEN
+        verify(userService).findByUsername(username);
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    void testExistsByEmail() throws Exception {
+        // GIVEN
+        String email = "johnwayne@email.com";
+
+        doReturn(true).when(userService).existsByEmail(email);
+
+        // WHEN, THEN
+        mockMvc.perform(get("/users/existsByEmail")
+                .param("email", email))
+                // verify status and response type
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // verify response
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void testFindByEmail() throws Exception {
+        // GIVEN
+        UserDto mockUser = createUserDto("1", "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Las Vegas", "Nevada", "123456");
+        AddressEntity address = mockUser.getAddressEntity();
+        String email = mockUser.getEmail();
+
+        doReturn(mockUser).when(userService).findByEmail(email);
+
+        // WHEN
+        mockMvc.perform(get("/users/findByEmail")
+                .param("email", email))
+                // validate the status and response content type
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // validate response
+                .andExpect(jsonPath("$.id", is(mockUser.getId())))
+                .andExpect(jsonPath("$.firstName", is(mockUser.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(mockUser.getLastName())))
+                .andExpect(jsonPath("$.email", is(email)))
+                .andExpect(jsonPath("$.username", is(mockUser.getUsername())))
+                .andExpect(jsonPath("$.password", is(mockUser.getPassword())))
+                .andExpect(jsonPath("$.telephone", is(mockUser.getTelephone())))
+                .andExpect(jsonPath("$.sex", is(mockUser.getSex())))
+                .andExpect(jsonPath("$.addressEntity.address", is(address.getAddress())))
+                .andExpect(jsonPath("$.addressEntity.city", is(address.getCity())))
+                .andExpect(jsonPath("$.addressEntity.county", is(address.getCounty())))
+                .andExpect(jsonPath("$.addressEntity.postalCode", is(address.getPostalCode())));
+
+        // THEN
+        verify(userService).findByEmail(email);
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
     void testCreateUser() throws Exception {
         // GIVEN
         UserDtoNoId requestDto = createUserDto(null, "John", "Wayne", "johnwayne@movies.com",

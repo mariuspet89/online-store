@@ -34,6 +34,9 @@ class UserServiceImplTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Mock
+    private EmailServiceImpl emailService;
+
+    @Mock
     private UserRepository userRepository;
 
     @InjectMocks
@@ -41,9 +44,6 @@ class UserServiceImplTest {
 
     @Captor
     private ArgumentCaptor<UserEntity> userEntityArgumentCaptor;
-
-    @Mock
-    private EmailServiceImpl emailService;
 
     @Test
     void testFindAll() {
@@ -122,6 +122,166 @@ class UserServiceImplTest {
     }
 
     @Test
+    void testExistsByUsernameTrue() {
+        // GIVEN
+        String username = "user";
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
+
+        // WHEN
+        boolean existsByUsername = userService.existsByUsername(username);
+
+        // THEN
+        assertTrue(existsByUsername);
+    }
+
+    @Test
+    void testExistsByUsernameFalse() {
+        // GIVEN
+        String username = "fakeUser";
+        when(userRepository.existsByUsername(anyString())).thenReturn(false);
+
+        // WHEN
+        boolean existsByUsername = userService.existsByUsername(username);
+
+        // THEN
+        assertFalse(existsByUsername);
+    }
+
+    @Test
+    void testFindByUsernameSuccess() {
+        // GIVEN
+        String username = "johnwayne";
+        UserEntity mockUser = createUserEntity("1", "John", "Wayne", "johnwayne@movies.com",
+                username, "pistols", "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+        AddressEntity mockAddress = mockUser.getAddressEntity();
+
+        doReturn(Optional.of(mockUser)).when(userRepository).findByUsername(anyString());
+
+        // WHEN
+        UserDto userDto = userService.findByUsername(username);
+
+        // THEN
+        verify(userRepository).findByUsername(username);
+        verifyNoMoreInteractions(userRepository);
+
+        assertNotNull(userDto);
+        assertEquals(mockUser.getId(), userDto.getId());
+        assertEquals(mockUser.getFirstName(), userDto.getFirstName());
+        assertEquals(mockUser.getLastName(), userDto.getLastName());
+        assertEquals(mockUser.getEmail(), userDto.getEmail());
+        assertEquals(username, userDto.getUsername());
+        assertEquals(mockUser.getPassword(), userDto.getPassword());
+        assertEquals(mockUser.getTelephone(), userDto.getTelephone());
+        assertEquals(mockUser.getSex(), userDto.getSex());
+
+        AddressEntity addressEntity = userDto.getAddressEntity();
+        assertNotNull(addressEntity);
+        assertEquals(mockAddress.getAddress(), addressEntity.getAddress());
+        assertEquals(mockAddress.getCity(), addressEntity.getCity());
+        assertEquals(mockAddress.getCounty(), addressEntity.getCounty());
+        assertEquals(mockAddress.getPostalCode(), addressEntity.getPostalCode());
+    }
+
+    @Test
+    void testFindByUsernameFailure() {
+        // GIVEN
+        String username = "johnwayne";
+        String expectedMessage = "UserEntity with username = " + username + " not found";
+        doReturn(Optional.empty()).when(userRepository).findByUsername(anyString());
+
+        // WHEN
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> userService.findByUsername(username));
+
+        // THEN
+        verify(userRepository).findByUsername(username);
+        verifyNoMoreInteractions(userRepository);
+
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testExistsByEmailTrue() {
+        // GIVEN
+        String email = "user@email.com";
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        // WHEN
+        boolean existsByEmail = userService.existsByEmail(email);
+
+        // THEN
+        assertTrue(existsByEmail);
+    }
+
+    @Test
+    void testExistsByEmailFalse() {
+        // GIVEN
+        String email = "user@email.com";
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+
+        // WHEN
+        boolean existsByEmail = userService.existsByEmail(email);
+
+        // THEN
+        assertFalse(existsByEmail);
+    }
+
+    @Test
+    void testFindByEmailSuccess() {
+        // GIVEN
+        String email = "johnwayne@movies.com";
+        UserEntity mockUser = createUserEntity("1", "John", "Wayne", email,
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+        AddressEntity mockAddress = mockUser.getAddressEntity();
+
+        doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(anyString());
+
+        // WHEN
+        UserDto userDto = userService.findByEmail(email);
+
+        // THEN
+        verify(userRepository).findByEmail(email);
+        verifyNoMoreInteractions(userRepository);
+
+        assertNotNull(userDto);
+        assertEquals(mockUser.getId(), userDto.getId());
+        assertEquals(mockUser.getFirstName(), userDto.getFirstName());
+        assertEquals(mockUser.getLastName(), userDto.getLastName());
+        assertEquals(email, userDto.getEmail());
+        assertEquals(mockUser.getUsername(), userDto.getUsername());
+        assertEquals(mockUser.getPassword(), userDto.getPassword());
+        assertEquals(mockUser.getTelephone(), userDto.getTelephone());
+        assertEquals(mockUser.getSex(), userDto.getSex());
+
+        AddressEntity addressEntity = userDto.getAddressEntity();
+        assertNotNull(addressEntity);
+        assertEquals(mockAddress.getAddress(), addressEntity.getAddress());
+        assertEquals(mockAddress.getCity(), addressEntity.getCity());
+        assertEquals(mockAddress.getCounty(), addressEntity.getCounty());
+        assertEquals(mockAddress.getPostalCode(), addressEntity.getPostalCode());
+    }
+
+    @Test
+    void testFindByEmailFailure() {
+        // GIVEN
+        String email = "johnwayne";
+        String expectedMessage = "UserEntity with email = " + email + " not found";
+        doReturn(Optional.empty()).when(userRepository).findByEmail(anyString());
+
+        // WHEN
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> userService.findByEmail(email));
+
+        // THEN
+        verify(userRepository).findByEmail(email);
+        verifyNoMoreInteractions(userRepository);
+
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void testCreateUser() throws Exception {
         // GIVEN
         String originalPassword = "pistols";
@@ -142,9 +302,8 @@ class UserServiceImplTest {
         // verify password encoding
         verify(passwordEncoder).encode(originalPassword);
 
-        // verified saved entity
+        // verify saved entity
         verify(userRepository).save(any(UserEntity.class));
-
 
         UserEntity entityToSave = userEntityArgumentCaptor.getValue();
         assertThat(entityToSave)
@@ -152,7 +311,7 @@ class UserServiceImplTest {
                 .ignoringFields("id", "password")
                 .isEqualTo(createdUserEntity);
 
-        // verified retrieved user DTO
+        // verify retrieved user DTO
         assertNotNull(newUser);
         assertThat(newUser).usingRecursiveComparison()
                 .ignoringFields("id", "password")
@@ -190,11 +349,12 @@ class UserServiceImplTest {
         // THEN
         verify(userRepository).save(initialUserEntity);
         verifyNoMoreInteractions(userRepository);
+
         assertNotNull(updatedUserDto);
-        assertEquals(updatedUserDto.getId(),userId,"ID mismatch !!");
-        assertEquals(updatedUserDto.getFirstName(),"John");
-        assertEquals(updatedUserDto.getLastName(),"Wayne");
-        assertEquals(updatedUserDto.getPassword(),"$2y$12$DHCALr9bzYqQ7VW0k0hke.OBbzQ3Cv4EFeqc6MhwTkiBCR5s3hIse");
+        assertEquals(updatedUserDto.getId(), userId, "ID mismatch !!");
+        assertEquals("John", updatedUserDto.getFirstName());
+        assertEquals("Wayne", updatedUserDto.getLastName());
+        assertEquals("$2y$12$DHCALr9bzYqQ7VW0k0hke.OBbzQ3Cv4EFeqc6MhwTkiBCR5s3hIse", updatedUserDto.getPassword());
     }
 
     @Test
@@ -243,5 +403,46 @@ class UserServiceImplTest {
         // THEN
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testConfirmUserSuccess() {
+        // GIVEN
+        final String userId = "1";
+        UserEntity mockUser = createUserEntity(userId, "John", "Wayne", "johnwayne@movies.com",
+                "johnwayne", "pistols", "123-456-789", "M", "Main Street 1",
+                "Main Street 1", "Nevada", "123456");
+
+        doReturn(Optional.of(mockUser)).when(userRepository).findById(anyString());
+
+        when(userRepository.save(userEntityArgumentCaptor.capture())).thenReturn(mockUser);
+
+        // WHEN
+        String confirmationMessage = userService.confirmUser(userId);
+
+        // THEN
+        assertTrue(userEntityArgumentCaptor.getValue().isEnabled());
+
+        verify(userRepository).findById(anyString());
+        verify(userRepository).save(any(UserEntity.class));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void testConfirmUserFailure() {
+        // GIVEN
+        String expectedMessage = "UserEntity with UserID = 1 not found";
+        doReturn(Optional.empty()).when(userRepository).findById(anyString());
+
+        // WHEN
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> userService.confirmUser("1"));
+
+        // THEN
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+        verify(userRepository).findById(anyString());
+        verifyNoMoreInteractions(userRepository);
     }
 }

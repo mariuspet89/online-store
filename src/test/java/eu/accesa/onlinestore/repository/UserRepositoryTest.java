@@ -59,7 +59,7 @@ class UserRepositoryTest {
         List<UserEntity> users = userRepository.findAll();
 
         // THEN
-        assertEquals(2, users.size(), "findAll() should return 2 users!");
+        assertThat(users).as("findAll() should have returned 2 users!").hasSize(2);
     }
 
     @Test
@@ -89,7 +89,7 @@ class UserRepositoryTest {
             assertEquals("california", addressEntity.getCounty());
             assertEquals("542545", addressEntity.getPostalCode());
 
-            assertTrue(user.getEnabled());
+            assertFalse(user.getEnabled());
         });
     }
 
@@ -103,6 +103,30 @@ class UserRepositoryTest {
 
         // THEN
         assertFalse(userEntityOptional.isPresent(), "A user with ID = " + id + " should not be present!");
+    }
+    
+    @Test
+    void existsByUsernameSuccess() {
+        // GIVEN
+        final String username = "johnytravolta";
+        
+        // WHEN
+        boolean existsByUsername = userRepository.existsByUsername(username);
+        
+        // THEN
+        assertTrue(existsByUsername);
+    }
+
+    @Test
+    void existsByUsernameFailure() {
+        // GIVEN
+        final String username = "fakeUsername";
+
+        // WHEN
+        boolean existsByUsername = userRepository.existsByUsername(username);
+
+        // THEN
+        assertFalse(existsByUsername);
     }
 
     @Test
@@ -132,8 +156,87 @@ class UserRepositoryTest {
             assertEquals("california", addressEntity.getCounty());
             assertEquals("542545", addressEntity.getPostalCode());
 
+            assertFalse(user.getEnabled());
+        });
+    }
+
+    @Test
+    void testFindByUsernameFailure() {
+        // GIVEN
+        final String username = "fakeUsername";
+
+        // WHEN
+        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
+
+        // THEN
+        assertFalse(userEntityOptional.isPresent(), "A user with username = " + username + " should not be present!");
+    }
+
+    @Test
+    void existsByEmailSuccess() {
+        // GIVEN
+        final String email = "lrozier2@networksolutions.com";
+
+        // WHEN
+        boolean existsByEmail = userRepository.existsByEmail(email);
+
+        // THEN
+        assertTrue(existsByEmail);
+    }
+
+    @Test
+    void existsByEmailFailure() {
+        // GIVEN
+        final String email = "fakeEmail";
+
+        // WHEN
+        boolean existsByEmail = userRepository.existsByEmail(email);
+
+        // THEN
+        assertFalse(existsByEmail);
+    }
+
+    @Test
+    void testFindByEmailSuccess() {
+        // GIVEN
+        final String email = "lrozier2@networksolutions.com";
+
+        // WHEN
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+
+        // THEN
+        assertTrue(userEntityOptional.isPresent(), "A user with email = " + email + " should be present!");
+        userEntityOptional.ifPresent(user -> {
+            assertEquals("603648273ed85832b440eb99", user.getId());
+            assertEquals("Lilah", user.getFirstName());
+            assertEquals("Rozier", user.getLastName());
+            assertEquals(email, user.getEmail());
+            assertEquals("lrozier2", user.getUsername());
+            assertEquals("592-653-3873", user.getTelephone());
+            assertEquals("F", user.getSex());
+            assertEquals("$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG", user.getPassword());
+
+            final AddressEntity addressEntity = user.getAddressEntity();
+            assertNotNull(addressEntity);
+            assertEquals("Frunzisului Street", addressEntity.getAddress());
+            assertEquals("Cluj-Napoca", addressEntity.getCity());
+            assertEquals("Cluj", addressEntity.getCounty());
+            assertEquals("123456", addressEntity.getPostalCode());
+
             assertTrue(user.getEnabled());
         });
+    }
+
+    @Test
+    void testFindByEmailFailure() {
+        // GIVEN
+        final String email = "fakeEmail";
+
+        // WHEN
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+
+        // THEN
+        assertFalse(userEntityOptional.isPresent(), "A user with email = " + email + " should not be present!");
     }
 
     @Test
@@ -194,7 +297,7 @@ class UserRepositoryTest {
         // WHEN
         userRepository.deleteById(id);
 
-        // THEN
-        assertEquals(1, userRepository.findAll().size());
+        // THEN`
+        assertThat(userRepository.findAll()).hasSize(1);
     }
 }

@@ -24,4 +24,6 @@ public interface UserService {
     UserDto updateUser(String id, UserDtoNoId userDtoNoId);
 
     void deleteUser(String id);
+
+    String confirmUser(String userId);
 }
