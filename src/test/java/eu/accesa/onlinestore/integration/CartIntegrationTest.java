@@ -50,7 +50,9 @@ public class CartIntegrationTest {
      * @return The autowired MongoTemplate instance.
      */
 
-    public MongoTemplate getMongoTemplate() { return mongoTemplate;}
+    public MongoTemplate getMongoTemplate() {
+        return mongoTemplate;
+    }
 
     @Test
     @WithMockUser
@@ -61,18 +63,19 @@ public class CartIntegrationTest {
         String cartId = "1234567";
 
         //When, Then
-        mockMvc.perform(get("/carts/{id}",cartId))
+        mockMvc.perform(get("/carts/{id}", cartId))
                 //Validate the response code and content type
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(cartId)))
                 .andExpect(jsonPath("$.userId", is("testtest")));
     }
+
     @Test
     @WithMockUser
     @DisplayName("GET //carts/users/{userId} - Found")
     @MongoDataFile(value = "CartData.json", classType = CartEntity.class, collectionName = "carts")
-    void findByUserId() throws Exception{
+    void findByUserId() throws Exception {
         String userId = "testtest";
         ResultActions perform = mockMvc.perform(get("/carts/users/{userId}", userId));
         perform
@@ -94,7 +97,7 @@ public class CartIntegrationTest {
         cartProducts.put("6040d6ba1e240556a8b76ec0", 2);
         CartDtoNoId cartToBeSavedNoId = createCartDtoNoId("testtest", cartProducts);
         String expectedMessage = "UserEntity with UserID = " + cartToBeSavedNoId.getUserId() + " not found";
-        ResultActions result=mockMvc.perform(post("/carts")
+        ResultActions result = mockMvc.perform(post("/carts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cartToBeSavedNoId)));
         result.andExpect(status().isCreated());
@@ -102,7 +105,7 @@ public class CartIntegrationTest {
 
     @Test
     @WithMockUser
-    @DisplayName("PUT //carts - Cart created")
+    @DisplayName("PUT //carts - Updated created")
     @MongoDataFile(value = "CartData.json", classType = CartEntity.class, collectionName = "carts")
     void updateCart() throws Exception {
         HashMap<String, Integer> cartProducts = new HashMap<>();
@@ -113,12 +116,23 @@ public class CartIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cartDtoNoId)));
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id",is("1234567")))
-                .andExpect(jsonPath("$.userId", is("testtest22") ));
+                .andExpect(jsonPath("$.id", is("1234567")))
+                .andExpect(jsonPath("$.userId", is("testtest22")));
 
     }
 
+    @Test
+    @WithMockUser
+    @DisplayName("DELETE //carts - Cart deleted")
+    @MongoDataFile(value = "CartData.json", classType = CartEntity.class, collectionName = "carts")
+    void testDeleteCart() throws Exception {
+        // GIVEN
+        final String cartId = "1234567";
 
+        // WHEN, THEN
+        mockMvc.perform(delete("/carts/{id}", cartId))
+                .andExpect(status().isOk());
+    }
 
     private String asJsonString(final Object object) {
         try {
