@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
@@ -83,6 +85,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDtoNoId userDtoNoId) throws Exception {
         LOGGER.info("UserService: creating user");
+
         List<UserDto> mailChecker = findAll();
         for (UserDto user : mailChecker) {
             if (user.getUsername().equals(userDtoNoId.getUsername())) {
@@ -96,9 +99,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(encodedPassword);
         userEntity = userRepository.save(userEntity);
 
-        emailService.sendSimpleMessage(userEntity.getEmail(),
-                "Confirmation Email", "Please verify your account by pressing the link below:\n" +
-                        "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("confirmationURL", "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
+
+        emailService.sendMessageUsingThymeleafTemplate(userEntity.getEmail(), "Confirmation Email",
+                "user-email-confirmation", templateModel);
         return modelMapper.map(userEntity, UserDto.class);
     }
 
