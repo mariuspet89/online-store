@@ -7,6 +7,7 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
 import eu.accesa.onlinestore.utils.mongodb.MongoSpringExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +29,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Disabled
 @ExtendWith(MongoSpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ContextConfiguration
 @TestPropertySource(properties = {
         "JWT_ISSUER=eu.accesa.onlinestore",
         "JWT_SECRET=L6avrMtXQIhTP4tGc6qlz02RV46DCCEkQY25EOce3PAyJZkhD93ViPI44t9n2DP"
@@ -77,8 +78,7 @@ public class CartIntegrationTest {
     @MongoDataFile(value = "CartData.json", classType = CartEntity.class, collectionName = "carts")
     void findByUserId() throws Exception {
         String userId = "testtest";
-        ResultActions perform = mockMvc.perform(get("/carts/users/{userId}", userId));
-        perform
+        ResultActions perform = mockMvc.perform(get("/carts/users/{userId}", userId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNotEmpty())
