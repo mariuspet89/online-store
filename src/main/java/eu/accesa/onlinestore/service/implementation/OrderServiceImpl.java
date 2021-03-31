@@ -6,6 +6,7 @@ import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
+import eu.accesa.onlinestore.model.invoice.ProductLine;
 import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
@@ -18,9 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -78,12 +77,19 @@ public class OrderServiceImpl implements OrderService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
-        // verify if products exist
-        for (String productId : orderDtoNoId.getOrderedProducts().keySet()) {
-            if (productRepository.findById(productId).isEmpty()) {
+        // table data for the order invoice
+        List<ProductLine> productLines = new ArrayList<>();
+
+        // verify that products exist
+        orderDtoNoId.getOrderedProducts().forEach((productId, value) -> {
+            Optional<ProductEntity> optionalProductEntity = productRepository.findById(productId);
+            if (optionalProductEntity.isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
+            } else {
+                ProductEntity product = optionalProductEntity.get();
+                productLines.add(new ProductLine(product.getDescription(), value, product.getPrice()));
             }
-        }
+        });
 
         // save order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
@@ -106,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // generate invoice
-        pdfGeneratorService.generateInvoice(orderEntity);
+        pdfGeneratorService.generateInvoice(orderEntity, productLines);
 
         // send email with attachment
         emailService.sendMessageWithAttachment(userEntity.getEmail(), "Order Invoice",
