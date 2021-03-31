@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
@@ -15,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,20 +27,24 @@ import static java.util.stream.Collectors.toList;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
-    private final EmailServiceImpl emailService;
+
     private final ModelMapper mapper;
+
+    private final EmailServiceImpl emailService;
+    private final PdfGeneratorServiceImpl pdfGeneratorService;
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final PdfGeneratorServiceImpl pdfGeneratorService;
 
-    public OrderServiceImpl(EmailServiceImpl emailService, ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository, PdfGeneratorServiceImpl pdfGeneratorService) {
-        this.emailService = emailService;
+    public OrderServiceImpl(ModelMapper mapper, EmailServiceImpl emailService, PdfGeneratorServiceImpl pdfGeneratorService,
+                            OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.mapper = mapper;
+        this.emailService = emailService;
+        this.pdfGeneratorService = pdfGeneratorService;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
-        this.pdfGeneratorService = pdfGeneratorService;
     }
 
     @Override
@@ -64,33 +72,45 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto createOrder(OrderDtoNoId orderDtoNoId) {
         LOGGER.info("Service: creating order");
 
-        UserEntity userEntity = userRepository.findById(orderDtoNoId.getUserId()).
-                orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
-                        " UserID ", orderDtoNoId.getUserId()));
+        // verify if user exists
+        String userId = orderDtoNoId.getUserId();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
+        // verify if products exist
         for (String productId : orderDtoNoId.getOrderedProducts().keySet()) {
             if (productRepository.findById(productId).isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             }
         }
+
+        // save order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
-
         orderEntity = orderRepository.save(orderEntity);
 
-        emailService.sendSimpleMessage(userEntity.getEmail(),
-                "Your Order", " Your order has been placed, order id\n " + orderEntity.getId()
-                        + " with order date " + orderEntity.getOrderDate());
+        // prepare template data
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("orderId", orderEntity.getId());
+        templateModel.put("orderDate", orderEntity.getOrderDate());
+
+        // send confirmation email
+        try {
+            emailService.sendMessageUsingThymeleafTemplate(userEntity.getEmail(), "Order Placed Successfully",
+                    "order-placed", templateModel);
+        } catch (MessagingException e) {
+            LOGGER.error(e.getMessage());
+            throw new OnlineStoreException("The order could not be placed!");
+        }
 
 
-
-        String orderIdToInvoice = orderEntity.getId();
-        OrderEntity orderToInvoice=orderRepository.findById(orderEntity.getId()).orElseThrow(()->new EntityNotFoundException(OrderEntity.class.getName(),"OrderId",orderIdToInvoice));
-        pdfGeneratorService.generateInvoiceHashMapp(orderToInvoice);
-
-        emailService.sendMessageWithAttachment(userEntity.getEmail(),
-                "Invoice", "Please find the invoice generated for your order",
-                "C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf");
+//        String orderIdToInvoice = orderEntity.getId();
+//        OrderEntity orderToInvoice=orderRepository.findById(orderEntity.getId()).orElseThrow(()->new EntityNotFoundException(OrderEntity.class.getName(),"OrderId",orderIdToInvoice));
+//        pdfGeneratorService.generateInvoice(orderToInvoice);
+//
+//        emailService.sendMessageWithAttachment(userEntity.getEmail(),
+//                "Invoice", "Please find the invoice generated for your order",
+//                "C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf");
         return mapper.map(orderEntity, OrderDto.class);
 
     }
