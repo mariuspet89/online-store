@@ -17,7 +17,6 @@ public class CartTestUtils {
         return cartEntity;
     }
 
-
     public static CartDto createCartDto(String id, String userId, HashMap<String, Integer> products) {
 
         CartDto cartDto = new CartDto();
