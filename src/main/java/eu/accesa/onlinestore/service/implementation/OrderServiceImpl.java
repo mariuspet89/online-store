@@ -1,7 +1,6 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
-import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
@@ -17,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderDtoNoId orderDtoNoId) {
-        LOGGER.info("Service: creating order");
+        LOGGER.info("Order Service: creating order...");
 
         // verify if user exists
         String userId = orderDtoNoId.getUserId();
@@ -92,27 +93,26 @@ public class OrderServiceImpl implements OrderService {
         // prepare template data
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("orderId", orderEntity.getId());
-        templateModel.put("orderDate", orderEntity.getOrderDate());
+        templateModel.put("orderDate", orderEntity.getOrderDate()
+                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
         // send confirmation email
         try {
             emailService.sendMessageUsingThymeleafTemplate(userEntity.getEmail(), "Order Placed Successfully",
                     "order-placed", templateModel);
         } catch (MessagingException e) {
+            LOGGER.error("The order email could not be placed!");
             LOGGER.error(e.getMessage());
-            throw new OnlineStoreException("The order could not be placed!");
         }
 
+        // generate invoice
+        pdfGeneratorService.generateInvoice(orderEntity);
 
-//        String orderIdToInvoice = orderEntity.getId();
-//        OrderEntity orderToInvoice=orderRepository.findById(orderEntity.getId()).orElseThrow(()->new EntityNotFoundException(OrderEntity.class.getName(),"OrderId",orderIdToInvoice));
-//        pdfGeneratorService.generateInvoice(orderToInvoice);
-//
-//        emailService.sendMessageWithAttachment(userEntity.getEmail(),
-//                "Invoice", "Please find the invoice generated for your order",
-//                "C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf");
+        // send email with attachment
+        emailService.sendMessageWithAttachment(userEntity.getEmail(), "Order Invoice",
+                "Please find the invoice generated for your order", "src/main/resources/order-templates/Invoice.pdf");
+
         return mapper.map(orderEntity, OrderDto.class);
-
     }
 
     @Override
@@ -125,5 +125,11 @@ public class OrderServiceImpl implements OrderService {
         mapper.map(orderDtoNoId, orderEntity);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
         return mapper.map(savedOrderEntity, OrderDto.class);
+    }
+
+    @Override
+    public void deleteOrder(String id) {
+        LOGGER.info("Deleting order with ID = {}", id);
+        orderRepository.deleteById(id);
     }
 }

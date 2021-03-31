@@ -13,9 +13,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.io.File;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -46,24 +46,17 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendMessageWithAttachment(String to,
-                                          String subject,
-                                          String text,
-                                          String pathToAttachment) {
+    public void sendMessageWithAttachment(String to, String subject, String text, String pathToAttachment) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
-            // pass 'true' to the constructor to create a multipart message
-            MimeMessageHelper helper = new MimeMessageHelper(message, true,"UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(NOREPLY_ADDRESS);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text);
-            FileSystemResource resource = new FileSystemResource(new File("C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice.pdf"));
-            helper.addAttachment("Invoice.pdf",resource);
-
-            /*FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
-            helper.addAttachment("Invoice", file);*/
+            FileSystemResource resource = new FileSystemResource(new File("src/main/resources/order-templates/Invoice.pdf"));
+            helper.addAttachment("Invoice.pdf", resource);
 
             emailSender.send(message);
         } catch (MessagingException e) {

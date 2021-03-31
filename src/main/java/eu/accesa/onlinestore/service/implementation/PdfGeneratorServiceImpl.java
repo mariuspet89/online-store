@@ -94,7 +94,7 @@ Each element of it is a String array that can be set up like this: */
             //create a document instance
             Document doc = new Document();
             //load the template file
-            doc.loadFromFile("C:\\Users\\dan.goia\\Desktop\\online-store\\online-store_BE\\Invoice-Template.docx");
+            doc.loadFromFile("src/main/resources/order-templates/Invoice-Template.docx");
             //replace text in the document
             doc.replace("#InvoiceNum", order.getId(), true, true);
             doc.replace("#CompanyName", order.getUser().getLastName() + " " + order.getUser().getFirstName(), true, true);
@@ -122,7 +122,7 @@ Each element of it is a String array that can be set up like this: */
             doc.isUpdateFields(true);
 
             //save file in pdf format
-            doc.saveToFile("Invoice.pdf", FileFormat.PDF);
+            doc.saveToFile("src/main/resources/order-templates/Invoice.pdf", FileFormat.PDF);
             return doc;
         }
 
