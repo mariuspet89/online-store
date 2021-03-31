@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -102,8 +101,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("confirmationURL", "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
 
-        emailService.sendMessageUsingThymeleafTemplate(userEntity.getEmail(), "Confirmation Email",
-                "user-email-confirmation", templateModel);
+        emailService.sendMessage(userEntity.getEmail(), "User Confirmation Mail",
+                "user-email-confirmation", templateModel, null);
         return modelMapper.map(userEntity, UserDto.class);
     }
 

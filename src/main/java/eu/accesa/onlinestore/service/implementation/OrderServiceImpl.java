@@ -20,8 +20,7 @@ import javax.mail.MessagingException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -51,7 +50,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findAll() {
         LOGGER.info("Service: getting  all  order");
         List<OrderEntity> orders = orderRepository.findAll();
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
+        return orders.stream()
+                .map(orderEntity -> mapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -65,7 +66,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findByUser(String userId) {
         LOGGER.info("Service: searching for order of user with id : {}", userId);
         List<OrderEntity> orders = orderRepository.getOrderEntitiesByUserId(userId);
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
+        return orders.stream()
+                .map(orderEntity -> mapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -102,22 +105,24 @@ public class OrderServiceImpl implements OrderService {
         templateModel.put("orderDate", orderEntity.getOrderDate()
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
-        // send confirmation email
+        // generate invoice
+        String generatedInvoicePath = "src/main/resources/order-templates/Invoice.pdf";
+        pdfGeneratorService.generateInvoice(orderEntity, productLines, generatedInvoicePath);
+
+        // prepare attachments
+        Map<String, String> attachments = new HashMap<>();
+        attachments.put("Invoice.pdf", generatedInvoicePath);
+
+        // send email with invoice attached
         try {
-            emailService.sendMessageUsingThymeleafTemplate(userEntity.getEmail(), "Order Placed Successfully",
-                    "order-placed", templateModel);
+            emailService.sendMessage(userEntity.getEmail(), "Order Created Successfully",
+                    "order-created", templateModel, attachments);
         } catch (MessagingException e) {
-            LOGGER.error("The order email could not be placed!");
+            LOGGER.error("The order email could not be sent!");
             LOGGER.error(e.getMessage());
         }
 
-        // generate invoice
-        pdfGeneratorService.generateInvoice(orderEntity, productLines);
-
-        // send email with attachment
-        emailService.sendMessageWithAttachment(userEntity.getEmail(), "Order Invoice",
-                "Please find the invoice generated for your order", "src/main/resources/order-templates/Invoice.pdf");
-
+        // return created order DTO
         return mapper.map(orderEntity, OrderDto.class);
     }
 

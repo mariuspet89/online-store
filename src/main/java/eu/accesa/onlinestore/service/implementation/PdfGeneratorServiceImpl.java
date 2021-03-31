@@ -82,13 +82,21 @@ Each element of it is a String array that can be set up like this: */
         fillTableWithData(table, purchaseData);
     }
 
-    //Here's the code for generating PDF invoices
-    public Document generateInvoice(OrderEntity order, List<ProductLine> productLines) {
-        //create a document instance
+    /**
+     * Generates a PDF invoice for a given order.
+     *
+     * @param order                the order information
+     * @param productLines         the products information
+     * @param generatedInvoicePath the path where the invoice should be generated to
+     * @return a generated invoice in a PDF format
+     */
+    public Document generateInvoice(OrderEntity order, List<ProductLine> productLines, String generatedInvoicePath) {
+        // load the template file
         Document doc = new Document();
-        //load the template file
+        // TODO Move this path to application.properties
         doc.loadFromFile("src/main/resources/order-templates/Invoice-Template.docx");
-        //replace text in the document
+
+        // replace the placeholders from the invoice template
         doc.replace("#InvoiceNum", order.getId(), true, true);
         doc.replace("#CompanyName", order.getUser().getLastName() + " " + order.getUser().getFirstName(), true, true);
         doc.replace("#CompanyAddress", order.getUser().getAddressEntity().getAddress(), true, true);
@@ -99,7 +107,7 @@ Each element of it is a String array that can be set up like this: */
         doc.replace("#ShippingAddress", order.getUser().getAddressEntity().getAddress(), true, true);
         doc.replace("#Tel2", order.getUser().getTelephone(), true, true);
 
-        // define purchase data
+        // create table with purchased products
         String[][] purchaseData = new String[productLines.size()][3];
         for (int i = 0; i < productLines.size(); i++) {
             ProductLine productLine = productLines.get(i);
@@ -107,14 +115,14 @@ Each element of it is a String array that can be set up like this: */
                     String.valueOf(productLine.getUnitPrice())};
         }
 
-        //write the purchase data to the document
+        // write the purchase data to the document
         writeDataToDocument(doc, purchaseData);
 
-        //update fields
+        // update fields
         doc.isUpdateFields(true);
 
-        //save file in pdf format
-        doc.saveToFile("src/main/resources/order-templates/Invoice.pdf", FileFormat.PDF);
+        // save file in pdf format
+        doc.saveToFile(generatedInvoicePath, FileFormat.PDF);
         return doc;
     }
 }
