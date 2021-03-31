@@ -6,6 +6,7 @@ import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
+import eu.accesa.onlinestore.model.invoice.ProductLine;
 import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
@@ -15,27 +16,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
+import javax.mail.MessagingException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
-    private final EmailServiceImpl emailService;
+
     private final ModelMapper mapper;
+
+    private final EmailServiceImpl emailService;
+    private final PdfGeneratorServiceImpl pdfGeneratorService;
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    public OrderServiceImpl(EmailServiceImpl emailService, ModelMapper mapper, OrderRepository orderRepository, ProductRepository productRepository,
-                            UserRepository userRepository) {
-        this.emailService = emailService;
+    public OrderServiceImpl(ModelMapper mapper, EmailServiceImpl emailService, PdfGeneratorServiceImpl pdfGeneratorService,
+                            OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.mapper = mapper;
+        this.emailService = emailService;
+        this.pdfGeneratorService = pdfGeneratorService;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
@@ -45,7 +50,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findAll() {
         LOGGER.info("Service: getting  all  order");
         List<OrderEntity> orders = orderRepository.findAll();
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
+        return orders.stream()
+                .map(orderEntity -> mapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -59,32 +66,64 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findByUser(String userId) {
         LOGGER.info("Service: searching for order of user with id : {}", userId);
         List<OrderEntity> orders = orderRepository.getOrderEntitiesByUserId(userId);
-        return orders.stream().map(orderEntity -> mapper.map(orderEntity, OrderDto.class)).collect(toList());
+        return orders.stream()
+                .map(orderEntity -> mapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public OrderDto createOrder(OrderDtoNoId orderDtoNoId) {
-        LOGGER.info("Service: creating order");
+        LOGGER.info("Order Service: creating order...");
 
-        UserEntity userEntity = userRepository.findById(orderDtoNoId.getUserId()).
-                orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(),
-                        " UserID ", orderDtoNoId.getUserId()));
+        // verify if user exists
+        String userId = orderDtoNoId.getUserId();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
-        for (String productId : orderDtoNoId.getOrderedProducts().keySet()) {
-            if (productRepository.findById(productId).isEmpty()) {
+        // table data for the order invoice
+        List<ProductLine> productLines = new ArrayList<>();
+
+        // verify that products exist
+        orderDtoNoId.getOrderedProducts().forEach((productId, value) -> {
+            Optional<ProductEntity> optionalProductEntity = productRepository.findById(productId);
+            if (optionalProductEntity.isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
+            } else {
+                ProductEntity product = optionalProductEntity.get();
+                productLines.add(new ProductLine(product.getDescription(), value, product.getPrice()));
             }
-        }
+        });
+
+        // save order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
-
         orderEntity = orderRepository.save(orderEntity);
 
-        emailService.sendSimpleMessage(userEntity.getEmail(),
-                "Your Order", " Your order has been placed, order id\n " + orderEntity.getId()
-                        + " with order date " + orderEntity.getOrderDate());
-        return mapper.map(orderEntity, OrderDto.class);
+        // prepare template data
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("orderId", orderEntity.getId());
+        templateModel.put("orderDate", orderEntity.getOrderDate()
+                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
+        // generate invoice
+        String generatedInvoicePath = "src/main/resources/order-templates/Invoice.pdf";
+        pdfGeneratorService.generateInvoice(orderEntity, productLines, generatedInvoicePath);
+
+        // prepare attachments
+        Map<String, String> attachments = new HashMap<>();
+        attachments.put("Invoice.pdf", generatedInvoicePath);
+
+        // send email with invoice attached
+        try {
+            emailService.sendMessage(userEntity.getEmail(), "Order Created Successfully",
+                    "order-created", templateModel, attachments);
+        } catch (MessagingException e) {
+            LOGGER.error("The order email could not be sent!");
+            LOGGER.error(e.getMessage());
+        }
+
+        // return created order DTO
+        return mapper.map(orderEntity, OrderDto.class);
     }
 
     @Override
@@ -97,5 +136,11 @@ public class OrderServiceImpl implements OrderService {
         mapper.map(orderDtoNoId, orderEntity);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
         return mapper.map(savedOrderEntity, OrderDto.class);
+    }
+
+    @Override
+    public void deleteOrder(String id) {
+        LOGGER.info("Deleting order with ID = {}", id);
+        orderRepository.deleteById(id);
     }
 }

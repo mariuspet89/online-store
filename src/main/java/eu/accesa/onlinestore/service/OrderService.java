@@ -16,4 +16,6 @@ public interface OrderService {
     OrderDto createOrder(OrderDtoNoId orderDtoNoId);
 
     OrderDto updateOrder(String id, OrderDtoNoId orderDtoNoId);
+
+    void deleteOrder(String id);
 }
