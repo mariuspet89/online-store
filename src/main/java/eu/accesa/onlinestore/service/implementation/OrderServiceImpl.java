@@ -10,6 +10,7 @@ import eu.accesa.onlinestore.model.invoice.ProductLine;
 import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
+import eu.accesa.onlinestore.service.InvoiceGeneratorService;
 import eu.accesa.onlinestore.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -30,17 +31,18 @@ public class OrderServiceImpl implements OrderService {
     private final ModelMapper mapper;
 
     private final EmailServiceImpl emailService;
-    private final PdfGeneratorServiceImpl pdfGeneratorService;
+    private final InvoiceGeneratorService invoiceGeneratorService;
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public OrderServiceImpl(ModelMapper mapper, EmailServiceImpl emailService, PdfGeneratorServiceImpl pdfGeneratorService,
-                            OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository) {
+    public OrderServiceImpl(ModelMapper mapper, EmailServiceImpl emailService,
+                            InvoiceGeneratorService invoiceGeneratorService, OrderRepository orderRepository,
+                            ProductRepository productRepository, UserRepository userRepository) {
         this.mapper = mapper;
         this.emailService = emailService;
-        this.pdfGeneratorService = pdfGeneratorService;
+        this.invoiceGeneratorService = invoiceGeneratorService;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
@@ -106,8 +108,9 @@ public class OrderServiceImpl implements OrderService {
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
         // generate invoice
-        String generatedInvoicePath = "src/main/resources/order-templates/Invoice.pdf";
-        pdfGeneratorService.generateInvoice(orderEntity, productLines, generatedInvoicePath);
+        String generatedInvoicePath = "src/main/resources/Invoice.pdf";
+        invoiceGeneratorService.createPDF(orderEntity);
+//        invoiceGeneratorService.createPDF(orderEntity, productLines, generatedInvoicePath);
 
         // prepare attachments
         Map<String, String> attachments = new HashMap<>();
