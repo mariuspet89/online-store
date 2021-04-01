@@ -29,7 +29,7 @@ public class UserTestUtils {
     }
 
     public static UserDto createUserDto(String id, String firstName, String lastName, String email, String username,
-                                        String password, String telephone, String gender, String address, String city,
+                                        String password, String telephone, String sex, String address, String city,
                                         String county, String postalCode) {
         final UserDto userDto = new UserDto();
         userDto.setId(id);
@@ -39,7 +39,7 @@ public class UserTestUtils {
         userDto.setUsername(username);
         userDto.setPassword(password);
         userDto.setTelephone(telephone);
-        userDto.setSex(gender);
+        userDto.setSex(sex);
 
         final AddressEntity addressEntity = new AddressEntity();
         addressEntity.setAddress(address);

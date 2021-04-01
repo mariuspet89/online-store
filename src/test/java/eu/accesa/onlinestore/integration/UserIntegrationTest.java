@@ -200,7 +200,7 @@ public class UserIntegrationTest {
     void testUpdateUser() throws Exception {
         //Setup mocked service
         UserDtoNoId requestDto = createUserDto(null, "Lilah1", "Rozier1", "lrozier2@networksolutions.com1",
-                "lrozier21", "$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG1", "592-653-38731", "M",
+                "lrozier21", "test1", "592-653-38731", "M",
                 "Frunzisului Street1", "Cluj-Napoca1", "Cluj1", "123451");
         String userId = "603648273ed85832b440eb99";
 
@@ -208,6 +208,18 @@ public class UserIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(requestDto)))
                 .andExpect(status().isOk());
+        mockMvc.perform(get("/users/{id}", userId))
+                .andExpect(jsonPath("$.firstName",is("Lilah1")))
+                .andExpect(jsonPath("$.lastName",is("Rozier1")))
+                .andExpect(jsonPath("$.email",is("lrozier2@networksolutions.com1")))
+                .andExpect(jsonPath("$.username",is("lrozier21")))
+                .andExpect(jsonPath("$.telephone",is("592-653-38731")))
+                .andExpect(jsonPath("$.sex",is("M")))
+                .andExpect(jsonPath("$.addressEntity.address",is("Frunzisului Street1")))
+                .andExpect(jsonPath("$.addressEntity.city",is("Cluj-Napoca1")))
+                .andExpect(jsonPath("$.addressEntity.county",is("Cluj1")))
+                .andExpect(jsonPath("$.addressEntity.postalCode",is("123451")));
+
     }
 
     @Test
