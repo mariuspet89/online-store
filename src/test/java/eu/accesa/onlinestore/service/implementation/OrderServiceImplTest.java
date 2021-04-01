@@ -8,6 +8,7 @@ import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -73,6 +74,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
+    @Disabled
     public void createOrder() {
 
         //given
