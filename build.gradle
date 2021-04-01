@@ -41,11 +41,8 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
 	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.2'
-	// https://mvnrepository.com/artifact/e-iceblue/spire.pdf
 	// https://mvnrepository.com/artifact/e-iceblue/spire.doc.free
 	implementation group: 'e-iceblue', name: 'spire.doc.free', version: '3.9.0'
-// https://mvnrepository.com/artifact/e-iceblue/spire.pdf
-	implementation group: 'e-iceblue', name: 'spire.pdf', version: '3.4.2'
 }
 configurations {
 	compile.exclude group: 'org.slf4j', module: 'slf4j-simple'
