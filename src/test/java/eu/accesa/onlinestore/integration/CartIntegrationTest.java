@@ -17,10 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.HashMap;
 
@@ -78,7 +76,7 @@ public class CartIntegrationTest {
     @MongoDataFile(value = "CartData.json", classType = CartEntity.class, collectionName = "carts")
     void findByUserId() throws Exception {
         String userId = "testtest";
-        ResultActions perform = mockMvc.perform(get("/carts/users/{userId}", userId))
+        mockMvc.perform(get("/carts/users/{userId}", userId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNotEmpty())
@@ -96,11 +94,10 @@ public class CartIntegrationTest {
         HashMap<String, Integer> cartProducts = new HashMap<>();
         cartProducts.put("6040d6ba1e240556a8b76ec0", 2);
         CartDtoNoId cartToBeSavedNoId = createCartDtoNoId("testtest", cartProducts);
-        String expectedMessage = "UserEntity with UserID = " + cartToBeSavedNoId.getUserId() + " not found";
-        ResultActions result = mockMvc.perform(post("/carts")
+        mockMvc.perform(post("/carts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(cartToBeSavedNoId)));
-        result.andExpect(status().isCreated());
+                .content(asJsonString(cartToBeSavedNoId)))
+        .andExpect(status().isCreated());
     }
 
     @Test
@@ -112,10 +109,10 @@ public class CartIntegrationTest {
         cartProducts.put("6040d6ba1e240556a8b76ec0", 222);
         String cartId = "1234567";
         CartDtoNoId cartDtoNoId = createCartDtoNoId("testtest22", cartProducts);
-        final ResultActions resultActions = mockMvc.perform(put("/carts/{id}", cartId)
+        mockMvc.perform(put("/carts/{id}", cartId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(cartDtoNoId)));
-        resultActions.andExpect(status().isOk())
+                .content(asJsonString(cartDtoNoId)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is("1234567")))
                 .andExpect(jsonPath("$.userId", is("testtest22")));
 
