@@ -118,8 +118,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
             PdfPTable accounts = new PdfPTable(3);
             accounts.setWidthPercentage(100);
-            accounts.addCell(getAccountsCell("Subtotal"));
-            accounts.addCell(getAccountsCell("Tax(19%)"));
+            accounts.addCell(getAccountsCell("Subtotal VAT excluded"));
+            accounts.addCell(getAccountsCell("VAT(19%)"));
             accounts.addCell(getAccountsCell("Total"));
 
             DecimalFormat df = new DecimalFormat("#.##");
@@ -133,8 +133,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
                 Integer quantity = order.getOrderedProducts().get(id).intValue();
 
                 double productTotalValue = (price * quantity);
-                invoiceSubTotalValue += (productTotalValue / 1.19);
-                taxTotalValue += (productTotalValue * 0.19);
+                invoiceSubTotalValue += (productTotalValue *0.84033);
+                taxTotalValue += (productTotalValue * 0.15967);
             }
 
             // add total cells
@@ -169,7 +169,7 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
     public static PdfPCell getIRHCell(String text, int alignment) {
         FontSelector fs = new FontSelector();
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16);
-        /*	font.setColor(BaseColor.GRAY);*/
+        font.setColor(BaseColor.GRAY);
         fs.addFont(font);
         Phrase phrase = fs.process(text);
         PdfPCell cell = new PdfPCell(phrase);
@@ -194,8 +194,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
     public static PdfPCell getBillHeaderCell(String text) {
         FontSelector fs = new FontSelector();
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 11);
-        font.setColor(BaseColor.GRAY);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+        font.setColor(BaseColor.BLUE);
         fs.addFont(font);
         Phrase phrase = fs.process(text);
         PdfPCell cell = new PdfPCell (phrase);
@@ -205,7 +205,13 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
     }
 
     public static PdfPCell getBillRowCell(String text) {
-        PdfPCell cell = new PdfPCell (new Paragraph (text));
+        FontSelector fs = new FontSelector();
+        Font font = FontFactory.getFont(FontFactory.COURIER_OBLIQUE, 9);
+        font.setColor(BaseColor.DARK_GRAY);
+        fs.addFont(font);
+        fs.process(text);
+        Phrase phrase = fs.process(text);
+        PdfPCell cell = new PdfPCell (phrase);
         cell.setHorizontalAlignment (Element.ALIGN_CENTER);
         cell.setPadding (5.0f);
         cell.setBorderWidthBottom(0);
@@ -235,7 +241,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
     public static PdfPCell getAccountsCell(String text) {
         FontSelector fs = new FontSelector();
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 10);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 8);
+        font.setColor(BaseColor.RED);
         fs.addFont(font);
         Phrase phrase = fs.process(text);
         PdfPCell cell = new PdfPCell (phrase);
@@ -246,7 +253,7 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
     }
     public static PdfPCell getAccountsCellR(String text) {
         FontSelector fs = new FontSelector();
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 10);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 8);
         fs.addFont(font);
         Phrase phrase = fs.process(text);
         PdfPCell cell = new PdfPCell (phrase);
