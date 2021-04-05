@@ -34,7 +34,7 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             PdfWriter.getInstance(document, baos);
 
             //Inserting Image in PDF
-            Image image = Image.getInstance("src/main/resources/logo.jpg");//Header Image
+            Image image = Image.getInstance("classpath:/src/main/resources/logo.jpg");//Header Image
             image.scaleAbsolute(540f, 72f);//image width,height
 
             PdfPTable irdTable = new PdfPTable(2);
