@@ -6,10 +6,13 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.ProductEntity;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +22,8 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceGeneratorServiceImpl.class);
 
     private final ProductRepository productRepository;
 
@@ -34,7 +39,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             PdfWriter.getInstance(document, baos);
 
             //Inserting Image in PDF
-            Image image = Image.getInstance("classpath:/src/main/resources/logo.jpg");//Header Image
+            byte[] imageAsBytes = InvoiceGeneratorServiceImpl.class.getResourceAsStream("/logo.jpg").readAllBytes();
+            Image image = Image.getInstance(imageAsBytes);//Header Image
             image.scaleAbsolute(540f, 72f);//image width,height
 
             PdfPTable irdTable = new PdfPTable(2);
@@ -157,10 +163,9 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
             return baos;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            throw new OnlineStoreException(e.getMessage());
         }
-
-        return null;
     }
 
     private PdfPCell getIRHCell(String text, int alignment) {
