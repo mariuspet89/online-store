@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -108,13 +110,12 @@ public class OrderServiceImpl implements OrderService {
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
         // generate invoice
-        String generatedInvoicePath = "src/main/resources/Invoice.pdf";
-        invoiceGeneratorService.createPDF(orderEntity);
-//        invoiceGeneratorService.createPDF(orderEntity, productLines, generatedInvoicePath);
+        ByteArrayOutputStream generatedInvoice = invoiceGeneratorService.createPDF(orderEntity);
+        ByteArrayInputStream invoiceAsBytes = new ByteArrayInputStream(generatedInvoice.toByteArray());
 
         // prepare attachments
-        Map<String, String> attachments = new HashMap<>();
-        attachments.put("Invoice.pdf", generatedInvoicePath);
+        Map<String, ByteArrayInputStream> attachments = new HashMap<>();
+        attachments.put("Invoice.pdf", invoiceAsBytes);
 
         // send email with invoice attached
         try {
