@@ -64,9 +64,7 @@ public class ProductController {
     public ResponseEntity<InputStreamResource> findProductImageByImageId(@PathVariable String id) throws IOException {
         Optional<GridFsResource> file = productService.findImageByImageId(id);
 
-        if (file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        } else {
+        if (file.isPresent()) {
             GridFsResource gridFsResource = file.get();
             GridFSFile gridFSFile = gridFsResource.getGridFSFile();
 
@@ -82,6 +80,8 @@ public class ProductController {
                     .contentLength(gridFsResource.contentLength())
                     .contentType(MediaType.parseMediaType(contentType))
                     .body(gridFsResource);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
