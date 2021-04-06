@@ -89,7 +89,7 @@ class UserRepositoryTest {
             assertEquals("california", addressEntity.getCounty());
             assertEquals("542545", addressEntity.getPostalCode());
 
-            assertFalse(user.getEnabled());
+            assertFalse(user.isEnabled());
         });
     }
 
@@ -104,15 +104,15 @@ class UserRepositoryTest {
         // THEN
         assertFalse(userEntityOptional.isPresent(), "A user with ID = " + id + " should not be present!");
     }
-    
+
     @Test
     void existsByUsernameSuccess() {
         // GIVEN
         final String username = "johnytravolta";
-        
+
         // WHEN
         boolean existsByUsername = userRepository.existsByUsername(username);
-        
+
         // THEN
         assertTrue(existsByUsername);
     }
@@ -156,7 +156,7 @@ class UserRepositoryTest {
             assertEquals("california", addressEntity.getCounty());
             assertEquals("542545", addressEntity.getPostalCode());
 
-            assertFalse(user.getEnabled());
+            assertFalse(user.isEnabled());
         });
     }
 
@@ -223,7 +223,7 @@ class UserRepositoryTest {
             assertEquals("Cluj", addressEntity.getCounty());
             assertEquals("123456", addressEntity.getPostalCode());
 
-            assertTrue(user.getEnabled());
+            assertTrue(user.isEnabled());
         });
     }
 

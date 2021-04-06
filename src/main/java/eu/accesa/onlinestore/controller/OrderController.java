@@ -3,7 +3,6 @@ package eu.accesa.onlinestore.controller;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.service.OrderService;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

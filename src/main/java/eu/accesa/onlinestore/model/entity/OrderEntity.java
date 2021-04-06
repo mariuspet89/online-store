@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,24 +9,28 @@ import nonapi.io.github.classgraph.json.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Document(collection = "orders")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderEntity {
+
     @Id
     private String id;
+
     @Field(value = "ordered_products")
-    private HashMap<String, Integer> orderedProducts;
+    private Map<String, Integer> orderedProducts;
+
     @Field(value = "order_date")
-    @JsonDeserialize(using= LocalDateTimeDeserializer.class)
-    @JsonSerialize(using= LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime orderDate;
+
     @Field(value = "order_value")
     private Double orderValue;
+
     private UserEntity user;
 
     public String getId() {
@@ -38,11 +41,11 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public HashMap<String, Integer> getOrderedProducts() {
+    public Map<String, Integer> getOrderedProducts() {
         return orderedProducts;
     }
 
-    public void setOrderedProducts(HashMap<String, Integer> orderedProducts) {
+    public void setOrderedProducts(Map<String, Integer> orderedProducts) {
         this.orderedProducts = orderedProducts;
     }
 

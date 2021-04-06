@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -169,7 +166,7 @@ public class OrderRepositoryTest {
         addressEntity.setPostalCode("123456");
         userEntity.setAddressEntity(addressEntity);
 
-        final HashMap<String, Integer> orderedProducts = new HashMap<>();
+        final Map<String, Integer> orderedProducts = new HashMap<>();
         orderedProducts.put("6034068975bb0d4088a441c2", 1);
 
         final OrderEntity orderToSave = new OrderEntity();

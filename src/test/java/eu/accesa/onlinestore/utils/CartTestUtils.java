@@ -5,10 +5,11 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class CartTestUtils {
     public static CartEntity createCartEntity(String id, String userId,
-                                              HashMap<String, Integer> cartProducts) {
+                                              Map<String, Integer> cartProducts) {
 
         CartEntity cartEntity = new CartEntity();
         cartEntity.setId(id);
@@ -17,7 +18,7 @@ public class CartTestUtils {
         return cartEntity;
     }
 
-    public static CartDto createCartDto(String id, String userId, HashMap<String, Integer> products) {
+    public static CartDto createCartDto(String id, String userId, Map<String, Integer> products) {
 
         CartDto cartDto = new CartDto();
         cartDto.setId(id);
@@ -26,7 +27,7 @@ public class CartTestUtils {
         return cartDto;
     }
 
-    public static CartDtoNoId createCartDtoNoId(String userId, HashMap<String, Integer> products) {
+    public static CartDtoNoId createCartDtoNoId(String userId, Map<String, Integer> products) {
 
         CartDtoNoId cartDtoNoId = new CartDtoNoId();
         cartDtoNoId.setUserId(userId);

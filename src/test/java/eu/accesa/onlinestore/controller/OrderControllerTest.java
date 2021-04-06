@@ -18,8 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static eu.accesa.onlinestore.utils.OrderTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,7 +92,7 @@ public class OrderControllerTest {
     @Test
     public void createOrder() throws Exception {
         //GIVEN
-        HashMap<String, Integer> orderedProducts = testHMOrderedProduct("a", 1);
+        Map<String, Integer> orderedProducts = testHMOrderedProduct("a", 1);
         OrderDtoNoId orderToBeSavedNoId = testOrderDtoNoId(1.1, "orderUserId");
 
         orderToBeSavedNoId.setOrderedProducts(orderedProducts);

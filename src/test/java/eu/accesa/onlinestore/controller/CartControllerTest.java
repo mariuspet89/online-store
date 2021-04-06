@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static eu.accesa.onlinestore.utils.CartTestUtils.createCartDto;
 import static eu.accesa.onlinestore.utils.CartTestUtils.createCartDtoNoId;
@@ -47,7 +48,7 @@ class CartControllerTest {
 
     @Test
     public void testFindById() throws Exception {
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String cartId = "123456";
         CartDto cartDto = createCartDto(cartId, "testtest", productsToBuy);
@@ -62,7 +63,7 @@ class CartControllerTest {
 
     @Test
     public void testFindByUserId() throws Exception {
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String userId = "testtest";
         String cartId = "1234567";
@@ -78,7 +79,7 @@ class CartControllerTest {
 
     @Test
     public void testCreateCart() throws Exception {
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String userId = "testtest";
         String cartId = "1234567";
@@ -103,7 +104,7 @@ class CartControllerTest {
     @Test
     void testUpdateCart() throws Exception {
 
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String cartId = "1234567";
 

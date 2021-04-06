@@ -3,7 +3,7 @@ package eu.accesa.onlinestore.model.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Document(collection = "carts")
@@ -12,7 +12,7 @@ public class CartEntity {
     @Id
     private String id;
     private String userId;
-    private HashMap<String, Integer> products;
+    private Map<String, Integer> products;
 
     public String getId() {
         return id;
@@ -30,11 +30,11 @@ public class CartEntity {
         this.userId = userId;
     }
 
-    public HashMap<String, Integer> getProducts() {
+    public Map<String, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<String, Integer> products) {
+    public void setProducts(Map<String, Integer> products) {
         this.products = products;
     }
 

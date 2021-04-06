@@ -36,11 +36,12 @@ public class ProductController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a product")
-    public ResponseEntity<ProductDto> createProduct(
-            @Valid @RequestPart("productDto") ProductDtoNoId productDtoNoId, @Nullable MultipartFile file) throws IOException {
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestPart("productDto") ProductDtoNoId productDtoNoId,
+                                                    @Nullable MultipartFile file) throws IOException {
         if (file != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDtoNoId, file));
         }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDtoNoId));
     }
 
@@ -63,22 +64,25 @@ public class ProductController {
     public ResponseEntity<InputStreamResource> findProductImageByImageId(@PathVariable String id) throws IOException {
         Optional<GridFsResource> file = productService.findImageByImageId(id);
 
-        if (file.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } else {
+            GridFsResource gridFsResource = file.get();
+            GridFSFile gridFSFile = gridFsResource.getGridFSFile();
 
-        GridFsResource gridFsResource = file.get();
-        GridFSFile gridFSFile = gridFsResource.getGridFSFile();
+            String contentType;
+            if (gridFSFile != null && gridFSFile.getMetadata() != null) {
+                contentType = gridFSFile.getMetadata().get("_contentType").toString();
+            } else {
+                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
 
-        String contentType = "application/octet-stream";
-
-        if (gridFSFile != null) {
-            if (gridFSFile.getMetadata() != null) contentType = gridFSFile.getMetadata().get("_contentType").toString();
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentLength(gridFsResource.contentLength())
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(gridFsResource);
         }
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(gridFsResource.contentLength())
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(gridFsResource);
     }
 
     @GetMapping("/images/{productId}")

@@ -5,7 +5,6 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -17,25 +16,25 @@ public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     @Value("${jwt.issuer}")
-    private String JWT_ISSUER;
+    private String jwtIssuer;
 
     @Value("${jwt.secret}")
-    private String JWT_SECRET;
+    private String jwtSecret;
 
     public String generateAccessToken(UserEntity user) {
         LocalDateTime currentTime = LocalDateTime.now();
         return Jwts.builder()
                 .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
-                .setIssuer(JWT_ISSUER)
+                .setIssuer(jwtIssuer)
                 .setIssuedAt(Timestamp.valueOf(currentTime))
                 .setExpiration(Timestamp.valueOf(currentTime.plusWeeks(1))) // 1 week
-                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
     public boolean validate(String token) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true; // successful validation
         } catch (SignatureException ex) {
             LOGGER.error("Invalid JWT signature - {}", ex.getMessage());
@@ -54,7 +53,7 @@ public class JwtTokenUtil {
 
     public String getUsername(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(JWT_SECRET)
+                .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
 

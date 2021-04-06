@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static eu.accesa.onlinestore.utils.CartTestUtils.createCartDto;
@@ -41,7 +42,7 @@ public class CartServiceImplTest {
 
         //GIVEN
 
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
 
         CartEntity createdCartEntity = createCartEntity("4141", "3232", productsToBuy);
@@ -64,7 +65,7 @@ public class CartServiceImplTest {
 
     @Test
     void findById() {
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String id = "1313";
         CartEntity foundCart = createCartEntity("1313", "1414", productsToBuy);
@@ -83,7 +84,7 @@ public class CartServiceImplTest {
     @Test
     void findCartByUserID() {
 
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         String id = "3232";
 
@@ -103,7 +104,7 @@ public class CartServiceImplTest {
     @Test
     void testUpdateCart() {
 
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         CartDtoNoId cartDtoNoId = createCartDto(null, "1", productsToBuy);
         CartEntity foundCartEntity = createCartEntity("4141", "3232", productsToBuy);
@@ -122,7 +123,7 @@ public class CartServiceImplTest {
 
     @Test
     void testDeleteCart() {
-        HashMap<String, Integer> productsToBuy = new HashMap<>();
+        Map<String, Integer> productsToBuy = new HashMap<>();
         productsToBuy.put("blaba22", 3432);
         CartEntity foundCart = createCartEntity("4141", "1414", productsToBuy);
         lenient().when(cartRepository.findById(foundCart.getId())).thenReturn(Optional.of(foundCart));
