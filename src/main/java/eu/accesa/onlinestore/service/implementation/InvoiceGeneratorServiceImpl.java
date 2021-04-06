@@ -5,11 +5,9 @@ import com.itextpdf.text.pdf.FontSelector;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
-import eu.accesa.onlinestore.model.entity.ProductEntity;
-import eu.accesa.onlinestore.repository.ProductRepository;
+import eu.accesa.onlinestore.model.invoice.ProductLine;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,37 +17,39 @@ import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceGeneratorServiceImpl.class);
 
-    private final ProductRepository productRepository;
-
-    public InvoiceGeneratorServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     @Override
-    public ByteArrayOutputStream createPDF(OrderEntity order) {
+    public ByteArrayOutputStream createPDF(OrderEntity order, List<ProductLine> productLines) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Document document = new Document();
-            PdfWriter.getInstance(document, baos);
 
-            //Inserting Image in PDF
+            PdfWriter.getInstance(document, outputStream);
+
+            //Inserting image in PDF
             byte[] imageAsBytes = InvoiceGeneratorServiceImpl.class.getResourceAsStream("/logo.jpg").readAllBytes();
-            Image image = Image.getInstance(imageAsBytes);//Header Image
-            image.scaleAbsolute(540f, 72f);//image width,height
+
+            //Setting header image
+            Image image = Image.getInstance(imageAsBytes);
+            //Setting image width, height
+            image.scaleAbsolute(540f, 72f);
 
             PdfPTable irdTable = new PdfPTable(2);
             irdTable.addCell(getIRDCell("Invoice No"));
             irdTable.addCell(getIRDCell("Invoice Date"));
-            irdTable.addCell(getIRDCell(order.getId())); // pass invoice number
+            //Passing invoice no
+            irdTable.addCell(getIRDCell(order.getId()));
+            //Passing invoice date
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime orderDate = order.getOrderDate();
-            irdTable.addCell(getIRDCell(orderDate.format(formatter))); // pass invoice date
+            irdTable.addCell(getIRDCell(orderDate.format(formatter)));
+
             PdfPTable irhTable = new PdfPTable(2);
             irhTable.setWidthPercentage(100);
 
@@ -58,28 +58,39 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             irhTable.addCell(getIRHCell("Invoice", PdfPCell.ALIGN_RIGHT));
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
+
             PdfPCell invoiceTable = new PdfPCell(irdTable);
             invoiceTable.setBorder(0);
+
             irhTable.addCell(invoiceTable);
 
             FontSelector fs = new FontSelector();
             Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.BOLD);
             fs.addFont(font);
-            Phrase bill = fs.process("Bill To"); // customer information
-            //customer name
+
+            //Defining font for name and address
+            Font nameAndAddressFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, Font.BOLDITALIC);
+
+            //Customer information
+            Phrase bill = fs.process("Bill To");
+
+            //Customer name
             Paragraph name = new Paragraph(order.getUser().getFirstName() + " " + order.getUser().getLastName());
             name.setIndentationLeft(20);
-            Font nameAndAdressFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, Font.BOLDITALIC);
-            name.setFont(nameAndAdressFont);
+            name.setFont(nameAndAddressFont);
+
+            //Customer telephone
             Paragraph contact = new Paragraph(order.getUser().getTelephone());
             contact.setIndentationLeft(20);
-            //set adress
+
+            //Customer address
             Paragraph address = new Paragraph(order.getUser().getAddressEntity().getAddress() + ","
                     + order.getUser().getAddressEntity().getCity() + "," + order.getUser().getAddressEntity().getCounty());
             address.setIndentationLeft(20);
-            address.setFont(nameAndAdressFont);
+            address.setFont(nameAndAddressFont);
 
-            PdfPTable billTable = new PdfPTable(5); //one page contains 7 empty aditional records
+            //One page contains 7 empty additional records
+            PdfPTable billTable = new PdfPTable(5);
             billTable.setWidthPercentage(100);
             billTable.setWidths(new float[]{2, 4, 1, 1, 1});
             billTable.setSpacingBefore(30.0f);
@@ -89,21 +100,17 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             billTable.addCell(getBillHeaderCell("Qty"));
             billTable.addCell(getBillHeaderCell("Amount"));
 
-            for (String id : order.getOrderedProducts().keySet()) {
+            for (ProductLine productLine : productLines) {
 
-                ProductEntity product = productRepository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException(ProductEntity.class.getName(),
-                                "Product id", order.getOrderedProducts().keySet().toString()));
-                Double price = product.getPrice();
-                Integer quantity = order.getOrderedProducts().get(id);
+                Double price = productLine.getUnitPrice();
+                Integer quantity = productLine.getQuantity();
 
-                billTable.addCell(getBillRowCell(id));
-                billTable.addCell(getBillRowCell(product.getDescription()));
-                billTable.addCell(getBillRowCell(product.getPrice().toString()));
+                billTable.addCell(getBillRowCell(productLine.getId()));
+                billTable.addCell(getBillRowCell(productLine.getDescription()));
+                billTable.addCell(getBillRowCell(price.toString()));
                 billTable.addCell(getBillRowCell(quantity.toString()));
                 billTable.addCell(getBillRowCell((Double.toString(price * quantity))));
             }
-
 
             PdfPTable validity = new PdfPTable(1);
             validity.setWidthPercentage(100);
@@ -125,19 +132,18 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             DecimalFormat df = new DecimalFormat("#.##");
             double invoiceSubTotalValue = 0;
             double taxTotalValue = 0;
-            for (String id : order.getOrderedProducts().keySet()) {
-                ProductEntity product = productRepository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException(ProductEntity.class.getName(),
-                                "Product id", order.getOrderedProducts().keySet().toString()));
-                Double price = product.getPrice();
-                Integer quantity = order.getOrderedProducts().get(id);
+
+            for (ProductLine productLine : productLines) {
+
+                Double price = productLine.getUnitPrice();
+                Integer quantity = productLine.getQuantity();
 
                 double productTotalValue = (price * quantity);
                 invoiceSubTotalValue += (productTotalValue * 0.84033);
                 taxTotalValue += (productTotalValue * 0.15967);
             }
 
-            // add total cells
+            //Adding total cells
             accounts.addCell(getBillRowCell(df.format(invoiceSubTotalValue)));
             accounts.addCell(getBillRowCell(df.format(taxTotalValue)));
             accounts.addCell(getBillRowCell(df.format(invoiceSubTotalValue + taxTotalValue)));
@@ -146,10 +152,10 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             summaryR.setColspan(3);
             billTable.addCell(summaryR);
 
+            //Opening PDF document
+            document.open();
 
-            document.open();//PDF document opened........
-
-            //add contents table for invoice...
+            //Adding contents table for invoice...
             document.add(image);
             document.add(irhTable);
             document.add(bill);
@@ -159,9 +165,9 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             document.add(billTable);
 
             document.close();
-            baos.close();
+            outputStream.close();
 
-            return baos;
+            return outputStream;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new OnlineStoreException(e.getMessage());

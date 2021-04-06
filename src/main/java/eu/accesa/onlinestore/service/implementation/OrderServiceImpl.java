@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
@@ -79,54 +78,50 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto createOrder(OrderDtoNoId orderDtoNoId) {
         LOGGER.info("Order Service: creating order...");
 
-        // verify if user exists
+        //Retrieve the user or throw exception if user doesn't exist
         String userId = orderDtoNoId.getUserId();
+
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
-        // table data for the order invoice
+        //Creating table data for the order invoice
         List<ProductLine> productLines = new ArrayList<>();
 
-        // verify that products exist
+        //Verifying that products exist and if they do, adding them to productLines
         orderDtoNoId.getOrderedProducts().forEach((productId, value) -> {
             Optional<ProductEntity> optionalProductEntity = productRepository.findById(productId);
             if (optionalProductEntity.isEmpty()) {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             } else {
                 ProductEntity product = optionalProductEntity.get();
-                productLines.add(new ProductLine(product.getDescription(), value, product.getPrice()));
+                productLines.add(new ProductLine(product.getId(), product.getDescription(), value, product.getPrice()));
             }
         });
 
-        // save order
+        //Saving order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
         orderEntity = orderRepository.save(orderEntity);
 
-        // prepare template data
+        //Preparing template data
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("orderId", orderEntity.getId());
         templateModel.put("orderDate", orderEntity.getOrderDate()
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
-        // generate invoice
-        ByteArrayOutputStream generatedInvoice = invoiceGeneratorService.createPDF(orderEntity);
+        //Generating invoice
+        ByteArrayOutputStream generatedInvoice = invoiceGeneratorService.createPDF(orderEntity, productLines);
         ByteArrayInputStream invoiceAsBytes = new ByteArrayInputStream(generatedInvoice.toByteArray());
 
-        // prepare attachments
+        //Preparing attachments
         Map<String, ByteArrayInputStream> attachments = new HashMap<>();
         attachments.put("Invoice.pdf", invoiceAsBytes);
 
-        // send email with invoice attached
-        try {
-            emailService.sendMessage(userEntity.getEmail(), "Order Created Successfully",
-                    "order-created", templateModel, attachments);
-        } catch (MessagingException e) {
-            LOGGER.error("The order email could not be sent!");
-            LOGGER.error(e.getMessage());
-        }
+        //Sending email with invoice attached
+        emailService.sendMessage(userEntity.getEmail(), "Order Created Successfully",
+                "order-created", templateModel, attachments);
 
-        // return created order DTO
+        //Returning created order DTO
         return mapper.map(orderEntity, OrderDto.class);
     }
 

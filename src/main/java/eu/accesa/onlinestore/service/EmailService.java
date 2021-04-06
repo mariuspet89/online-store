@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.service;
 
-import javax.mail.MessagingException;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
@@ -15,11 +14,10 @@ public interface EmailService {
      * @param template      the email's template
      * @param templateModel the template's concrete data
      * @param attachments   the attachments names and contents
-     * @throws MessagingException if an error occurs during the email sending
      */
     void sendMessage(String to,
                      String subject,
                      String template,
                      Map<String, Object> templateModel,
-                     Map<String, ByteArrayInputStream> attachments) throws MessagingException;
+                     Map<String, ByteArrayInputStream> attachments);
 }
