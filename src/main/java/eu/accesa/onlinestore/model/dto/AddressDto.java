@@ -1,7 +1,5 @@
 package eu.accesa.onlinestore.model.dto;
 
-import eu.accesa.onlinestore.model.entity.AddressEntity;
-
 import java.util.Objects;
 
 public class AddressDto {

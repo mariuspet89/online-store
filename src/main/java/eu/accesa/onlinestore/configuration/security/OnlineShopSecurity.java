@@ -52,7 +52,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
                                 authException.getMessage()))
                 .and();
 
-        final String[] SWAGGER_AUTH_WHITELIST = {
+        final String[] swaggerAuthWhitelist = {
                 "/swagger-ui/**",
                 "/swagger-resources/**",
                 "/v3/api-docs",
@@ -62,11 +62,11 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // public endpoints (e.g. Swagger)
                 .mvcMatchers("/login").permitAll()
-                .mvcMatchers(SWAGGER_AUTH_WHITELIST).permitAll()
+                .mvcMatchers(swaggerAuthWhitelist).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/users/existsByUsername", "/users/existsByEmail").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/users").permitAll()
-                .mvcMatchers(HttpMethod.PUT,"/userConfirmation").permitAll()
+                .mvcMatchers(HttpMethod.PUT, "/userConfirmation").permitAll()
                 // private endpoints
                 .anyRequest().authenticated();
 

@@ -49,7 +49,7 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             irdTable.addCell(getIRDCell(order.getId())); // pass invoice number
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDateTime orderDate = order.getOrderDate();
-            irdTable.addCell(getIRDCell(orderDate.format(formatter).toString())); // pass invoice date
+            irdTable.addCell(getIRDCell(orderDate.format(formatter))); // pass invoice date
             PdfPTable irhTable = new PdfPTable(2);
             irhTable.setWidthPercentage(100);
 
@@ -94,8 +94,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
                 ProductEntity product = productRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException(ProductEntity.class.getName(),
                                 "Product id", order.getOrderedProducts().keySet().toString()));
-                Double price = product.getPrice().doubleValue();
-                Integer quantity = order.getOrderedProducts().get(id).intValue();
+                Double price = product.getPrice();
+                Integer quantity = order.getOrderedProducts().get(id);
 
                 billTable.addCell(getBillRowCell(id));
                 billTable.addCell(getBillRowCell(product.getDescription()));
@@ -130,7 +130,7 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
                         .orElseThrow(() -> new EntityNotFoundException(ProductEntity.class.getName(),
                                 "Product id", order.getOrderedProducts().keySet().toString()));
                 Double price = product.getPrice();
-                Integer quantity = order.getOrderedProducts().get(id).intValue();
+                Integer quantity = order.getOrderedProducts().get(id);
 
                 double productTotalValue = (price * quantity);
                 invoiceSubTotalValue += (productTotalValue * 0.84033);

@@ -125,14 +125,9 @@ public class UserEntity implements UserDetails {
         this.addressEntity = addressEntity;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-
 
     @Override
     public boolean equals(Object o) {

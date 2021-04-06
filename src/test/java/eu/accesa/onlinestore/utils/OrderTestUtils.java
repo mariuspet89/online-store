@@ -5,10 +5,7 @@ import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static eu.accesa.onlinestore.utils.UserTestUtils.createUserEntity;
 
@@ -28,7 +25,7 @@ public class OrderTestUtils {
         return orderEntity;
     }
 
-    public static HashMap<String, Integer> testHMOrderedProducts(String a, String b, String c, Integer one, Integer two, Integer three) {
+    public static Map<String, Integer> testHMOrderedProducts(String a, String b, String c, Integer one, Integer two, Integer three) {
         List<String> productIds = new ArrayList<>();
         productIds.add(a);
         productIds.add(b);
@@ -39,7 +36,7 @@ public class OrderTestUtils {
         quantities.add(two);
         quantities.add(three);
 
-        HashMap<String, Integer> orderedProducts = new HashMap<>();
+        Map<String, Integer> orderedProducts = new HashMap<>();
         for (String s : productIds) {
             for (Integer i : quantities) {
                 orderedProducts.put(s, i);
@@ -48,9 +45,8 @@ public class OrderTestUtils {
         return orderedProducts;
     }
 
-    public static HashMap<String, Integer> testHMOrderedProduct(String a, Integer one) {
-
-        HashMap<String, Integer> orderedProducts = new HashMap<>();
+    public static Map<String, Integer> testHMOrderedProduct(String a, Integer one) {
+        Map<String, Integer> orderedProducts = new HashMap<>();
         orderedProducts.put(a, one);
         return orderedProducts;
     }

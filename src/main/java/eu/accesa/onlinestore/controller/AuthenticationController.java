@@ -1,11 +1,10 @@
 package eu.accesa.onlinestore.controller;
 
+import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.model.dto.AuthRequestDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.entity.UserEntity;
-import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.service.UserService;
-import eu.accesa.onlinestore.service.implementation.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

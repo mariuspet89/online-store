@@ -16,13 +16,13 @@ import java.util.List;
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
-    private final static Logger logger = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
 
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleEntityNotFoundException(EntityNotFoundException exception) {
-        logger.warn(exception.getMessage());
+        LOGGER.warn(exception.getMessage());
         return exception.getMessage();
     }
 
@@ -37,7 +37,7 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception exception) {
-        logger.warn(exception.getMessage(), exception);
+        LOGGER.warn(exception.getMessage(), exception);
         return exception.getMessage();
     }
 

@@ -18,8 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static eu.accesa.onlinestore.utils.OrderTestUtils.*;
@@ -84,7 +84,7 @@ public class OrderServiceImplTest {
                 "John", "Doe", "jd@mockemail.com", "jd", "qwerty",
                 "40722112211", "male", "Toamnei nr.1", "Las Vegas", "Nevada", "440055");
         OrderDtoNoId order = testOrderDtoNoId(100.1, "603648273ed85832b440eb99");
-        HashMap<String, Integer> orderedProducts = testHMOrderedProduct("6040d6ba1e240556a8b76e8a1", 1);
+        Map<String, Integer> orderedProducts = testHMOrderedProduct("6040d6ba1e240556a8b76e8a1", 1);
         order.setOrderedProducts(orderedProducts);
         order.setOrderDate(orderDate);
         OrderEntity orderEntity = testOrderEntity(null, 100.1, user);

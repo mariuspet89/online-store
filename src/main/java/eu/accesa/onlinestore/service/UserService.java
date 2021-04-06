@@ -19,11 +19,17 @@ public interface UserService {
 
     UserDto findByEmail(String email);
 
-    UserDto createUser(UserDtoNoId userDtoNoId) throws Exception;
+    UserDto createUser(UserDtoNoId userDtoNoId);
 
     UserDto updateUser(String id, UserDtoNoId userDtoNoId);
 
     void deleteUser(String id);
 
+    /**
+     * Sets the {@code enabled} field's value to true.
+     *
+     * @param userId the user ID
+     * @return a confirmation message
+     */
     String confirmUser(String userId);
 }

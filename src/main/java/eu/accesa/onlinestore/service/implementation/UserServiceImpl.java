@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.model.entity.UserEntity;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,17 +84,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDtoNoId userDtoNoId) throws Exception {
+    public UserDto createUser(UserDtoNoId userDtoNoId) {
         LOGGER.info("UserService: creating user");
 
-        List<UserDto> mailChecker = findAll();
-        for (UserDto user : mailChecker) {
-            if (user.getUsername().equals(userDtoNoId.getUsername())) {
-                throw new Exception("This user name is already used!");
-            }else if(user.getEmail().equals((userDtoNoId.getEmail()))){
-                throw new Exception(("This email is already used"));
-            }
+        // duplicate checks
+        if (existsByUsername(userDtoNoId.getUsername())) {
+            throw new OnlineStoreException("This user name is already used!");
         }
+
+        if (existsByEmail(userDtoNoId.getEmail())) {
+            throw new OnlineStoreException("This email is already used!");
+        }
+
         UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
         String encodedPassword = passwordEncoder.encode(userDtoNoId.getPassword());
         userEntity.setPassword(encodedPassword);
@@ -101,8 +104,13 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("confirmationURL", "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
 
-        emailService.sendMessage(userEntity.getEmail(), "User Confirmation Mail",
-                "user-email-confirmation", templateModel, null);
+        try {
+            emailService.sendMessage(userEntity.getEmail(), "User Confirmation",
+                    "user-email-confirmation", templateModel, null);
+        } catch (MessagingException e) {
+            throw new OnlineStoreException(e.getMessage());
+        }
+
         return modelMapper.map(userEntity, UserDto.class);
     }
 
