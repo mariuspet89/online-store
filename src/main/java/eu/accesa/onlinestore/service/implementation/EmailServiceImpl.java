@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.service.EmailService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
@@ -32,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendMessage(String to, String subject,
                             String template, Map<String, Object> templateModel,
-                            Map<String, ByteArrayInputStream> attachments) throws MessagingException {
+                            Map<String, ByteArrayInputStream> attachments) {
         // populate template with concrete data
         Context context = new Context();
         context.setVariables(templateModel);
@@ -40,21 +41,25 @@ public class EmailServiceImpl implements EmailService {
 
         // prepare email
         MimeMessage mimeMessage = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
-        helper.setFrom(NO_REPLY_ADDRESS);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlBody, true);
 
-        // add email attachments if any
-        if (attachments != null && !attachments.isEmpty()) {
-            for (Map.Entry<String, ByteArrayInputStream> attachment : attachments.entrySet()) {
-                InputStreamSource isr = new ByteArrayResource(attachment.getValue().readAllBytes());
-                helper.addAttachment(attachment.getKey(), isr);
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
+            helper.setFrom(NO_REPLY_ADDRESS);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+
+            // add email attachments if any
+            if (attachments != null && !attachments.isEmpty()) {
+                for (Map.Entry<String, ByteArrayInputStream> attachment : attachments.entrySet()) {
+                    InputStreamSource isr = new ByteArrayResource(attachment.getValue().readAllBytes());
+                    helper.addAttachment(attachment.getKey(), isr);
+                }
             }
+            // send email
+            emailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new OnlineStoreException(e.getLocalizedMessage());
         }
-
-        // send email
-        emailSender.send(mimeMessage);
     }
 }

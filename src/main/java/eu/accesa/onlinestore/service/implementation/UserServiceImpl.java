@@ -104,12 +104,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("confirmationURL", "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
 
-        try {
-            emailService.sendMessage(userEntity.getEmail(), "User Confirmation",
-                    "user-email-confirmation", templateModel, null);
-        } catch (MessagingException e) {
-            throw new OnlineStoreException(e.getMessage());
-        }
+        emailService.sendMessage(userEntity.getEmail(), "User Confirmation",
+                "user-email-confirmation", templateModel, null);
 
         return modelMapper.map(userEntity, UserDto.class);
     }

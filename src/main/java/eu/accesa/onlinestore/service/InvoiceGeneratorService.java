@@ -1,8 +1,10 @@
 package eu.accesa.onlinestore.service;
 
 import eu.accesa.onlinestore.model.entity.OrderEntity;
+import eu.accesa.onlinestore.model.invoice.ProductLine;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public interface InvoiceGeneratorService {
 
@@ -12,5 +14,5 @@ public interface InvoiceGeneratorService {
      * @param order the order's data
      * @return a byte array containing the invoice as a PDF
      */
-    ByteArrayOutputStream createPDF(OrderEntity order);
+    ByteArrayOutputStream createPDF(OrderEntity order, List<ProductLine> productLine);
 }
