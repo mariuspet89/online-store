@@ -103,6 +103,14 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setUser(userEntity);
         orderEntity = orderRepository.save(orderEntity);
 
+        //Removing quantity ordered for each product
+        for (String id : orderEntity.getOrderedProducts().keySet()) {
+            ProductEntity product = productRepository.findById(id).orElseThrow(()
+                    -> new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", id));
+            product.setItemsInStock(product.getItemsInStock() - orderEntity.getOrderedProducts().get(id));
+            productRepository.save(product);
+        }
+
         //Preparing template data
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("orderId", orderEntity.getId());
