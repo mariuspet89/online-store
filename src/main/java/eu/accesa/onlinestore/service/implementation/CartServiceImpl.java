@@ -59,6 +59,8 @@ public class CartServiceImpl implements CartService {
                 orElseThrow(() -> new EntityNotFoundException(CartEntity.class.getName(), "CartId", id));
 
         mapper.map(cartDtoNoId, cartFromDatabase);
+        cartFromDatabase.setProducts(cartDtoNoId.getProducts());
+
         CartEntity savedCartEntity = cartRepository.save(cartFromDatabase);
         return mapper.map(savedCartEntity, CartDto.class);
     }
