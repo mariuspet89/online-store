@@ -5,8 +5,7 @@ import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 
 import java.util.List;
 
-public interface
-OrderService {
+public interface OrderService {
 
     List<OrderDto> findAll();
 
