@@ -7,7 +7,6 @@ import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
 import eu.accesa.onlinestore.utils.mongodb.MongoSpringExtension;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @ExtendWith(MongoSpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc

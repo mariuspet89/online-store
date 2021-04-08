@@ -2,13 +2,10 @@ package eu.accesa.onlinestore.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
-import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
 import eu.accesa.onlinestore.utils.mongodb.MongoSpringExtension;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +23,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import static eu.accesa.onlinestore.utils.UserTestUtils.createUserDto;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @ExtendWith(MongoSpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -187,7 +182,7 @@ public class UserIntegrationTest {
                 "lrozier21", "$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG1", "592-653-38731", "M",
                 "Frunzisului Street1", "Cluj-Napoca1", "Cluj1", "123451");
 
-                mockMvc.perform(post("/users")
+        mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(requestDto)))
                 .andExpect(status().isCreated());
@@ -209,16 +204,16 @@ public class UserIntegrationTest {
                 .content(asJsonString(requestDto)))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/users/{id}", userId))
-                .andExpect(jsonPath("$.firstName",is("Lilah1")))
-                .andExpect(jsonPath("$.lastName",is("Rozier1")))
-                .andExpect(jsonPath("$.email",is("lrozier2@networksolutions.com1")))
-                .andExpect(jsonPath("$.username",is("lrozier21")))
-                .andExpect(jsonPath("$.telephone",is("592-653-38731")))
-                .andExpect(jsonPath("$.sex",is("M")))
-                .andExpect(jsonPath("$.addressEntity.address",is("Frunzisului Street1")))
-                .andExpect(jsonPath("$.addressEntity.city",is("Cluj-Napoca1")))
-                .andExpect(jsonPath("$.addressEntity.county",is("Cluj1")))
-                .andExpect(jsonPath("$.addressEntity.postalCode",is("123451")));
+                .andExpect(jsonPath("$.firstName", is("Lilah1")))
+                .andExpect(jsonPath("$.lastName", is("Rozier1")))
+                .andExpect(jsonPath("$.email", is("lrozier2@networksolutions.com1")))
+                .andExpect(jsonPath("$.username", is("lrozier21")))
+                .andExpect(jsonPath("$.telephone", is("592-653-38731")))
+                .andExpect(jsonPath("$.sex", is("M")))
+                .andExpect(jsonPath("$.addressEntity.address", is("Frunzisului Street1")))
+                .andExpect(jsonPath("$.addressEntity.city", is("Cluj-Napoca1")))
+                .andExpect(jsonPath("$.addressEntity.county", is("Cluj1")))
+                .andExpect(jsonPath("$.addressEntity.postalCode", is("123451")));
 
     }
 

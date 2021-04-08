@@ -7,7 +7,6 @@ import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
 import eu.accesa.onlinestore.utils.mongodb.MongoSpringExtension;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @ExtendWith(MongoSpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -97,7 +95,7 @@ public class CartIntegrationTest {
         mockMvc.perform(post("/carts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(cartToBeSavedNoId)))
-        .andExpect(status().isCreated());
+                .andExpect(status().isCreated());
     }
 
     @Test

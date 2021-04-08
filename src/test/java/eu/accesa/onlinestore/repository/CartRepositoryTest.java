@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataMongoTest
-@Disabled
 public class CartRepositoryTest {
 
     private final File CART_DATA_JSON = Paths.get("src", "test", "resources", "data",
