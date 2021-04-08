@@ -12,6 +12,7 @@ import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
 import eu.accesa.onlinestore.service.OrderService;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,28 +81,19 @@ public class OrderServiceImpl implements OrderService {
 
         //Retrieve the user or throw exception if user doesn't exist
         String userId = orderDtoNoId.getUserId();
-
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
         //Creating table data for the order invoice
-        List<ProductLine> productLines = new ArrayList<>();
-
-        //Verifying that products exist and if they do, adding them to productLines
-        orderDtoNoId.getOrderedProducts().forEach((productId, value) -> {
-            Optional<ProductEntity> optionalProductEntity = productRepository.findById(productId);
-            if (optionalProductEntity.isEmpty()) {
-                throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
-            } else {
-                ProductEntity product = optionalProductEntity.get();
-                productLines.add(new ProductLine(product.getId(), product.getDescription(), value, product.getPrice()));
-            }
-        });
+        List<ProductLine> productLines = createProductLinesHelperEntity(orderDtoNoId);
 
         //Saving order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
         orderEntity = orderRepository.save(orderEntity);
+
+        //Removing ordered products from stock
+        removeOrderedQuantityFromEachProduct(orderEntity);
 
         //Preparing template data
         Map<String, Object> templateModel = new HashMap<>();
@@ -141,5 +133,31 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(String id) {
         LOGGER.info("Deleting order with ID = {}", id);
         orderRepository.deleteById(id);
+    }
+
+    @NotNull
+    private List<ProductLine> createProductLinesHelperEntity(OrderDtoNoId orderDtoNoId) {
+        List<ProductLine> productLines = new ArrayList<>();
+
+        //Verifying that products exist and if they do, adding them to productLines
+        orderDtoNoId.getOrderedProducts().forEach((productId, value) -> {
+            Optional<ProductEntity> optionalProductEntity = productRepository.findById(productId);
+            if (optionalProductEntity.isEmpty()) {
+                throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
+            } else {
+                ProductEntity product = optionalProductEntity.get();
+                productLines.add(new ProductLine(product.getId(), product.getDescription(), value, product.getPrice()));
+            }
+        });
+        return productLines;
+    }
+
+    private void removeOrderedQuantityFromEachProduct(OrderEntity orderEntity) {
+        for (String id : orderEntity.getOrderedProducts().keySet()) {
+            ProductEntity product = productRepository.findById(id).orElseThrow(()
+                    -> new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", id));
+            product.setItemsInStock(product.getItemsInStock() - orderEntity.getOrderedProducts().get(id));
+            productRepository.save(product);
+        }
     }
 }
