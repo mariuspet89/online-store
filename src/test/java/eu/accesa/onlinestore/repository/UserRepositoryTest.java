@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB.
 @DataMongoTest
-@Disabled
 class UserRepositoryTest {
 
     // the path to the JSON file
