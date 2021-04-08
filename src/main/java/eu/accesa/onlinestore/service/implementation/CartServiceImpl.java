@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.CartDto;
 import eu.accesa.onlinestore.model.dto.CartDtoNoId;
 import eu.accesa.onlinestore.model.entity.CartEntity;
@@ -10,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,7 +49,11 @@ public class CartServiceImpl implements CartService {
         ObjectId objectId = new ObjectId();
         CartEntity cart = mapper.map(cartDtoNoId, CartEntity.class);
         cart.setId(objectId.toString());
-        return mapper.map(cartRepository.save(cart), CartDto.class);
+        try {
+            return mapper.map(cartRepository.save(cart), CartDto.class);
+        }catch(DuplicateKeyException e){
+            throw new OnlineStoreException( "User with Id: " + cartDtoNoId.getUserId() + " already has a cart.");
+        }
     }
 
     @Override
