@@ -15,9 +15,6 @@ import java.util.List;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private static final String SUCCESS_URL = "pay/success";
-    private static final String CANCEL_URL = "pay/cancel";
-
     private final PayPalHttpClient payPalClient;
 
     public PaymentServiceImpl(PayPalHttpClient payPalClient) {
@@ -25,7 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String createTransaction(PaymentDataDto paymentDataDto) {
+    public String createPayment(PaymentDataDto paymentDataDto) {
         OrdersCreateRequest request = new OrdersCreateRequest();
         request.prefer("return=representation");
         request.requestBody(createPayPalOrderRequest(paymentDataDto));
@@ -33,7 +30,16 @@ public class PaymentServiceImpl implements PaymentService {
         // call PayPal for transaction
         try {
             HttpResponse<Order> response = payPalClient.execute(request);
-            return response.result().id();
+            LinkDescription approveLink = response.result().links().stream()
+                    .filter(linkDescription -> linkDescription.rel().equals("approve"))
+                    .findFirst()
+                    .orElse(null);
+
+            if (approveLink != null) {
+                return approveLink.href();
+            } else {
+                throw new OnlineStoreException("Payment Confirmation Link could not be found!");
+            }
         } catch (IOException e) {
             throw new OnlineStoreException(e.getMessage());
         }
@@ -44,8 +50,8 @@ public class PaymentServiceImpl implements PaymentService {
         orderRequest.checkoutPaymentIntent("AUTHORIZE");
 
         ApplicationContext applicationContext = new ApplicationContext()
-                .returnUrl("http://localhost:8080/" + SUCCESS_URL)
-                .cancelUrl("http://localhost:8080/" + CANCEL_URL);
+                .returnUrl("http://18.224.7.25:5000/")
+                .cancelUrl("http://18.224.7.25:5000/");
         orderRequest.applicationContext(applicationContext);
 
         List<PurchaseUnitRequest> purchaseUnitRequests = new ArrayList<>();
