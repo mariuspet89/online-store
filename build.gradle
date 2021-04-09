@@ -38,6 +38,11 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
 	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.2'
+
+	// PayPal
+//    implementation 'com.paypal:paypalhttp:1.0.1'
+	implementation group: 'com.paypal.sdk', name: 'checkout-sdk', version: '1.0.1'
+//	implementation group: 'com.paypal.sdk', name: 'rest-api-sdk', version: '1.14.0'
 }
 configurations {
 	compile.exclude group: 'org.slf4j', module: 'slf4j-simple'
