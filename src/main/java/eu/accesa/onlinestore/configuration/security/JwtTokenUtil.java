@@ -59,4 +59,14 @@ public class JwtTokenUtil {
 
         return claims.getSubject().split(",")[1];
     }
+    public String generatePasswordToken(UserEntity user){
+        LocalDateTime currentTime = LocalDateTime.now();
+        return Jwts.builder()
+                .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
+                .setIssuer(jwtIssuer)
+                .setIssuedAt(Timestamp.valueOf(currentTime))
+                .setExpiration(Timestamp.valueOf(currentTime.plusHours(1))) //valid for 1 Hour
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
 }

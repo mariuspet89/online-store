@@ -28,6 +28,8 @@ public class UserEntity implements UserDetails {
 
     private Boolean enabled = false;
 
+    private String token;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptySet();
@@ -129,17 +131,29 @@ public class UserEntity implements UserDetails {
         this.enabled = enabled;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(username, that.username) && Objects.equals(telephone, that.telephone) && Objects.equals(sex, that.sex) && Objects.equals(password, that.password) && Objects.equals(addressEntity, that.addressEntity);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(username, that.username) && Objects.equals(telephone, that.telephone) && Objects.equals(sex, that.sex) && Objects.equals(password, that.password) && Objects.equals(addressEntity, that.addressEntity) && Objects.equals(enabled, that.enabled) && Objects.equals(token, that.token);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, username, telephone, sex, password, addressEntity);
+        return Objects.hash(id, firstName, lastName, email, username, telephone, sex, password, addressEntity, enabled, token);
     }
 
     @Override
@@ -153,7 +167,9 @@ public class UserEntity implements UserDetails {
                 ", telephone='" + telephone + '\'' +
                 ", sex='" + sex + '\'' +
                 ", password='" + password + '\'' +
-                ", address=" + addressEntity +
+                ", addressEntity=" + addressEntity +
+                ", enabled=" + enabled +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

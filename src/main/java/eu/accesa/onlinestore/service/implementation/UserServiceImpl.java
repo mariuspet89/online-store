@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.UserDto;
@@ -13,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,12 +31,14 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public UserServiceImpl(EmailServiceImpl emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserServiceImpl(EmailServiceImpl emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder, UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
         this.emailService = emailService;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
@@ -135,6 +138,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findByUserResetToken(String resetToken) {
+
+        Optional<UserEntity> user = userRepository.findUserEntityByTokenEquals(resetToken);
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
     public String confirmUser(String userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", userId));
@@ -142,5 +152,22 @@ public class UserServiceImpl implements UserService {
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
         return "Your account is confirmed!";
+    }
+
+    @Override
+    public UserDto resetPassword(String token, String newPassword, String userEmail) {
+
+        UserEntity user = userRepository.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", userEmail));
+
+        if (jwtTokenUtil.validate(token)) {
+            if (token.equals(user.getToken())) {
+                String newEncodePassword = passwordEncoder.encode(newPassword);
+                user.setPassword(newEncodePassword);
+                user.setToken(null);
+            }
+        } else {
+            user.setToken(null);
+        }
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 }
