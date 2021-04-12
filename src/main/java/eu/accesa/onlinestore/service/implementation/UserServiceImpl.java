@@ -146,6 +146,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
         return "Your account is confirmed!";
     }
+/*
+    public void decodeEmailLink(String emailLink){
+        String jwt = emailLink.substring();
+        String email = emailLink.substring();
+
+        //redirect cu informatiile astea -> fe primesc info, le pun in background si mai asteapta doar parola
+    }*/
 
     @Override
     public UserDto resetPassword(String token, String userEmail, String newPassword) {
@@ -171,6 +178,7 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
+    //TODO implement a thymeleaf form in which you are redirected to reset password endpoint with hidden token and email..user will have to provide only the new password
     @Override
     public void generateToken(String email) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", email));
