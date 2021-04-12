@@ -64,7 +64,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/login").permitAll()
                 .mvcMatchers(swaggerAuthWhitelist).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/products/**").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/users/existsByUsername", "/users/existsByEmail").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/users/existsByUsername", "/users/existsByEmail","/users/token","users/reset-password").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/users").permitAll()
                 .mvcMatchers(HttpMethod.PUT, "/userConfirmation").permitAll()
                 // private endpoints

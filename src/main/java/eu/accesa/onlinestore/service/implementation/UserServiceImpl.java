@@ -138,13 +138,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findByUserResetToken(String resetToken) {
-
-        Optional<UserEntity> user = userRepository.findUserEntityByTokenEquals(resetToken);
-        return modelMapper.map(user, UserDto.class);
-    }
-
-    @Override
     public String confirmUser(String userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(UserEntity.class.getName(), "UserID", userId));
@@ -155,7 +148,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto resetPassword(String token, String newPassword, String userEmail) {
+    public UserDto resetPassword(String token, String userEmail ,String newPassword) {
 
         UserEntity user = userRepository.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", userEmail));
 
@@ -169,5 +162,25 @@ public class UserServiceImpl implements UserService {
             user.setToken(null);
         }
         return modelMapper.map(userRepository.save(user), UserDto.class);
+    }
+    @Override
+    public UserDto findByUserResetToken(String resetToken) {
+
+        Optional<UserEntity> user = userRepository.findUserEntityByTokenEquals(resetToken);
+        return modelMapper.map(user, UserDto.class);
+    }
+    @Override
+    public void generateToken(String email) {
+        UserEntity user=userRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException(UserEntity.class.getName(),"User email", email));
+        String token =jwtTokenUtil.generatePasswordToken(user);
+
+        user.setToken(token);
+        userRepository.save(user);
+
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("token", "http://localhost:8080/users/reset-password?token="+user.getToken()+"&email="+user.getEmail());
+
+        emailService.sendMessage(user.getEmail(), "Password reset message for onlinestore account ",
+                "user-token", templateModel, null);
     }
 }

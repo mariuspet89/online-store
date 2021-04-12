@@ -68,4 +68,14 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
     }
+    @GetMapping("/token")
+    public ResponseEntity<String> generateToken(@RequestParam() String email) {
+          userService.generateToken(email);
+          return ResponseEntity.status(HttpStatus.OK).body("Token sent to user email");
+    }
+    @GetMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam() String token,@RequestParam() String email,@RequestParam() String newPassword) {
+        userService.resetPassword(token, email, newPassword);
+        return ResponseEntity.status(HttpStatus.OK).body("Password was changed");
+    }
 }
