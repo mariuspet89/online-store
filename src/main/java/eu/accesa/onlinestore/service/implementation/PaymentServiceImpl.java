@@ -5,6 +5,7 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.orders.*;
 import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.PaymentDataDto;
+import eu.accesa.onlinestore.model.dto.PaymentLinkDto;
 import eu.accesa.onlinestore.service.PaymentService;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String createPayment(PaymentDataDto paymentDataDto) {
+    public PaymentLinkDto createPayment(PaymentDataDto paymentDataDto) {
         OrdersCreateRequest request = new OrdersCreateRequest();
         request.prefer("return=representation");
         request.requestBody(createPayPalOrderRequest(paymentDataDto));
@@ -36,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElse(null);
 
             if (approveLink != null) {
-                return approveLink.href();
+                return new PaymentLinkDto(approveLink.href());
             } else {
                 throw new OnlineStoreException("Payment Confirmation Link could not be found!");
             }
@@ -50,8 +51,8 @@ public class PaymentServiceImpl implements PaymentService {
         orderRequest.checkoutPaymentIntent("AUTHORIZE");
 
         ApplicationContext applicationContext = new ApplicationContext()
-                .returnUrl("http://18.224.7.25:5000/")
-                .cancelUrl("http://18.224.7.25:5000/");
+                .returnUrl("http://18.224.7.25:5000/#/success")
+                .cancelUrl("http://18.224.7.25:5000/#/failure");
         orderRequest.applicationContext(applicationContext);
 
         List<PurchaseUnitRequest> purchaseUnitRequests = new ArrayList<>();
