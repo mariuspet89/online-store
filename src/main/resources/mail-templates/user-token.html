@@ -1,10 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
 </head>
 <body>
-<p>Please reset your password by pressing using the code provided below:</p>
-<p th:text="${token}"></p>
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3><i class="fas fa-lock" style="font-size:2em;"></i></h3>
+                        <h2 class="text-center">Reset password</h2>
+                        <div class="panel-body">
+                            <form th:action="@{localhost:8080/users/reset-password}"  method="post">
+
+                                <input type="hidden"  name="token" th:value="${token}"/>
+                                <input type="email" th:readonly="email" name="email" th:value="${email}"/>
+
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
+                                        </div>
+                                        <input type="password" class="form-control" placeholder="Password"
+                                               aria-describedby="basic-addon1" id="password"
+                                               th:value="*{password}"/>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirmation Password</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
+                                        </div>
+                                        <input type="password" class="form-control" placeholder="Confirm Password"
+                                               aria-describedby="basic-addon2" id="confirmPassword"
+                                               th:value="*{confirmPassword}"/>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-block btn-success">Reset password</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
 </body>
 </html>

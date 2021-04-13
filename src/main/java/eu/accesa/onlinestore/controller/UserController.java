@@ -74,8 +74,8 @@ public class UserController {
           return ResponseEntity.status(HttpStatus.OK).body("Token sent to user email");
     }
     @GetMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam() String token,@RequestParam() String email,@RequestParam() String newPassword) {
-        userService.resetPassword(token, email, newPassword);
+    public ResponseEntity<String> resetPassword(@RequestParam() String token,@RequestParam() String email,@RequestParam() String password) {
+        userService.resetPassword(token, email, password);
         return ResponseEntity.status(HttpStatus.OK).body("Password was changed");
     }
 }

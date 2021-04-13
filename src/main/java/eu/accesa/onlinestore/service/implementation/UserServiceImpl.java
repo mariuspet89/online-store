@@ -188,9 +188,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("token", "http://localhost:8080/users/reset-password?token=" + user.getToken() + "&email=" + user.getEmail());
+        templateModel.put("token",user.getToken());
+        templateModel.put("email",user.getEmail());
 
-        emailService.sendMessage(user.getEmail(), "Password reset message for onlinestore account ",
+
+        emailService.sendMessage(user.getEmail(), "Password reset message from your onlinestore account ",
                 "user-token", templateModel, null);
     }
 }
