@@ -25,9 +25,9 @@ public interface UserService {
 
     void deleteUser(String id);
 
-    void generateToken(String email);
+    String forgotPassword(String email);
 
-    UserDto resetPassword(String token, String newPassword, String userEmail);
+    String resetPassword(String password, String userEmail);
 
     UserDto findByUserResetToken (String resetToken);
 

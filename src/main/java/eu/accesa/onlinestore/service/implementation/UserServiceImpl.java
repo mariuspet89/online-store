@@ -146,29 +146,24 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
         return "Your account is confirmed!";
     }
-/*
-    public void decodeEmailLink(String emailLink){
-        String jwt = emailLink.substring();
-        String email = emailLink.substring();
-
-        //redirect cu informatiile astea -> fe primesc info, le pun in background si mai asteapta doar parola
-    }*/
 
     @Override
-    public UserDto resetPassword(String token, String userEmail, String newPassword) {
+    public String resetPassword(String token, String password) {
 
-        UserEntity user = userRepository.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", userEmail));
+        UserEntity user = userRepository.findUserEntityByTokenEquals(token).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
 
         if (jwtTokenUtil.validate(token)) {
             if (token.equals(user.getToken())) {
-                String newEncodePassword = passwordEncoder.encode(newPassword);
+                String newEncodePassword = passwordEncoder.encode(password);
                 user.setPassword(newEncodePassword);
                 user.setToken(null);
+                userRepository.save(user);
+
             }
         } else {
-            user.setToken(null);
+            return "Invalid token";
         }
-        return modelMapper.map(userRepository.save(user), UserDto.class);
+        return "Your password successfully updated.";
     }
 
     @Override
@@ -178,9 +173,9 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
-    //TODO implement a thymeleaf form in which you are redirected to reset password endpoint with hidden token and email..user will have to provide only the new password
+
     @Override
-    public void generateToken(String email) {
+    public String forgotPassword(String email) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", email));
         String token = jwtTokenUtil.generatePasswordToken(user);
 
@@ -189,10 +184,11 @@ public class UserServiceImpl implements UserService {
 
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("token",user.getToken());
-        templateModel.put("email",user.getEmail());
 
 
-        emailService.sendMessage(user.getEmail(), "Password reset message from your onlinestore account ",
+        emailService.sendMessage(user.getEmail(), "Bellow you find the  token to reset the password for your onlinestore account ",
                 "user-token", templateModel, null);
+
+        return user.getToken();
     }
 }
