@@ -58,7 +58,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDtoNoId));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDtoNoId userDtoNoId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, userDtoNoId));
     }
@@ -67,5 +67,19 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        String response = userService.forgotPassword(email);
+        if (!response.isEmpty()) {
+            response = "http://localhost:8080/users/reset-password?token=" + response;
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token,
+                                @RequestParam String password) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.resetPassword(token, password));
     }
 }

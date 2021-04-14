@@ -25,6 +25,12 @@ public interface UserService {
 
     void deleteUser(String id);
 
+    String forgotPassword(String email);
+
+    String resetPassword(String password, String userEmail);
+
+    UserDto findByUserResetToken (String resetToken);
+
     /**
      * Sets the {@code enabled} field's value to true.
      *

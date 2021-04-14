@@ -49,6 +49,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
 
+
             // add email attachments if any
             if (attachments != null && !attachments.isEmpty()) {
                 for (Map.Entry<String, ByteArrayInputStream> attachment : attachments.entrySet()) {
