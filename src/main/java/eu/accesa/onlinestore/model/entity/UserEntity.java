@@ -131,10 +131,6 @@ public class UserEntity implements UserDetails {
         this.enabled = enabled;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
     public String getToken() {
         return token;
     }

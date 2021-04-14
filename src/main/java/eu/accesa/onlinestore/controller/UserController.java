@@ -71,7 +71,7 @@ public class UserController {
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         String response = userService.forgotPassword(email);
-        if (!response.startsWith("Invalid")) {
+        if (!response.isEmpty()) {
             response = "http://localhost:8080/users/reset-password?token=" + response;
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);

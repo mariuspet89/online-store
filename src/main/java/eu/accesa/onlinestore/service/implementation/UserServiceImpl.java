@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String resetPassword(String token, String password) {
 
-        UserEntity user = userRepository.findUserEntityByTokenEquals(token).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
+        UserEntity user = userRepository.findUserEntityByToken(token).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
 
         if (jwtTokenUtil.validate(token)) {
             if (token.equals(user.getToken())) {
@@ -163,13 +163,13 @@ public class UserServiceImpl implements UserService {
         } else {
             return "Invalid token";
         }
-        return "Your password successfully updated.";
+        return "Your was password successfully updated.";
     }
 
     @Override
     public UserDto findByUserResetToken(String resetToken) {
 
-        Optional<UserEntity> user = userRepository.findUserEntityByTokenEquals(resetToken);
+        Optional<UserEntity> user = userRepository.findUserEntityByToken(resetToken);
         return modelMapper.map(user, UserDto.class);
     }
 
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("token", "http://18.224.7.25:5000/#/account/new-password?token=" + user.getToken());
 
-        emailService.sendMessage(user.getEmail(), "Attached is the token to reset the password for your onlinestore account ",
+        emailService.sendMessage(user.getEmail(), "Password reset link for onlinestore account ",
                 "user-token", templateModel, null);
 
         return user.getToken();
