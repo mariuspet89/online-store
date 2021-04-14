@@ -183,10 +183,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("token",user.getToken());
+        templateModel.put("token", "http://18.224.7.25:5000/#/account/new-password?token=" + user.getToken());
 
-
-        emailService.sendMessage(user.getEmail(), "Bellow you find the  token to reset the password for your onlinestore account ",
+        emailService.sendMessage(user.getEmail(), "Attached is the token to reset the password for your onlinestore account ",
                 "user-token", templateModel, null);
 
         return user.getToken();
