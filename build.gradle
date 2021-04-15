@@ -13,6 +13,8 @@ group = 'eu.accesa'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+apply plugin: 'maven'
+
 repositories {
     mavenCentral()
 }
@@ -55,6 +57,13 @@ test {
     useJUnitPlatform()
 }
 
-task tellMeTheVersion {
-    print version
+install {
+    repositories {
+        mavenInstaller {
+            pom.version = project.version
+            pom.groupId = project.group
+            pom.artifactId = 'online-store'
+            pom.writeTo("/pom.xml")
+        }
+    }
 }
