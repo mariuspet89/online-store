@@ -63,7 +63,7 @@ install {
             pom.version = project.version
             pom.groupId = project.group
             pom.artifactId = 'online-store'
-            pom.writeTo("/pom.xml")
+            pom.writeTo("${project.rootDir}/pom.xml")
         }
     }
 }
