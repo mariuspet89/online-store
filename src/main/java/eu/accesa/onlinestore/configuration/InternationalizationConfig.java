@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.configuration;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,7 @@ public class InternationalizationConfig {
         private final List<Locale> supportedLocales = List.of(
                 Locale.ENGLISH, Locale.GERMAN, new Locale("ro", ""));
 
+        @NotNull
         @Override
         public Locale resolveLocale(HttpServletRequest request) {
             String acceptLanguage = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
