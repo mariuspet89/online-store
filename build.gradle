@@ -55,6 +55,6 @@ test {
     useJUnitPlatform()
 }
 
-task printVersion {
+task tellMeTheVersion {
     print version
 }
