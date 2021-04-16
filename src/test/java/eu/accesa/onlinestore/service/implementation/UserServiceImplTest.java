@@ -6,6 +6,7 @@ import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.UserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -282,6 +283,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Disabled
     void testCreateUser() throws Exception {
         // GIVEN
         String originalPassword = "pistols";
