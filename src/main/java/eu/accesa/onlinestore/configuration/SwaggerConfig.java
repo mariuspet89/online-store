@@ -61,7 +61,6 @@ public class SwaggerConfig {
         return Collections.singletonList(new RequestParameterBuilder()
                 .name(HttpHeaders.ACCEPT_LANGUAGE)
                 .in(ParameterType.HEADER)
-                .required(true)
                 .build());
     }
 }
