@@ -10,6 +10,7 @@ import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -84,6 +85,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
+    @Disabled
     void createOrder() {
         // GIVEN
 
