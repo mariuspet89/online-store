@@ -11,13 +11,13 @@ import eu.accesa.onlinestore.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,15 +26,23 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    @Value("${user.confirmation.base.url}")
+    private String userConfirmationBaseURL;
+
+    @Value("${user.password.reset.url}")
+    private String userPasswordResetURL;
 
     private final EmailServiceImpl emailService;
+    private final MessageSource messageSource;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
-    public UserServiceImpl(EmailServiceImpl emailService, ModelMapper modelMapper, PasswordEncoder passwordEncoder, UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
+    public UserServiceImpl(EmailServiceImpl emailService, MessageSource messageSource, ModelMapper modelMapper,
+                           PasswordEncoder passwordEncoder, UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
         this.emailService = emailService;
+        this.messageSource = messageSource;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
@@ -105,10 +113,11 @@ public class UserServiceImpl implements UserService {
         userEntity = userRepository.save(userEntity);
 
         Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("confirmationURL", "http://18.224.7.25:5000/#/userConfirmation?userId=" + userEntity.getId());
+        templateModel.put("confirmationURL", userConfirmationBaseURL + userEntity.getId());
 
-        emailService.sendMessage(userEntity.getEmail(), "User Confirmation",
-                "user-email-confirmation", templateModel, null);
+        Locale locale = LocaleContextHolder.getLocale();
+        String subject = messageSource.getMessage("user.confirmation.subject", null, locale);
+        emailService.sendMessage(userEntity.getEmail(), subject, "user-email-confirmation", templateModel, null);
 
         return modelMapper.map(userEntity, UserDto.class);
     }
@@ -149,8 +158,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String resetPassword(String token, String password) {
-
-        UserEntity user = userRepository.findUserEntityByToken(token).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
+        UserEntity user = userRepository.findUserEntityByToken(token)
+                .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
 
         if (jwtTokenUtil.validate(token)) {
             if (token.equals(user.getToken())) {
@@ -158,7 +167,6 @@ public class UserServiceImpl implements UserService {
                 user.setPassword(newEncodePassword);
                 user.setToken(null);
                 userRepository.save(user);
-
             }
         } else {
             return "Invalid token";
@@ -168,25 +176,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findByUserResetToken(String resetToken) {
-
         Optional<UserEntity> user = userRepository.findUserEntityByToken(resetToken);
         return modelMapper.map(user, UserDto.class);
     }
 
-
     @Override
     public String forgotPassword(String email) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", email));
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "User email", email));
         String token = jwtTokenUtil.generatePasswordToken(user);
 
         user.setToken(token);
         userRepository.save(user);
 
         Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("token", "http://18.224.7.25:5000/#/account/new-password?token=" + user.getToken());
+        templateModel.put("token", userPasswordResetURL + user.getToken());
 
-        emailService.sendMessage(user.getEmail(), "Password reset link for onlinestore account ",
-                "user-token", templateModel, null);
+        Locale locale = LocaleContextHolder.getLocale();
+        String subject = messageSource.getMessage("password.reset.subject", null, locale);
+        emailService.sendMessage(user.getEmail(), subject, "user-token", templateModel, null);
 
         return user.getToken();
     }

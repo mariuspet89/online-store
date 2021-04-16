@@ -1,8 +1,10 @@
 package eu.accesa.onlinestore.configuration;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
@@ -15,6 +17,9 @@ import java.util.Locale;
 @Configuration
 public class InternationalizationConfig {
 
+    @Value("${spring.messages.basename}")
+    private String messageBundleBasename;
+
     /*
      * The LocaleResolver interface has implementations that determine the current locale based on the session,
      * cookies, the Accept-Language header, or a fixed value.
@@ -24,6 +29,15 @@ public class InternationalizationConfig {
         AcceptHeaderLocaleResolver localeResolver = new CustomAcceptHeaderLocaleResolver();
         localeResolver.setDefaultLocale(Locale.ENGLISH);
         return localeResolver;
+    }
+
+    @Bean
+    public ResourceBundleMessageSource resourceBundleMessageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultLocale(Locale.ENGLISH);
+        messageSource.setBasename(messageBundleBasename);
+        messageSource.setUseCodeAsDefaultMessage(true);
+        return messageSource;
     }
 
     private static class CustomAcceptHeaderLocaleResolver extends AcceptHeaderLocaleResolver {
