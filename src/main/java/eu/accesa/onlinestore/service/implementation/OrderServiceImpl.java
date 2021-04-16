@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.service.implementation;
 
+import com.google.common.net.MediaType;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -31,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final ModelMapper mapper;
+    private final MessageSource messageSource;
 
     private final EmailServiceImpl emailService;
     private final InvoiceGeneratorService invoiceGeneratorService;
@@ -39,10 +43,11 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public OrderServiceImpl(ModelMapper mapper, EmailServiceImpl emailService,
+    public OrderServiceImpl(ModelMapper mapper, MessageSource messageSource, EmailServiceImpl emailService,
                             InvoiceGeneratorService invoiceGeneratorService, OrderRepository orderRepository,
                             ProductRepository productRepository, UserRepository userRepository) {
         this.mapper = mapper;
+        this.messageSource = messageSource;
         this.emailService = emailService;
         this.invoiceGeneratorService = invoiceGeneratorService;
         this.orderRepository = orderRepository;
@@ -79,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto createOrder(OrderDtoNoId orderDtoNoId) {
         LOGGER.info("Order Service: creating order...");
 
-        //Retrieve the user or throw exception if user doesn't exist
+        // retrieve the user or throw exception if user doesn't exist
         String userId = orderDtoNoId.getUserId();
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
@@ -87,33 +92,38 @@ public class OrderServiceImpl implements OrderService {
         //Creating table data for the order invoice
         List<ProductLine> productLines = createProductLinesHelperEntity(orderDtoNoId);
 
-        //Saving order
+        // saving order
         OrderEntity orderEntity = mapper.map(orderDtoNoId, OrderEntity.class);
         orderEntity.setUser(userEntity);
         orderEntity = orderRepository.save(orderEntity);
 
-        //Removing ordered products from stock
+        // removing ordered products from stock
         removeOrderedQuantityFromEachProduct(orderEntity);
 
-        //Preparing template data
+        // preparing template data
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("orderId", orderEntity.getId());
         templateModel.put("orderDate", orderEntity.getOrderDate()
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
 
-        //Generating invoice
+        // generating invoice
         ByteArrayOutputStream generatedInvoice = invoiceGeneratorService.createPDF(orderEntity, productLines);
         ByteArrayInputStream invoiceAsBytes = new ByteArrayInputStream(generatedInvoice.toByteArray());
 
-        //Preparing attachments
+        // preparing attachments
+        Locale locale = LocaleContextHolder.getLocale();
+        String invoiceBaseName = messageSource.getMessage("invoice.base.name", null, locale);
+        String invoiceFinalName = invoiceBaseName + "-" + orderEntity.getId() + ".pdf";
+
         Map<String, ByteArrayInputStream> attachments = new HashMap<>();
-        attachments.put("Invoice.pdf", invoiceAsBytes);
+        attachments.put(invoiceFinalName, invoiceAsBytes);
 
-        //Sending email with invoice attached
-        emailService.sendMessage(userEntity.getEmail(), "Order Created Successfully",
-                "order-created", templateModel, attachments);
+        // sending email with invoice attached
 
-        //Returning created order DTO
+        String subject = messageSource.getMessage("order.created.subject", null, locale);
+        emailService.sendMessage(userEntity.getEmail(), subject, "order-created", templateModel, attachments);
+
+        // return created order DTO
         return mapper.map(orderEntity, OrderDto.class);
     }
 

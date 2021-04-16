@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.controller;
 
+import eu.accesa.onlinestore.model.dto.ResetLinkDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.service.UserService;
@@ -69,12 +70,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
     }
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<ResetLinkDto> forgotPassword(@RequestParam String email) {
         String response = userService.forgotPassword(email);
         if (!response.isEmpty()) {
             response = "http://localhost:8080/users/reset-password?token=" + response;
         }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResetLinkDto(response));
     }
 
     @PutMapping("/reset-password")

@@ -11,6 +11,8 @@ import eu.accesa.onlinestore.model.invoice.ProductLine;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -18,17 +20,26 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceGeneratorServiceImpl.class);
 
+    private MessageSource messageSource;
+
+    public InvoiceGeneratorServiceImpl(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
     @Override
     public ByteArrayOutputStream createPDF(OrderEntity order, List<ProductLine> productLines) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Document document = new Document();
+
+            Locale locale = LocaleContextHolder.getLocale();
 
             PdfWriter.getInstance(document, outputStream);
 
@@ -41,8 +52,10 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             image.scaleAbsolute(540f, 72f);
 
             PdfPTable irdTable = new PdfPTable(2);
-            irdTable.addCell(getIRDCell("Invoice No"));
-            irdTable.addCell(getIRDCell("Invoice Date"));
+            String invoiceNumber = messageSource.getMessage("invoice.number", null, locale);
+            irdTable.addCell(getIRDCell(invoiceNumber));
+            String invoiceDate = messageSource.getMessage("invoice.date", null, locale);
+            irdTable.addCell(getIRDCell(invoiceDate));
             //Passing invoice no
             irdTable.addCell(getIRDCell(order.getId()));
             //Passing invoice date
@@ -55,7 +68,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
-            irhTable.addCell(getIRHCell("Invoice", PdfPCell.ALIGN_RIGHT));
+            String invoice = messageSource.getMessage("invoice", null, locale);
+            irhTable.addCell(getIRHCell(invoice, PdfPCell.ALIGN_RIGHT));
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
             irhTable.addCell(getIRHCell("", PdfPCell.ALIGN_RIGHT));
 
@@ -72,7 +86,8 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             Font nameAndAddressFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, Font.BOLDITALIC);
 
             //Customer information
-            Phrase bill = fs.process("Bill To");
+            String billTo = messageSource.getMessage("bill.to", null, locale);
+            Phrase bill = fs.process(billTo);
 
             //Customer name
             Paragraph name = new Paragraph(order.getUser().getFirstName() + " " + order.getUser().getLastName());
@@ -94,11 +109,16 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
             billTable.setWidthPercentage(100);
             billTable.setWidths(new float[]{2, 4, 1, 1, 1});
             billTable.setSpacingBefore(30.0f);
-            billTable.addCell(getBillHeaderCell("Item Id"));
-            billTable.addCell(getBillHeaderCell("Description"));
-            billTable.addCell(getBillHeaderCell("Unit Price"));
-            billTable.addCell(getBillHeaderCell("Qty"));
-            billTable.addCell(getBillHeaderCell("Amount"));
+            String itemId = messageSource.getMessage("item.id", null, locale);
+            billTable.addCell(getBillHeaderCell(itemId));
+            String description = messageSource.getMessage("description", null, locale);
+            billTable.addCell(getBillHeaderCell(description));
+            String unitPrice = messageSource.getMessage("unit.price", null, locale);
+            billTable.addCell(getBillHeaderCell(unitPrice));
+            String unitQuantity = messageSource.getMessage("quantity", null, locale);
+            billTable.addCell(getBillHeaderCell(unitQuantity));
+            String amount = messageSource.getMessage("amount", null, locale);
+            billTable.addCell(getBillHeaderCell(amount));
 
             for (ProductLine productLine : productLines) {
 
@@ -114,9 +134,12 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
             PdfPTable validity = new PdfPTable(1);
             validity.setWidthPercentage(100);
-            validity.addCell(getValidityCell("Warranty"));
-            validity.addCell(getValidityCell(" * Products purchased comes with 2 year national warranty \n   (if applicable)"));
-            validity.addCell(getValidityCell(" * Warranty should be claimed only for bikes within manufacturer condition"));
+            String warranty = messageSource.getMessage("warranty", null, locale);
+            validity.addCell(getValidityCell(warranty));
+            String warrantyLine1 = messageSource.getMessage("warranty.line1", null, locale);
+            validity.addCell(getValidityCell(warrantyLine1));
+            String warrantyLine2 = messageSource.getMessage("warranty.line2", null, locale);
+            validity.addCell(getValidityCell(warrantyLine2));
 
             PdfPCell summaryL = new PdfPCell(validity);
             summaryL.setColspan(2);
@@ -125,9 +148,12 @@ public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
 
             PdfPTable accounts = new PdfPTable(3);
             accounts.setWidthPercentage(100);
-            accounts.addCell(getAccountsCell("Subtotal VAT excluded"));
-            accounts.addCell(getAccountsCell("VAT(19%)"));
-            accounts.addCell(getAccountsCell("Total"));
+            String subtotal = messageSource.getMessage("subtotal", null, locale);
+            accounts.addCell(getAccountsCell(subtotal));
+            String vat = messageSource.getMessage("vat", null, locale);
+            accounts.addCell(getAccountsCell(vat));
+            String total = messageSource.getMessage("total", null, locale);
+            accounts.addCell(getAccountsCell(total));
 
             DecimalFormat df = new DecimalFormat("#.##");
             double invoiceSubTotalValue = 0;

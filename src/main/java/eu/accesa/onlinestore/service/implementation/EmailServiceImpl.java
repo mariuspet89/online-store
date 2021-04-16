@@ -3,6 +3,8 @@ package eu.accesa.onlinestore.service.implementation;
 import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.service.EmailService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,12 +22,14 @@ import java.util.Map;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    private static final String NO_REPLY_ADDRESS = "onlinestoreaccesa@gmail.com";
+    @Value("${mail.no.reply.address}")
+    private String noReplyAddress;
 
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine thymeleafTemplateEngine;
 
-    public EmailServiceImpl(@Qualifier("emailSender") JavaMailSender emailSender, SpringTemplateEngine thymeleafTemplateEngine) {
+    public EmailServiceImpl(@Qualifier("emailSender") JavaMailSender emailSender,
+                            SpringTemplateEngine thymeleafTemplateEngine) {
         this.emailSender = emailSender;
         this.thymeleafTemplateEngine = thymeleafTemplateEngine;
     }
@@ -37,6 +41,7 @@ public class EmailServiceImpl implements EmailService {
         // populate template with concrete data
         Context context = new Context();
         context.setVariables(templateModel);
+        context.setLocale(LocaleContextHolder.getLocale());
         String htmlBody = thymeleafTemplateEngine.process(template, context);
 
         // prepare email
@@ -44,11 +49,10 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(NO_REPLY_ADDRESS);
+            helper.setFrom(noReplyAddress);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
-
 
             // add email attachments if any
             if (attachments != null && !attachments.isEmpty()) {
@@ -57,6 +61,7 @@ public class EmailServiceImpl implements EmailService {
                     helper.addAttachment(attachment.getKey(), isr);
                 }
             }
+
             // send email
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
