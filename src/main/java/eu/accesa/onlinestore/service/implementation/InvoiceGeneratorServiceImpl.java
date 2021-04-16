@@ -24,12 +24,14 @@ import java.util.Locale;
 
 @Service
 public class InvoiceGeneratorServiceImpl implements InvoiceGeneratorService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceGeneratorServiceImpl.class);
+
+    private MessageSource messageSource;
+
     public InvoiceGeneratorServiceImpl(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
-
-    private MessageSource messageSource;
-    private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceGeneratorServiceImpl.class);
 
     @Override
     public ByteArrayOutputStream createPDF(OrderEntity order, List<ProductLine> productLines) {
