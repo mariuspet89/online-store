@@ -1,4 +1,5 @@
 package eu.accesa.onlinestore.model.entity;
+
 import nonapi.io.github.classgraph.json.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -14,8 +15,10 @@ public class ProductEntity {
     private String description;
     private Double price;
     private Double rating;
-    @Field(value="itemsinstock")
+
+    @Field(value = "itemsinstock")
     private Integer itemsInStock;
+
     @Field(value = "picture")
     private String image;
     private String brand;
@@ -103,7 +106,10 @@ public class ProductEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductEntity that = (ProductEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(rating, that.rating) && Objects.equals(itemsInStock, that.itemsInStock) && Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) && Objects.equals(price, that.price) &&
+                Objects.equals(rating, that.rating) && Objects.equals(itemsInStock, that.itemsInStock) &&
+                Objects.equals(image, that.image) && Objects.equals(brand, that.brand);
     }
 
     @Override

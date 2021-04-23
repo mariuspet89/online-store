@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.repository;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.entity.CartEntity;
 import org.junit.jupiter.api.AfterEach;
@@ -14,14 +13,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @DataMongoTest
-public class CartRepositoryTest {
+class CartRepositoryTest {
 
     private final File CART_DATA_JSON = Paths.get("src", "test", "resources", "data",
             "CartData.json").toFile();
@@ -36,10 +37,8 @@ public class CartRepositoryTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        // deserialize the JSON file to an array of users
-
+        // deserialize the JSON file to an array of carts
         CartEntity[] carts = objectMapper.readValue(CART_DATA_JSON, CartEntity[].class);
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         // load each user into embedded MongoDB
         Arrays.stream(carts).forEach(mongoTemplate::save);
@@ -47,30 +46,57 @@ public class CartRepositoryTest {
 
     @AfterEach
     public void tearDown() {
-        // drop the users collection
+        // drops the carts collection
         mongoTemplate.dropCollection("carts");
-
     }
 
     @Test
-    public void testDeleteSuccess() {
+    void testFindByUserId() {
         // GIVEN
-        final String id = "1234567";
+        final String userId = "testtest";
 
         // WHEN
-        cartRepository.deleteById(id);
+        final Optional<CartEntity> cartOptional = cartRepository.findByUserId(userId);
 
         // THEN
-        assertEquals(1, cartRepository.findAll().size());
+        cartOptional.ifPresentOrElse(
+                cartEntity -> assertEquals(userId, cartEntity.getUserId()),
+                () -> fail("A cart with userId = " + userId + " should be found in the database!"));
     }
 
     @Test
-    public void testUpdateSuccess() {
+    void testSave() {
         // GIVEN
+        final CartEntity cartEntity = new CartEntity();
+        cartEntity.setId("1234567");
+        cartEntity.setUserId("user id");
 
+        final Map<String, Integer> products = new HashMap<>();
+        products.put("147", 1);
+        products.put("258", 2);
+        products.put("359", 3);
+        cartEntity.setProducts(products);
+
+        // WHEN
+        final CartEntity savedCart = cartRepository.save(cartEntity);
+
+        // THEN
+        final Optional<CartEntity> loadedCarts = cartRepository.findById(cartEntity.getId());
+        loadedCarts.ifPresentOrElse(
+                cart -> assertThat(cart).usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(savedCart),
+                () -> fail("A new cart should have been saved to the database!"));
+    }
+
+    @Test
+    void testUpdate() {
+        // GIVEN
         final String id = "1234567";
         final CartEntity cartEntity = cartRepository.findById(id).get();
-        cartEntity.setUserId("1234");
+
+        final String newUserId = "1234";
+        cartEntity.setUserId(newUserId);
 
         // WHEN
         final CartEntity updatedCart = cartRepository.save(cartEntity);
@@ -79,36 +105,18 @@ public class CartRepositoryTest {
         assertThat(updatedCart).usingRecursiveComparison()
                 .ignoringFields("products")
                 .isEqualTo(cartEntity);
-        assertEquals("1234", updatedCart.getUserId());
+        assertEquals(newUserId, updatedCart.getUserId());
     }
 
     @Test
-    public void testSave() {
+    void testDelete() {
+        // GIVEN
+        final String id = "1234567";
 
-        final CartEntity cartEntity = new CartEntity();
+        // WHEN
+        cartRepository.deleteById(id);
 
-        cartEntity.setId("1234567");
-        cartEntity.setUserId("user id");
-
-        final CartEntity savedCart = cartRepository.save(cartEntity);
-
-        final Optional<CartEntity> loadedCarts
-                = cartRepository.findById(cartEntity.getId());
-        assertTrue(loadedCarts.isPresent());
-        loadedCarts.ifPresent(cart ->
-                assertThat(cart).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(savedCart));
-
-    }
-
-    @Test
-    public void testFindCartEntityByUserId() {
-
-        final String userId = "testtest";
-        final Optional<CartEntity> cart =
-                cartRepository.findCartEntityByUserId(userId);
-
-        assertEquals(userId, cart.get().getUserId());
+        // THEN
+        assertEquals(1, cartRepository.findAll().size());
     }
 }

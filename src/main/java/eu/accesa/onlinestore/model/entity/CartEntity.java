@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.model.entity;
 
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +12,7 @@ public class CartEntity {
 
     @Id
     private String id;
+
     @Indexed(unique = true)
     private String userId;
     private Map<String, Integer> products;
@@ -46,7 +46,8 @@ public class CartEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CartEntity cart = (CartEntity) o;
-        return Objects.equals(id, cart.id) && Objects.equals(userId, cart.userId) && Objects.equals(products, cart.products);
+        return Objects.equals(id, cart.id) && Objects.equals(userId, cart.userId) &&
+                Objects.equals(products, cart.products);
     }
 
     @Override

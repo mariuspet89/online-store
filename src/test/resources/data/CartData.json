@@ -1,14 +1,13 @@
 [
   {
-  "id": "1234567",
-  "products": {
-    "additionalProp1": 10,
-    "additionalProp2": 20,
-    "additionalProp3": 30
+    "id": "1234567",
+    "products": {
+      "additionalProp1": 10,
+      "additionalProp2": 20,
+      "additionalProp3": 30
+    },
+    "userId": "testtest"
   },
-  "userId": "testtest"
-},
-
   {
     "id": "12345678",
     "products": {

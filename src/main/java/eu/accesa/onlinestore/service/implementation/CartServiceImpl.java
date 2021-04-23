@@ -39,7 +39,7 @@ public class CartServiceImpl implements CartService {
     public CartDto getCartByUserId(String id) {
         LOGGER.info("Service: searching for cart belonging to user with id: {}", id);
 
-        return mapper.map(cartRepository.findCartEntityByUserId(id).orElseThrow(() -> new EntityNotFoundException
+        return mapper.map(cartRepository.findByUserId(id).orElseThrow(() -> new EntityNotFoundException
                 (CartEntity.class.getName(), "CartId", id)), CartDto.class);
     }
 

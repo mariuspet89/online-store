@@ -78,7 +78,9 @@ public class OrderEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderEntity that = (OrderEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(orderedProducts, that.orderedProducts) && Objects.equals(orderDate, that.orderDate) && Objects.equals(orderValue, that.orderValue) && Objects.equals(user, that.user);
+        return Objects.equals(id, that.id) && Objects.equals(orderedProducts, that.orderedProducts) &&
+                Objects.equals(orderDate, that.orderDate) && Objects.equals(orderValue, that.orderValue) &&
+                Objects.equals(user, that.user);
     }
 
     @Override
