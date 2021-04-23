@@ -1,11 +1,11 @@
 package eu.accesa.onlinestore.repository;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,15 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-//Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB
+// Creates an embedded MongoDB instance and loads the subset of the Spring configuration that supports MongoDB
 @DataMongoTest
-public class OrderRepositoryTest {
-    // the path to the JSON file
-    private final File ORDER_DATA_JSON = Paths.get("src", "test", "resources", "data", "OrderData.json").toFile();
+class OrderRepositoryTest {
 
-    // used to load a JSON file into a list of Products
+    // the path to the JSON file
+    private final File ORDER_DATA_JSON = Paths.get("src", "test", "resources", "data",
+            "OrderData.json").toFile();
+
+    // used to load a JSON file into a list of Orders
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -39,10 +41,8 @@ public class OrderRepositoryTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        // deserialize the JSON file to an array of products
-
-        OrderEntity[] orders = objectMapper.readValue(ORDER_DATA_JSON, OrderEntity[].class);
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        // deserialize the JSON file to an array of orders
+        final OrderEntity[] orders = objectMapper.readValue(ORDER_DATA_JSON, OrderEntity[].class);
 
         // load each product into embedded MongoDB
         Arrays.stream(orders).forEach(mongoTemplate::save);
@@ -55,97 +55,56 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    public void testFindAllSuccess() {
+    void testFindAll() {
         // WHEN
-        List<OrderEntity> orders = orderRepository.findAll();
+        final List<OrderEntity> orders = orderRepository.findAll();
 
         // THEN
         assertEquals(2, orders.size(), "findAll() should return 2 orders!");
     }
 
     @Test
-    public void testFindByIdSucces() {
-        //GIVEN
+    void testFindById() {
+        // GIVEN
         final String id = "6038ae272c4f617114584428";
 
-        //WHEN
-        Optional<OrderEntity> order = orderRepository.findById(id);
-
-        //THEN
-        assertTrue(order.isPresent(), "An order with Id: " + id + " should exist");
-        order.ifPresent(orderEntity -> {
-            assertEquals(id, orderEntity.getId());
-            assertEquals(12, orderEntity.getOrderValue());
-            assertEquals("603648273ed85832b440eb99", orderEntity.getUser().getId());
-            assertEquals("Lilah", orderEntity.getUser().getFirstName());
-            assertEquals("Rozier", orderEntity.getUser().getLastName());
-            assertEquals("Cluj-Napoca", orderEntity.getUser().getAddressEntity().getCity());
-            assertEquals(2021, orderEntity.getOrderDate().getYear());
-            assertEquals(2, orderEntity.getOrderDate().getMonthValue());
-            assertEquals(26, orderEntity.getOrderDate().getDayOfMonth());
-        });
-    }
-
-    @Test
-    public void testFindByFailure() {
-        //GIVEN
-        final String id = "fakeId";
-
-        //WHEN
-        Optional<OrderEntity> order = orderRepository.findById(id);
+        // WHEN
+        final Optional<OrderEntity> order = orderRepository.findById(id);
 
         // THEN
-        assertFalse(order.isPresent(), "An order with ID = " + id + " should not be present!");
+        order.ifPresentOrElse(
+                orderEntity -> {
+                    assertEquals(id, orderEntity.getId());
+                    assertEquals(12, orderEntity.getOrderValue());
 
+                    final UserEntity userEntity = orderEntity.getUser();
+                    assertEquals("603648273ed85832b440eb99", userEntity.getId());
+                    assertEquals("Lilah", userEntity.getFirstName());
+                    assertEquals("Rozier", userEntity.getLastName());
+                    assertEquals("Cluj-Napoca", userEntity.getAddressEntity().getCity());
+
+                    final LocalDateTime orderDate = orderEntity.getOrderDate();
+                    assertEquals(2021, orderDate.getYear());
+                    assertEquals(2, orderDate.getMonthValue());
+                    assertEquals(26, orderDate.getDayOfMonth());
+                },
+                () -> fail("An order with orderId = " + id + " should be found in the database!"));
     }
 
     @Test
-    public void testGetOrderEntitiesByUserIdSuccess() {
+    void testFindByUserId() {
         // GIVEN
         final String userId = "604107dde3835d7496be4e3d";
 
-        //WHEN
-        List<OrderEntity> orders = orderRepository.getOrderEntitiesByUserId(userId);
-
-        //THEN
-        assertNotNull(orders, "List is empty");
-        assertEquals(1, orders.size());
-        OrderEntity orderFound = orders.get(0);
-        assertTrue(orders.contains(orderFound));
-        assertEquals("6037a0ab9cfa0f22a397ac4c", orderFound.getId());
-    }
-
-    @Test
-    public void testDeleteSuccess() {
-        // GIVEN
-        final String id = "6037a0ab9cfa0f22a397ac4c";
-
         // WHEN
-        orderRepository.deleteById(id);
+        final List<OrderEntity> orders = orderRepository.findByUserId(userId);
 
         // THEN
-        assertEquals(1, orderRepository.findAll().size());
+        orders.forEach(orderEntity -> assertEquals(userId, orderEntity.getUser().getId()));
     }
 
     @Test
-    public void testUpdateSuccess() {
-        // GIVEN
-        final String id = "6037a0ab9cfa0f22a397ac4c";
-        final OrderEntity order = orderRepository.findById(id).get();
-        order.setOrderValue(1.1);
-
-        // WHEN
-        final OrderEntity updatedOrder = orderRepository.save(order);
-
-        // THEN
-        assertThat(updatedOrder).usingRecursiveComparison()
-                .ignoringFields("orderValue")
-                .isEqualTo(order);
-        assertEquals(1.1, updatedOrder.getOrderValue());
-    }
-
-    @Test
-    public void testSave() {
+    void testSave() {
         // GIVEN
         final UserEntity userEntity = new UserEntity();
         userEntity.setId("60377ec00e2cb07c9a3811d3");
@@ -179,10 +138,41 @@ public class OrderRepositoryTest {
         // THEN
         // validate we can get the order from the database
         final Optional<OrderEntity> loadedOrder = orderRepository.findById(savedOrder.getId());
-        assertTrue(loadedOrder.isPresent());
-        loadedOrder.ifPresent(order ->
-                assertThat(order).usingRecursiveComparison()
+        loadedOrder.ifPresentOrElse(
+                order -> assertThat(order).usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(savedOrder));
+                        .isEqualTo(savedOrder),
+                () -> fail("An new order should have been saved to the database!"));
+    }
+
+    @Test
+    void testUpdate() {
+        // GIVEN
+        final String id = "6037a0ab9cfa0f22a397ac4c";
+        OrderEntity order = orderRepository.findById(id).get();
+
+        final double newOrderValue = 1.1;
+        order.setOrderValue(newOrderValue);
+
+        // WHEN
+        final OrderEntity updatedOrder = orderRepository.save(order);
+
+        // THEN
+        assertThat(updatedOrder).usingRecursiveComparison()
+                .ignoringFields("orderValue")
+                .isEqualTo(order);
+        assertEquals(newOrderValue, updatedOrder.getOrderValue());
+    }
+
+    @Test
+    void testDelete() {
+        // GIVEN
+        final String id = "6037a0ab9cfa0f22a397ac4c";
+
+        // WHEN
+        orderRepository.deleteById(id);
+
+        // THEN
+        assertEquals(1, orderRepository.findAll().size());
     }
 }

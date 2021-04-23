@@ -14,7 +14,8 @@
       "county": "Cluj",
       "postalCode": "123456"
     },
-    "enabled": true
+    "enabled": true,
+    "token": null
   },
   {
     "id": "604107dde3835d7496be4e3d",
@@ -31,6 +32,7 @@
       "county": "california",
       "postalCode": "542545"
     },
-    "enabled": false
+    "enabled": false,
+    "token": "eyJhbGciOiJIUzUxMiJ9YyIsImlzcyI6ImV1Lm"
   }
 ]

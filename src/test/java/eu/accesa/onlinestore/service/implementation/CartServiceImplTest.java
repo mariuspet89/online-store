@@ -90,7 +90,7 @@ public class CartServiceImplTest {
 
         CartEntity foundCartEntity = createCartEntity("4141", "3232", productsToBuy);
 
-        when(cartRepository.findCartEntityByUserId(anyString())).thenReturn(Optional.of(foundCartEntity));
+        when(cartRepository.findByUserId(anyString())).thenReturn(Optional.of(foundCartEntity));
 
         CartDto foundCartDto = cartService.getCartByUserId(id);
 
@@ -98,7 +98,7 @@ public class CartServiceImplTest {
         assertNotNull(foundCartEntity);
         assertNotNull(foundCartDto);
 
-        verify(cartRepository).findCartEntityByUserId(id);
+        verify(cartRepository).findByUserId(id);
     }
 
     @Test

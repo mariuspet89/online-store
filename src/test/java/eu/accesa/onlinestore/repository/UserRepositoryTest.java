@@ -25,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryTest {
 
     // the path to the JSON file
-    private final File USER_DATA_JSON = Paths.get("src", "test", "resources", "data", "UserData.json").toFile();
+    private final File USER_DATA_JSON = Paths.get("src", "test", "resources", "data",
+            "UserData.json").toFile();
 
     // used to load a JSON file into a list of Users
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,7 +40,7 @@ class UserRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         // deserialize the JSON file to an array of users
-        UserEntity[] users = objectMapper.readValue(USER_DATA_JSON, UserEntity[].class);
+        final UserEntity[] users = objectMapper.readValue(USER_DATA_JSON, UserEntity[].class);
 
         // load each user into embedded MongoDB
         Arrays.stream(users).forEach(mongoTemplate::save);
@@ -52,189 +53,170 @@ class UserRepositoryTest {
     }
 
     @Test
-    void testFindAllSuccess() {
+    void testFindAll() {
         // WHEN
-        List<UserEntity> users = userRepository.findAll();
+        final List<UserEntity> users = userRepository.findAll();
 
         // THEN
         assertThat(users).as("findAll() should have returned 2 users!").hasSize(2);
     }
 
     @Test
-    void testFindByIdSuccess() {
+    void testFindById() {
         // GIVEN
         final String id = "604107dde3835d7496be4e3d";
 
         // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
+        final Optional<UserEntity> userEntityOptional = userRepository.findById(id);
 
         // THEN
-        assertTrue(userEntityOptional.isPresent(), "A user with ID = " + id + " should be present!");
-        userEntityOptional.ifPresent(user -> {
-            assertEquals(id, user.getId());
-            assertEquals("john", user.getFirstName());
-            assertEquals("travolta", user.getLastName());
-            assertEquals("johny@travolta.com", user.getEmail());
-            assertEquals("johnytravolta", user.getUsername());
-            assertEquals("123456", user.getTelephone());
-            assertEquals("Mr", user.getSex());
-            assertEquals("johny123", user.getPassword());
+        userEntityOptional.ifPresentOrElse(
+                user -> {
+                    assertEquals(id, user.getId());
+                    assertEquals("john", user.getFirstName());
+                    assertEquals("travolta", user.getLastName());
+                    assertEquals("johny@travolta.com", user.getEmail());
+                    assertEquals("johnytravolta", user.getUsername());
+                    assertEquals("123456", user.getTelephone());
+                    assertEquals("Mr", user.getSex());
+                    assertEquals("johny123", user.getPassword());
 
-            final AddressEntity addressEntity = user.getAddressEntity();
-            assertNotNull(addressEntity);
-            assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
-            assertEquals("LA", addressEntity.getCity());
-            assertEquals("california", addressEntity.getCounty());
-            assertEquals("542545", addressEntity.getPostalCode());
+                    final AddressEntity addressEntity = user.getAddressEntity();
+                    assertNotNull(addressEntity);
+                    assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
+                    assertEquals("LA", addressEntity.getCity());
+                    assertEquals("california", addressEntity.getCounty());
+                    assertEquals("542545", addressEntity.getPostalCode());
 
-            assertFalse(user.isEnabled());
-        });
+                    assertFalse(user.isEnabled());
+                    assertEquals("eyJhbGciOiJIUzUxMiJ9YyIsImlzcyI6ImV1Lm", user.getToken());
+                },
+                () -> fail("A user with id = " + id + " should be found in the database!"));
     }
 
     @Test
-    void testFindByIdFailure() {
-        // GIVEN
-        final String id = "fakeId";
-
-        // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
-
-        // THEN
-        assertFalse(userEntityOptional.isPresent(), "A user with ID = " + id + " should not be present!");
-    }
-
-    @Test
-    void existsByUsernameSuccess() {
+    void testExistsByUsername() {
         // GIVEN
         final String username = "johnytravolta";
 
         // WHEN
-        boolean existsByUsername = userRepository.existsByUsername(username);
+        final boolean existsByUsername = userRepository.existsByUsername(username);
 
         // THEN
         assertTrue(existsByUsername);
     }
 
     @Test
-    void existsByUsernameFailure() {
-        // GIVEN
-        final String username = "fakeUsername";
-
-        // WHEN
-        boolean existsByUsername = userRepository.existsByUsername(username);
-
-        // THEN
-        assertFalse(existsByUsername);
-    }
-
-    @Test
-    void testFindByUsernameSuccess() {
+    void testFindByUsername() {
         // GIVEN
         final String username = "johnytravolta";
 
         // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
+        final Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
 
         // THEN
-        assertTrue(userEntityOptional.isPresent(), "A user with username = " + username + " should be present!");
-        userEntityOptional.ifPresent(user -> {
-            assertEquals("604107dde3835d7496be4e3d", user.getId());
-            assertEquals("john", user.getFirstName());
-            assertEquals("travolta", user.getLastName());
-            assertEquals("johny@travolta.com", user.getEmail());
-            assertEquals(username, user.getUsername());
-            assertEquals("123456", user.getTelephone());
-            assertEquals("Mr", user.getSex());
-            assertEquals("johny123", user.getPassword());
+        userEntityOptional.ifPresentOrElse(
+                user -> {
+                    assertEquals("604107dde3835d7496be4e3d", user.getId());
+                    assertEquals("john", user.getFirstName());
+                    assertEquals("travolta", user.getLastName());
+                    assertEquals("johny@travolta.com", user.getEmail());
+                    assertEquals(username, user.getUsername());
+                    assertEquals("123456", user.getTelephone());
+                    assertEquals("Mr", user.getSex());
+                    assertEquals("johny123", user.getPassword());
 
-            final AddressEntity addressEntity = user.getAddressEntity();
-            assertNotNull(addressEntity);
-            assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
-            assertEquals("LA", addressEntity.getCity());
-            assertEquals("california", addressEntity.getCounty());
-            assertEquals("542545", addressEntity.getPostalCode());
+                    final AddressEntity addressEntity = user.getAddressEntity();
+                    assertNotNull(addressEntity);
+                    assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
+                    assertEquals("LA", addressEntity.getCity());
+                    assertEquals("california", addressEntity.getCounty());
+                    assertEquals("542545", addressEntity.getPostalCode());
 
-            assertFalse(user.isEnabled());
-        });
+                    assertFalse(user.isEnabled());
+                    assertEquals("eyJhbGciOiJIUzUxMiJ9YyIsImlzcyI6ImV1Lm", user.getToken());
+                },
+                () -> fail("A user with username = " + username + " should be found in the database!"));
     }
 
     @Test
-    void testFindByUsernameFailure() {
-        // GIVEN
-        final String username = "fakeUsername";
-
-        // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
-
-        // THEN
-        assertFalse(userEntityOptional.isPresent(), "A user with username = " + username + " should not be present!");
-    }
-
-    @Test
-    void existsByEmailSuccess() {
+    void testExistsByEmail() {
         // GIVEN
         final String email = "lrozier2@networksolutions.com";
 
         // WHEN
-        boolean existsByEmail = userRepository.existsByEmail(email);
+        final boolean existsByEmail = userRepository.existsByEmail(email);
 
         // THEN
         assertTrue(existsByEmail);
     }
 
     @Test
-    void existsByEmailFailure() {
-        // GIVEN
-        final String email = "fakeEmail";
-
-        // WHEN
-        boolean existsByEmail = userRepository.existsByEmail(email);
-
-        // THEN
-        assertFalse(existsByEmail);
-    }
-
-    @Test
-    void testFindByEmailSuccess() {
+    void testFindByEmail() {
         // GIVEN
         final String email = "lrozier2@networksolutions.com";
 
         // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+        final Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
 
         // THEN
         assertTrue(userEntityOptional.isPresent(), "A user with email = " + email + " should be present!");
-        userEntityOptional.ifPresent(user -> {
-            assertEquals("603648273ed85832b440eb99", user.getId());
-            assertEquals("Lilah", user.getFirstName());
-            assertEquals("Rozier", user.getLastName());
-            assertEquals(email, user.getEmail());
-            assertEquals("lrozier2", user.getUsername());
-            assertEquals("592-653-3873", user.getTelephone());
-            assertEquals("F", user.getSex());
-            assertEquals("$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG", user.getPassword());
+        userEntityOptional.ifPresentOrElse(
+                user -> {
+                    assertEquals("603648273ed85832b440eb99", user.getId());
+                    assertEquals("Lilah", user.getFirstName());
+                    assertEquals("Rozier", user.getLastName());
+                    assertEquals(email, user.getEmail());
+                    assertEquals("lrozier2", user.getUsername());
+                    assertEquals("592-653-3873", user.getTelephone());
+                    assertEquals("F", user.getSex());
+                    assertEquals("$2y$12$pKggD4beeE8AJUTbLAu.7OwsBvtiHK7J2E/7fVTzLaKBh0XE/OThG", user.getPassword());
 
-            final AddressEntity addressEntity = user.getAddressEntity();
-            assertNotNull(addressEntity);
-            assertEquals("Frunzisului Street", addressEntity.getAddress());
-            assertEquals("Cluj-Napoca", addressEntity.getCity());
-            assertEquals("Cluj", addressEntity.getCounty());
-            assertEquals("123456", addressEntity.getPostalCode());
+                    final AddressEntity addressEntity = user.getAddressEntity();
+                    assertNotNull(addressEntity);
+                    assertEquals("Frunzisului Street", addressEntity.getAddress());
+                    assertEquals("Cluj-Napoca", addressEntity.getCity());
+                    assertEquals("Cluj", addressEntity.getCounty());
+                    assertEquals("123456", addressEntity.getPostalCode());
 
-            assertTrue(user.isEnabled());
-        });
+                    assertTrue(user.isEnabled());
+                    assertNull(user.getToken());
+                },
+                () -> fail("A user with email = " + email + " should be found in the database!"));
     }
 
     @Test
-    void testFindByEmailFailure() {
+    void testFindByToken() {
         // GIVEN
-        final String email = "fakeEmail";
+        final String token = "eyJhbGciOiJIUzUxMiJ9YyIsImlzcyI6ImV1Lm";
 
         // WHEN
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+        final Optional<UserEntity> userEntityOptional = userRepository.findByToken(token);
 
         // THEN
-        assertFalse(userEntityOptional.isPresent(), "A user with email = " + email + " should not be present!");
+        assertTrue(userEntityOptional.isPresent(), "A user with token = " + token + " should be present!");
+        userEntityOptional.ifPresentOrElse(
+                user -> {
+                    assertEquals("604107dde3835d7496be4e3d", user.getId());
+                    assertEquals("john", user.getFirstName());
+                    assertEquals("travolta", user.getLastName());
+                    assertEquals("johny@travolta.com", user.getEmail());
+                    assertEquals("johnytravolta", user.getUsername());
+                    assertEquals("123456", user.getTelephone());
+                    assertEquals("Mr", user.getSex());
+                    assertEquals("johny123", user.getPassword());
+
+                    final AddressEntity addressEntity = user.getAddressEntity();
+                    assertNotNull(addressEntity);
+                    assertEquals("sunste blvd, nr 13", addressEntity.getAddress());
+                    assertEquals("LA", addressEntity.getCity());
+                    assertEquals("california", addressEntity.getCounty());
+                    assertEquals("542545", addressEntity.getPostalCode());
+
+                    assertFalse(user.isEnabled());
+                    assertEquals(token, user.getToken());
+                },
+                () -> fail("A user with token = " + token + " should be found in the database!"));
     }
 
     @Test
@@ -256,6 +238,8 @@ class UserRepositoryTest {
         addressEntity.setPostalCode("123456");
         userEntity.setAddressEntity(addressEntity);
 
+        userEntity.setToken("eyJhbGciOiJIUzUxMiJ9YyIsImlzcyI6ImV1Lm");
+
         // WHEN
         final UserEntity savedUser = userRepository.save(userEntity);
 
@@ -263,19 +247,21 @@ class UserRepositoryTest {
         // validate we can get the user from the database
         final Optional<UserEntity> loadedUser = userRepository.findById(savedUser.getId());
         assertTrue(loadedUser.isPresent());
-        loadedUser.ifPresent(user ->
-                assertThat(user).usingRecursiveComparison()
+        loadedUser.ifPresentOrElse(
+                user -> assertThat(user).usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(userEntity)
-        );
+                        .isEqualTo(userEntity),
+                () -> fail("An new user should have been saved to the database!"));
     }
 
     @Test
-    void testUpdateSuccess() {
+    void testUpdate() {
         // GIVEN
         final String id = "604107dde3835d7496be4e3d";
+        final String newPassword = "newPassword";
+
         final UserEntity user = userRepository.findById(id).get();
-        user.setPassword("newPassword");
+        user.setPassword(newPassword);
 
         // WHEN
         final UserEntity updatedUser = userRepository.save(user);
@@ -284,18 +270,18 @@ class UserRepositoryTest {
         assertThat(updatedUser).usingRecursiveComparison()
                 .ignoringFields("password")
                 .isEqualTo(user);
-        assertEquals("newPassword", updatedUser.getPassword());
+        assertEquals(newPassword, updatedUser.getPassword());
     }
 
     @Test
-    void testDeleteSuccess() {
+    void testDelete() {
         // GIVEN
         final String id = "604107dde3835d7496be4e3d";
 
         // WHEN
         userRepository.deleteById(id);
 
-        // THEN`
+        // THEN
         assertThat(userRepository.findAll()).hasSize(1);
     }
 }

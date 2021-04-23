@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String resetPassword(String token, String password) {
-        UserEntity user = userRepository.findUserEntityByToken(token)
+        UserEntity user = userRepository.findByToken(token)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), "Token ", token));
 
         if (jwtTokenUtil.validate(token)) {
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findByUserResetToken(String resetToken) {
-        Optional<UserEntity> user = userRepository.findUserEntityByToken(resetToken);
+        Optional<UserEntity> user = userRepository.findByToken(resetToken);
         return modelMapper.map(user, UserDto.class);
     }
 

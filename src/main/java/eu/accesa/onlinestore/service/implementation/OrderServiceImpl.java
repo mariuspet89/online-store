@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.service.implementation;
 
-import com.google.common.net.MediaType;
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
@@ -74,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findByUser(String userId) {
         LOGGER.info("Service: searching for order of user with id : {}", userId);
-        List<OrderEntity> orders = orderRepository.getOrderEntitiesByUserId(userId);
+        List<OrderEntity> orders = orderRepository.findByUserId(userId);
         return orders.stream()
                 .map(orderEntity -> mapper.map(orderEntity, OrderDto.class))
                 .collect(Collectors.toList());
