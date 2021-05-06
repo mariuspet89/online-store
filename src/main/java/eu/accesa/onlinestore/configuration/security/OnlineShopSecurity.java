@@ -61,7 +61,7 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // public endpoints (e.g. Swagger)
-                .mvcMatchers("/login").permitAll()
+                .mvcMatchers("/login/**").permitAll()
                 .mvcMatchers(swaggerAuthWhitelist).permitAll()
                 .mvcMatchers(HttpMethod.GET, "/products/**","/users/reset-password").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/users/existsByUsername", "/users/existsByEmail").permitAll()
