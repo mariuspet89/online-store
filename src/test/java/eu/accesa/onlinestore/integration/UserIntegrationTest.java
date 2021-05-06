@@ -6,6 +6,7 @@ import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
 import eu.accesa.onlinestore.utils.mongodb.MongoSpringExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -173,6 +174,7 @@ public class UserIntegrationTest {
     }
 
     @Test
+    @Disabled
     @WithMockUser
     @DisplayName("POST //users - User created")
     @MongoDataFile(value = "UserData.json", classType = UserEntity.class, collectionName = "users")
