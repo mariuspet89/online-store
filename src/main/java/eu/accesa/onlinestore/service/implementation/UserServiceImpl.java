@@ -123,6 +123,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity loginWithSocialUser(UserDtoNoId userDtoNoId) {
+        final Optional<UserEntity> optionalUser = userRepository.findByEmail(userDtoNoId.getEmail());
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            UserEntity userEntity = modelMapper.map(userDtoNoId, UserEntity.class);
+            userRepository.save(userEntity);
+            return userEntity;
+        }
+    }
+
+    @Override
     public UserDto updateUser(String id, UserDtoNoId userDtoNoId) {
         LOGGER.info("Updating user with ID = {}", id);
 

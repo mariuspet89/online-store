@@ -2,6 +2,7 @@ package eu.accesa.onlinestore.service;
 
 import eu.accesa.onlinestore.model.dto.UserDto;
 import eu.accesa.onlinestore.model.dto.UserDtoNoId;
+import eu.accesa.onlinestore.model.entity.UserEntity;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface UserService {
     UserDto findByEmail(String email);
 
     UserDto createUser(UserDtoNoId userDtoNoId);
+
+    UserEntity loginWithSocialUser(UserDtoNoId userDtoNoId);
 
     UserDto updateUser(String id, UserDtoNoId userDtoNoId);
 
