@@ -18,7 +18,7 @@ public class JavaMailSenderConfig {
         mailSender.setPort(587);
 
         mailSender.setUsername("onlinestoreaccesa@gmail.com");
-        mailSender.setPassword("testTest");
+        mailSender.setPassword("Interwest1");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
