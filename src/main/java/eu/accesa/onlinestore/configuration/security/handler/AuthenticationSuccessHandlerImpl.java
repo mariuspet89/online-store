@@ -3,6 +3,7 @@ package eu.accesa.onlinestore.configuration.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.model.dto.UserDto;
+import eu.accesa.onlinestore.model.entity.AddressEntity;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -80,6 +81,15 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         userEntity.setLastName(fullName.split(" ")[1]);
         userEntity.setEmail(oAuth2User.getAttribute("email"));
         userEntity.setUsername(oAuth2User.getName());
+        userEntity.setTelephone("");
+        userEntity.setSex("");
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddress("");
+        addressEntity.setCounty("");
+        addressEntity.setCity("");
+        addressEntity.setPostalCode("");
+        userEntity.setAddressEntity(addressEntity);
         userEntity.setEnabled(true);
 
         userRepository.save(userEntity);
@@ -92,6 +102,16 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         userEntity.setLastName(oidcUser.getFamilyName());
         userEntity.setEmail(oidcUser.getEmail());
         userEntity.setUsername(oidcUser.getSubject());
+        userEntity.setTelephone(""); // oidcUser.getPhoneNumber()
+        userEntity.setSex(""); // oidcUser.getGender()
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddress(""); // oidcUser.getAddress().getStreetAddress()
+        addressEntity.setCounty("");
+        addressEntity.setCity("");
+        addressEntity.setPostalCode(""); // oidcUser.getAddress().getPostalCode()
+        userEntity.setAddressEntity(addressEntity);
+        userEntity.setEnabled(true);
 
         userRepository.save(userEntity);
         return userEntity;
