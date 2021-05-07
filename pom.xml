@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.accesa</groupId>
   <artifactId>online-store</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>1.0.11-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>io.springfox</groupId>
