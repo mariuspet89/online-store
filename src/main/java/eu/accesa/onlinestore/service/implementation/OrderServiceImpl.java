@@ -1,6 +1,7 @@
 package eu.accesa.onlinestore.service.implementation;
 
 import eu.accesa.onlinestore.exceptionhandler.EntityNotFoundException;
+import eu.accesa.onlinestore.exceptionhandler.OnlineStoreException;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
@@ -88,6 +89,8 @@ public class OrderServiceImpl implements OrderService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class.getName(), " UserID ", userId));
 
+        if (!userEntity.isEnabled()) throw new OnlineStoreException("Please confirm the user before making an order");
+
         //Creating table data for the order invoice
         List<ProductLine> productLines = createProductLinesHelperEntity(orderDtoNoId);
 
@@ -133,6 +136,18 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity orderEntity = orderRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException(OrderEntity.class.getName(), "OrderId", id));
 
+        //Here, for each product in the order, we check if the new desired quantity is greater than what is in stock
+        //and if not, we throw an exception
+        for (String productEntityId : orderEntity.getOrderedProducts().keySet()) {
+            ProductEntity productEntityFromDb = productRepository.findById(productEntityId).orElseThrow(()
+                    -> new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productEntityId));
+
+            if (productEntityFromDb.getItemsInStock() < orderEntity.getOrderedProducts().get(productEntityId)) {
+                throw new OnlineStoreException("There are only: " + productEntityFromDb.getItemsInStock() +
+                        " pieces of " + productEntityFromDb.getName() + " in stock.");
+            }
+        }
+
         mapper.map(orderDtoNoId, orderEntity);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
         return mapper.map(savedOrderEntity, OrderDto.class);
@@ -155,7 +170,11 @@ public class OrderServiceImpl implements OrderService {
                 throw new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productId);
             } else {
                 ProductEntity product = optionalProductEntity.get();
-                productLines.add(new ProductLine(product.getId(), product.getDescription(), value, product.getPrice()));
+                //Checking that product stock is greater than ordered quantity
+                if (product.getItemsInStock() > value) {
+                    productLines.add(new ProductLine(product.getId(), product.getDescription(), value, product.getPrice()));
+                } else throw new OnlineStoreException("There are only: " + product.getItemsInStock() +
+                        " pieces of " + product.getName() + " in stock.");
             }
         });
         return productLines;
@@ -170,3 +189,4 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 }
+
