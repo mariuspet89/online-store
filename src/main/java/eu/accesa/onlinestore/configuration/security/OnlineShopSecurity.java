@@ -1,5 +1,6 @@
 package eu.accesa.onlinestore.configuration.security;
 
+import eu.accesa.onlinestore.configuration.security.handler.AuthenticationSuccessHandlerImpl;
 import eu.accesa.onlinestore.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +25,13 @@ import java.util.List;
 @Configuration
 public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
 
+    private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
     private final UserRepository userRepository;
     private final JwtTokenFilter jwtTokenFilter;
 
-    public OnlineShopSecurity(UserRepository userRepository, JwtTokenFilter jwtTokenFilter) {
+    public OnlineShopSecurity(AuthenticationSuccessHandlerImpl authenticationSuccessHandler,
+                              UserRepository userRepository, JwtTokenFilter jwtTokenFilter) {
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.userRepository = userRepository;
         this.jwtTokenFilter = jwtTokenFilter;
     }
@@ -63,15 +67,18 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
                 // public endpoints (e.g. Swagger)
                 .mvcMatchers("/login/**").permitAll()
                 .mvcMatchers(swaggerAuthWhitelist).permitAll()
-                .mvcMatchers(HttpMethod.GET, "/products/**","/users/reset-password").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/products/**", "/users/reset-password").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/users/existsByUsername", "/users/existsByEmail").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/users","/users/forgot-password").permitAll()
-                .mvcMatchers(HttpMethod.PUT, "/userConfirmation","/users/**").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/users", "/users/forgot-password").permitAll()
+                .mvcMatchers(HttpMethod.PUT, "/userConfirmation", "/users/**").permitAll()
                 // private endpoints
                 .anyRequest().authenticated();
 
+        http.oauth2Login()
+                .successHandler(authenticationSuccessHandler);
+
         // Add JWT token filter (in the filter chain)
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

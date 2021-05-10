@@ -174,7 +174,6 @@ public class UserIntegrationTest {
     }
 
     @Test
-    @Disabled
     @WithMockUser
     @DisplayName("POST //users - User created")
     @MongoDataFile(value = "UserData.json", classType = UserEntity.class, collectionName = "users")
