@@ -162,6 +162,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
+    @Disabled
     public void updateOrder() {
 
         String orderId = "savedOrderId";
