@@ -1,6 +1,5 @@
 package eu.accesa.onlinestore.configuration.security;
 
-import eu.accesa.onlinestore.configuration.security.handler.AuthenticationSuccessHandlerImpl;
 import eu.accesa.onlinestore.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,13 +24,10 @@ import java.util.List;
 @Configuration
 public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
 
-    private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
     private final UserRepository userRepository;
     private final JwtTokenFilter jwtTokenFilter;
 
-    public OnlineShopSecurity(AuthenticationSuccessHandlerImpl authenticationSuccessHandler,
-                              UserRepository userRepository, JwtTokenFilter jwtTokenFilter) {
-        this.authenticationSuccessHandler = authenticationSuccessHandler;
+    public OnlineShopSecurity(UserRepository userRepository, JwtTokenFilter jwtTokenFilter) {
         this.userRepository = userRepository;
         this.jwtTokenFilter = jwtTokenFilter;
     }
@@ -73,9 +69,6 @@ public class OnlineShopSecurity extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PUT, "/userConfirmation", "/users/**").permitAll()
                 // private endpoints
                 .anyRequest().authenticated();
-
-        http.oauth2Login()
-                .successHandler(authenticationSuccessHandler);
 
         // Add JWT token filter (in the filter chain)
         http.addFilterAt(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

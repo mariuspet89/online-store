@@ -22,8 +22,6 @@ public interface UserService {
 
     UserDto createUser(UserDtoNoId userDtoNoId);
 
-    UserEntity loginWithSocialUser(UserDtoNoId userDtoNoId);
-
     UserDto updateUser(String id, UserDtoNoId userDtoNoId);
 
     void deleteUser(String id);

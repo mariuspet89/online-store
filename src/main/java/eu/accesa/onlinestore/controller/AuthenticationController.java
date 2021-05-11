@@ -3,7 +3,6 @@ package eu.accesa.onlinestore.controller;
 import eu.accesa.onlinestore.configuration.security.JwtTokenUtil;
 import eu.accesa.onlinestore.model.dto.AuthRequestDto;
 import eu.accesa.onlinestore.model.dto.UserDto;
-import eu.accesa.onlinestore.model.dto.UserDtoNoId;
 import eu.accesa.onlinestore.model.entity.UserEntity;
 import eu.accesa.onlinestore.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -55,15 +54,6 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Please verify your account first!");
         }
-    }
-
-    @PostMapping(value = {"/login/facebook", "/login/google"})
-    public ResponseEntity<Object> loginWithSocialUser(@Valid @RequestBody UserDtoNoId userDtoNoId) {
-        final UserEntity userEntity = userService.loginWithSocialUser(userDtoNoId);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(userEntity))
-                .body(modelMapper.map(userEntity, UserDto.class));
     }
 
     @PutMapping("/userConfirmation")
