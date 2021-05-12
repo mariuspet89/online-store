@@ -142,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
             ProductEntity productEntityFromDb = productRepository.findById(productEntityId).orElseThrow(()
                     -> new EntityNotFoundException(ProductEntity.class.getName(), "ProductId", productEntityId));
 
-            if (productEntityFromDb.getItemsInStock() < orderEntity.getOrderedProducts().get(productEntityId)) {
+            if (productEntityFromDb.getItemsInStock() <= orderEntity.getOrderedProducts().get(productEntityId)) {
                 throw new OnlineStoreException("There are only: " + productEntityFromDb.getItemsInStock() +
                         " pieces of " + productEntityFromDb.getName() + " in stock.");
             }
