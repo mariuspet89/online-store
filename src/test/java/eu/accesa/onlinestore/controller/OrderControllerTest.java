@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.service.implementation.OrderServiceImpl;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -19,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -91,22 +91,26 @@ public class OrderControllerTest {
     }
 
     @Test
-    @Disabled
-    public void createOrder() throws Exception {
+    void createOrder() throws Exception {
         //GIVEN
-        Map<String, Integer> orderedProducts = testHMOrderedProduct("a", 1);
-        OrderDtoNoId orderToBeSavedNoId = testOrderDtoNoId(1.1, "orderUserId");
+        OrderDtoNoId orderToBeSaved = testOrderDtoNoId(1.1, "orderUserId");
 
-        orderToBeSavedNoId.setOrderedProducts(orderedProducts);
-        OrderDto orderToBeSaved = testOrderDto("orderId", 1.1, "orderUserId");
+        final LocalDateTime orderDate = LocalDateTime.now();
+        orderToBeSaved.setOrderDate(orderDate);
+
+        Map<String, Integer> orderedProducts = testHMOrderedProduct("a", 1);
         orderToBeSaved.setOrderedProducts(orderedProducts);
 
+        OrderDto savedOrder = testOrderDto("orderId", 1.1, "orderUserId");
+        savedOrder.setOrderDate(orderDate);
+        savedOrder.setOrderedProducts(orderedProducts);
+
         //WHEN
-        doReturn(orderToBeSaved).when(orderService).createOrder(any(OrderDtoNoId.class));
+        doReturn(savedOrder).when(orderService).createOrder(any(OrderDtoNoId.class));
 
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(orderToBeSavedNoId)))
+                .content(asJsonString(orderToBeSaved)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -119,19 +123,25 @@ public class OrderControllerTest {
     }
 
     @Test
-    @Disabled
-    public void updateOrder() throws Exception {
+    void updateOrder() throws Exception {
         String id = "orderId1";
-        OrderDtoNoId order = testOrderDtoNoId(1.1, "userId1");
-        OrderDto orderToPut = testOrderDto("orderId1", 2.1, "userId1");
+        OrderDtoNoId orderToUpdate = testOrderDtoNoId(1.1, "userId1");
 
-        when(orderService.findById(id)).thenReturn(orderToPut);
-        when(orderService.updateOrder(id, order)).thenReturn(orderToPut);
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final String orderToPutJson = objectMapper.writeValueAsString(orderToPut);
+        final LocalDateTime orderDate = LocalDateTime.now();
+        orderToUpdate.setOrderDate(orderDate);
+
+        Map<String, Integer> orderedProducts = testHMOrderedProduct("a", 1);
+        orderToUpdate.setOrderedProducts(orderedProducts);
+
+        OrderDto updatedOrder = testOrderDto("orderId1", 2.1, "userId1");
+        updatedOrder.setOrderDate(orderDate);
+        updatedOrder.setOrderedProducts(orderedProducts);
+        
+        when(orderService.updateOrder(id, orderToUpdate)).thenReturn(updatedOrder);
+
         final ResultActions resultActions = mockMvc.perform(put("/orders/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(orderToPutJson));
+                .content(asJsonString(updatedOrder)));
         resultActions.andExpect(status().isOk());
         verify(orderService).updateOrder(Mockito.anyString(), orderDtoArgumentCaptor.capture());
         assertThat(orderDtoArgumentCaptor.getValue().getOrderValue()).isEqualTo(2.1);

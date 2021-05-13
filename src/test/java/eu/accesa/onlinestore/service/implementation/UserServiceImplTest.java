@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -36,6 +37,9 @@ class UserServiceImplTest {
 
     @Mock
     private EmailServiceImpl emailService;
+
+    @Mock
+    private MessageSource messageSource;
 
     @Mock
     private UserRepository userRepository;
@@ -283,7 +287,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @Disabled
     void testCreateUser() throws Exception {
         // GIVEN
         String originalPassword = "pistols";

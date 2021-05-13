@@ -14,7 +14,7 @@ public class OrderTestUtils {
     public static OrderEntity testOrderEntity(String id, Double orderValue, UserEntity user) {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setId(id);
-        orderEntity.setOrderedProducts(testHMOrderedProducts("fistProductId",
+        orderEntity.setOrderedProducts(testHMOrderedProducts("firstProductId",
                 "secondProductId",
                 "thirdProductId",
                 1,

@@ -10,16 +10,18 @@ import eu.accesa.onlinestore.repository.OrderRepository;
 import eu.accesa.onlinestore.repository.ProductRepository;
 import eu.accesa.onlinestore.repository.UserRepository;
 import eu.accesa.onlinestore.service.InvoiceGeneratorService;
-import org.junit.jupiter.api.Disabled;
+import eu.accesa.onlinestore.utils.ProductTestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,6 +39,9 @@ public class OrderServiceImplTest {
 
     @Spy
     private ModelMapper mapper;
+
+    @Mock
+    private MessageSource messageSource;
 
     @Mock
     private EmailServiceImpl emailService;
@@ -85,7 +90,6 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    @Disabled
     void createOrder() {
         // GIVEN
 
@@ -104,6 +108,7 @@ public class OrderServiceImplTest {
         UserEntity userEntity = createUserEntity(userId, "John", "Doe", "jd@mockemail.com",
                 "jd", "qwerty", "40722112211", "male", "Toamnei nr.1",
                 "Las Vegas", "Nevada", "440055");
+        userEntity.setEnabled(true);
         doReturn(Optional.of(userEntity)).when(userRepository).findById(userId);
 
         // mock product entity
@@ -120,6 +125,11 @@ public class OrderServiceImplTest {
 
         // mock generated PDF
         doReturn(new ByteArrayOutputStream()).when(invoiceGeneratorService).createPDF(any(OrderEntity.class), anyList());
+
+        doReturn("Invoice").when(messageSource)
+                .getMessage(eq("invoice.base.name"), isNull(), any(Locale.class));
+        doReturn("Order created successfully").when(messageSource)
+                .getMessage(eq("order.created.subject"), isNull(), any(Locale.class));
 
         // WHEN
         OrderDto createdOrderDto = orderService.createOrder(orderDtoNoId);
@@ -151,7 +161,7 @@ public class OrderServiceImplTest {
                 "The product price written to the invoice should be the same as the one from the product entity!");
 
         // verify email sending
-        verify(emailService).sendMessage(eq(userEntity.getEmail()), eq("Order Created Successfully"),
+        verify(emailService).sendMessage(eq(userEntity.getEmail()), eq("Order created successfully"),
                 eq("order-created"), anyMap(), anyMap());
 
         // verify order DTO
@@ -162,14 +172,26 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    @Disabled
-    public void updateOrder() {
+    void updateOrder() {
 
         String orderId = "savedOrderId";
         OrderEntity orderFound = testOrderEntity("savedOrderId", 100.1, null);
         OrderEntity savedOrder = testOrderEntity("updatedOrderId", 1.1, null);
 
+        final String firstProductId = "firstProductId";
+        final ProductEntity firstProduct = ProductTestUtils.createProductEnity(firstProductId, null, null,
+                null, null, 5, null, null);
+        final String secondProductId = "secondProductId";
+        final ProductEntity secondProduct = ProductTestUtils.createProductEnity(secondProductId, null, null,
+                null, null, 5, null, null);
+        final String thirdProductId = "thirdProductId";
+        final ProductEntity thirdProduct = ProductTestUtils.createProductEnity(thirdProductId, null, null,
+                null, null, 5, null, null);
+
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderFound));
+        when(productRepository.findById(firstProductId)).thenReturn(Optional.of(firstProduct));
+        when(productRepository.findById(secondProductId)).thenReturn(Optional.of(secondProduct));
+        when(productRepository.findById(thirdProductId)).thenReturn(Optional.of(thirdProduct));
         when(orderRepository.save(orderFound)).thenReturn(savedOrder);
 
         OrderDto orderDto = testOrderDto(savedOrder.getId(), savedOrder.getOrderValue(), null);
