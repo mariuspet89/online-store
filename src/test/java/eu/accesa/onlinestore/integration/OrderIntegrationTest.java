@@ -2,7 +2,6 @@ package eu.accesa.onlinestore.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.accesa.onlinestore.model.dto.OrderDto;
 import eu.accesa.onlinestore.model.dto.OrderDtoNoId;
 import eu.accesa.onlinestore.model.entity.OrderEntity;
 import eu.accesa.onlinestore.utils.mongodb.MongoDataFile;
@@ -23,9 +22,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
-import static eu.accesa.onlinestore.utils.OrderTestUtils.*;
+import static eu.accesa.onlinestore.utils.OrderTestUtils.testHMOrderedProduct;
+import static eu.accesa.onlinestore.utils.OrderTestUtils.testOrderDtoNoId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -130,15 +131,20 @@ public class OrderIntegrationTest {
     @DisplayName("PUT //orders - Order updated")
     @MongoDataFile(value = "OrderData.json", classType = OrderEntity.class, collectionName = "orders")
     void updateOrder() throws Exception {
-        String id = "6037a0ab9cfa0f22a397ac4c";
-        OrderDto orderToPut = testOrderDto("6037a0ab9cfa0f22a397ac4c", 2.1, "userId1");
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final String orderToPutJson = objectMapper.writeValueAsString(orderToPut);
-        final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/orders/{id}", id)
+        String orderId = "6037a0ab9cfa0f22a397ac4c";
+        OrderDtoNoId orderToUpdate = testOrderDtoNoId(2367.0 * 2, "userId1");
+
+        final LocalDateTime orderDate = LocalDateTime.now();
+        orderToUpdate.setOrderDate(orderDate);
+
+        Map<String, Integer> orderedProducts = testHMOrderedProduct("6034068975bb0d4088a441c2", 2);
+        orderToUpdate.setOrderedProducts(orderedProducts);
+
+        final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/orders/{id}", orderId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(orderToPutJson));
+                .content(asJsonString(orderToUpdate)));
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("6037a0ab9cfa0f22a397ac4c")))
+                .andExpect(jsonPath("$.id", is(orderId)))
                 .andExpect(jsonPath("$.orderValue", is(2.1)));
     }
 
