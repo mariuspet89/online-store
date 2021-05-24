@@ -36,7 +36,7 @@ public class ProductController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Successfully added a product")
-    public ResponseEntity<ProductDto> createProduct(@Valid @RequestPart("productDto") ProductDtoNoId productDtoNoId,
+    public ResponseEntity<ProductDto> createProduct(@Valid  ProductDtoNoId productDtoNoId,
                                                     @Nullable MultipartFile file) throws IOException {
         if (file != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDtoNoId, file));
