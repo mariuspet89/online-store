@@ -13,7 +13,7 @@ group = 'eu.accesa'
 version = '1.0.20-SNAPSHOT'
 sourceCompatibility = '11'
 
-apply plugi
+apply plugin
 
 repositories {
     mavenCentral()
