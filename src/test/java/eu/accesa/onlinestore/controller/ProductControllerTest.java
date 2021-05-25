@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.accesa.onlinestore.model.dto.ProductDto;
 import eu.accesa.onlinestore.model.dto.ProductDtoNoId;
 import eu.accesa.onlinestore.service.implementation.ProductServiceImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -61,7 +62,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.id").value(productDto.getId()));
         verify(productService).findById(productDto.getId());
     }
-
+    @Disabled
     @Test
     void testCreateProductWithMultipartFile() throws Exception {
         // GIVEN
@@ -99,7 +100,7 @@ class ProductControllerTest {
         verify(productService).createProduct(any(ProductDtoNoId.class), any(MultipartFile.class));
         verifyNoMoreInteractions(productService);
     }
-
+    @Disabled
     @Test
     void testCreateProductWithoutMultipartFile() throws Exception {
         // GIVEN
