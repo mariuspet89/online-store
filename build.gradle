@@ -10,10 +10,10 @@ plugins {
 }
 
 group = 'eu.accesa'
-version = '1.0.19-SNAPSHOT'
+version = '1.0.20-SNAPSHOT'
 sourceCompatibility = '11'
 
-apply plugin: 'maven'
+apply plugi
 
 repositories {
     mavenCentral()
