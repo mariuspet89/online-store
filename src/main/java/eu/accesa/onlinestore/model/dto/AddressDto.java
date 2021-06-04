@@ -1,11 +1,15 @@
 package eu.accesa.onlinestore.model.dto;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 public class AddressDto {
 
+    @NotBlank
     private String address;
+    @NotBlank
     private String city;
+    @NotBlank
     private String county;
     private String postalCode;
 

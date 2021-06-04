@@ -1,13 +1,23 @@
 package eu.accesa.onlinestore.model.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class ProductDtoNoId {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
+    @NotNull
     private Double price;
+    @NotNull
     private Double rating;
+    @NotNull
     private Integer itemsInStock;
+    @NotBlank
     private String image;
+    @NotBlank
     private String brand;
 
     public String getName() {

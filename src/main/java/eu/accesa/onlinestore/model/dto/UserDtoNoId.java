@@ -2,15 +2,23 @@ package eu.accesa.onlinestore.model.dto;
 
 import eu.accesa.onlinestore.model.entity.AddressEntity;
 
+import javax.validation.constraints.NotBlank;
+
 public class UserDtoNoId {
 
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
+    @NotBlank
     private String email;
+    @NotBlank
     private String username;
     private String telephone;
     private String sex;
+    @NotBlank
     private String password;
+
     private AddressEntity addressEntity;
 
     public String getFirstName() {
